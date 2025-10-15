@@ -1,0 +1,23 @@
+
+
+<ion-content [fullscreen]="true" >
+  <br>
+  <ion-row style="overflow: hidden;">
+    <ion-col size="2" [routerLink]="['/home']" style="display: flex;align-items: center;font-size: 20px;">
+      <ion-icon name="arrow-back"></ion-icon>
+    </ion-col>
+    <ion-col size="10">
+      <span class="hrae">Notifications</span>
+    </ion-col>
+  </ion-row>
+  <div style="padding: 0px 15px;">
+    <br>
+    <div *ngFor="let message of notications" class="notification" [ngClass]="message.type">
+      <div class="notification-content">
+        <strong style="font-family: 'sfregular';">{{ message.notification_title }}</strong>
+        <p style="font-family: 'sfregular';">{{ message.notification_description }}</p>
+        <span class="notification-date" style="color: black;">{{ message.date }}</span>
+      </div>
+    </div>
+  </div>
+</ion-content>

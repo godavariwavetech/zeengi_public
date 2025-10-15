@@ -1,0 +1,23 @@
+.update-container {
+    text-align: center;
+    font-family: 'sfregular';
+    padding: 8px;
+
+    h2 {
+        font-size: 25px;
+        font-weight: bold;
+    }
+
+    p {
+        color: gray;
+        margin-bottom: 16px;
+        letter-spacing: 0.5px;
+    }
+
+    ion-button {
+        margin-top: 10px;
+        font-family: 'sfregular';
+        color: white;
+
+    }
+}

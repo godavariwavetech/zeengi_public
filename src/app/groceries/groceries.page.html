@@ -1,0 +1,121 @@
+<ion-header>
+  <div class="category-header ">
+    <ion-button fill="clear" class="icon-button" (click)="goBack()">
+      <ion-icon name="arrow-back-outline"></ion-icon>
+    </ion-button>
+    <ion-searchbar [(ngModel)]="searchQuery" (ionInput)="searchdata()" placeholder="Search here..."
+      showClearButton="always">
+    </ion-searchbar>
+    <ion-button fill="clear" class="icon-button" (click)="gotobasket()">
+      <ion-icon name="basket-outline"></ion-icon>
+      <ion-badge *ngIf="totalItems > 0" class="cart-badge">{{ totalItems }}</ion-badge>
+    </ion-button>
+  </div>
+</ion-header>
+
+<ion-content [fullscreen]="true" scroll-y="true">
+  <ion-row>
+    <ion-col size="3" class="scrollable-col">
+      <div class="categories">
+        <div *ngFor="let category of categoryArray" (click)="selectCategory(category,merchantData?.shop_id)"
+          [class.active]="selectedCategory === category.category_id">
+          <img [src]="category.category_image" alt="{{ category.category_name }}" />
+          <br>
+          <span class="category-name">{{ category.category_name }}</span>
+        </div>
+      </div>
+    </ion-col>
+
+
+    <ion-col size="9" class="scrollable-col">
+      <div class="filter-container">
+        <div class="filter-btn" *ngFor="let i of filteredsubCategoryArray"
+          (click)="selectsubCategory(i,merchantData?.shop_id)">
+          &nbsp; <span class="filters">{{i.sub_category_name}}</span>&nbsp;
+        </div>
+      </div>
+
+      <div class="product-grid categoriesw">
+        <div *ngFor="let product of filteredProducts" [ngClass]="{'out-of-stock': product.soh == 0}"
+          style="border-radius: 10px;border: 1px solid #ededed;">
+          <img [src]="product.item_image" alt="Product image"
+            style="height: 100px; width: 100%; border-top-left-radius: 10px; border-top-right-radius: 10px;object-fit: cover;"
+            (error)="onImageError($event)" (click)="product.soh > 0 ? gotonext(product) : null">
+          <div *ngIf="product.soh == 0" class="no-stock-overlay">
+            Out of Stock
+          </div>
+          <div class="product-card" style="text-align: left;line-height: 1.5;"
+            (click)="product.soh > 0 ? gotonext(product) : null">
+            <span *ngIf="product?.item_name?.length > 30; else fullName" class="category-name">
+              {{ product.item_name }}
+            </span>
+            <ng-template #fullName>
+              <span class="category-name">{{ product.item_name }} </span>
+            </ng-template>
+            <div class="gt" *ngIf="product.measurement_type">
+              ⚖️ {{ product.measurement_type }}
+            </div>
+            <div class="price">
+              ₹{{product.selling_price}}
+              <span class="old-price" *ngIf="product.mrp_price>product.selling_price">
+                <s style="color: red;">₹{{product.mrp_price}}</s>
+              </span>
+            </div>
+          </div>
+
+          <div *ngIf="product.itemscount==0">
+            <span (click)="product.soh > 0 ? additem(product.id,1,product.soh) : null" class="add-button">
+              Add +
+            </span>
+          </div>
+          
+          <span *ngIf="product.itemscount!=0" class="add-button"
+            style="display: flex;align-items: center;font-family: sfregular;align-content: stretch;justify-content: center;">
+            <ion-icon name="remove" (click)="removeitem(product.id)"></ion-icon>
+            <input type="tel" readonly [(ngModel)]="product.itemscount"
+              style="border: none; width: 30px;text-align: center;">
+            <ion-icon name="add" (click)="additem(product.id,1,product.soh)"></ion-icon>
+          </span>
+        </div>
+      </div>
+    </ion-col>
+  </ion-row>
+
+  <ion-modal #modal trigger="open-modal" [canDismiss]="canDismiss" [breakpoints]="[0, 0.7, 1]"
+    [initialBreakpoint]="0.7">
+    <ng-template>
+      <ion-content class="ion-padding">
+        <p class="category-title2"> Categories </p>
+        <p class="close-btn" style="position:fixed;" (click)="modal.dismiss()"> ✖ </p>
+        <br>
+        <div class="grid-container">
+          <div class="grid-item" *ngFor="let item of filteredsubtotalCategoryArray"
+            (click)="selecttotalsubCategory(item,merchantData?.shop_id);modal.dismiss();">
+            <img [src]="item.sub_total_category_image" alt="{{ item.name }}">
+            <p>{{ item.sub_total_category_name }}</p>
+          </div>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button id="open-modal" style="--background: #F57B00;">
+      <ion-icon name="funnel" style="color: white;"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>
+
+
+
+
+
+
+<ion-footer *ngIf="cartData.length>0">
+  <ion-toolbar style="display: flex;">
+    <div *ngIf="cartData.length>0"
+      style="text-align: center;background-color: #2dd55b;padding: 15px 0px ;color: white;letter-spacing: 0.5px;"  (click)="gotobasket()">  {{totalItems}} Items Added <ion-icon name="arrow-forward-outline"
+        style="color: white;margin-bottom: -4px;"></ion-icon>
+    </div>
+  </ion-toolbar>
+</ion-footer>

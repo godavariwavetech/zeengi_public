@@ -1,0 +1,32 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start" style="font-family: 'sfregular';">
+      <ion-back-button (click)="gotoback()"></ion-back-button>
+    </ion-buttons>
+    <ion-title style="font-family: 'sfregular';text-align: center;"> Services Locations</ion-title>
+    <ion-buttons slot="end">
+      <!-- <ion-button>
+        <ion-icon style="font-family: 'sfregular';" slot="icon-only" name="cart-outline"></ion-icon>
+      </ion-button> -->
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+  <div class="search-wrapper">
+    <ion-searchbar style="font-family: 'sfregular';" showCancelButton="focus" placeholder="Search locations..."
+      class="custom-search" (ionInput)="filterLocations($event)">
+    </ion-searchbar>
+  </div>
+
+  <div class="location-list" lines="none" style="padding: 2%;">
+    <ion-item *ngFor="let i of filteredLocations" lines="none" button (click)="setlocation(i)" class="location-item">
+      <ion-label style="font-family: 'sfregular';">
+        {{ i.location_name }}
+      </ion-label>
+      <ion-icon name="chevron-forward-outline" slot="end" class="arrow-icon"></ion-icon>
+    </ion-item>
+  </div>
+
+</ion-content>

@@ -1,0 +1,40 @@
+<ion-content>
+  <div class="background">
+
+    <img src="assets/icon/slide/loginicon.svg" style="margin-top: 55%;width: 60%;">
+
+    <form [formGroup]="myForm">
+      <div class="input-container" *ngIf="!otp">
+        <br>
+        <div class="fes">
+          <span>+91 | </span>
+          <input type="tel" class="inputs" maxlength="10" minlength="10" placeholder="Enter Phone Number"
+            formControlName="number" [(ngModel)]="mobile_number">
+        </div>
+        <div class="submit-button" (click)="request()">
+          <ion-icon name="arrow-forward-outline"></ion-icon>
+        </div>
+      </div>
+      <div class="otp-inputs" *ngIf="otp">
+        <input type="tel" formControlName="otp1" maxlength="1" (keyup)="moveToNext($event, 'otp2')"
+          (keydown)="moveBack($event, 'otp1')">
+        <input type="tel" formControlName="otp2" maxlength="1" (keyup)="moveToNext($event, 'otp3')"
+          (keydown)="moveBack($event, 'otp1')">
+        <input type="tel" formControlName="otp3" maxlength="1" (keyup)="moveToNext($event, 'otp4')"
+          (keydown)="moveBack($event, 'otp2')">
+        <input type="tel" formControlName="otp4" maxlength="1" (keydown)="moveBack($event, 'otp3')">
+      </div>
+    </form>
+    <br>
+
+    <div style="padding: 0px 10px;" *ngIf="otp">
+      <button type="submit" class="red" [disabled]="!isOtpFilled()" (click)="verify()">
+        Verify
+      </button>
+    </div>
+    <br>
+    <div *ngIf="otp" style="text-align: right;font-family: 'sfregular';padding: 0px 20px;" (click)="openinput()">Wrong
+      Number
+    </div>
+  </div>
+</ion-content>

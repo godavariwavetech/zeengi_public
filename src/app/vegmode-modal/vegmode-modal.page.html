@@ -1,0 +1,17 @@
+<ion-content class="veg-alert-wrapper">
+  <div class="alert-box">
+    <div class="alert-icon">
+      <ion-icon name="alert-circle" class="icon-red"></ion-icon>
+    </div>
+
+    <h2 class="alert-title">Switch off Veg Mode?</h2>
+    <p class="alert-message">
+      You’ll see all restaurants, including those serving non-veg dishes
+    </p>
+
+    <ion-button expand="block" color="danger" fill="clear" class="switch-btn" (click)="confirmOff()">
+      Switch off
+    </ion-button>
+    <div class="keep-mode" (click)="dismiss()">Keep using this mode</div>
+  </div>
+</ion-content>

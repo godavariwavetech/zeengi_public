@@ -1,0 +1,46 @@
+<!-- <ion-header>
+  <div class="category-header">
+    <ion-button fill="clear" class="icon-button" (click)="goBack()">
+      <ion-icon style="color: white;" name="arrow-back-outline"></ion-icon>
+    </ion-button>
+    <h5 class="tet" style="font-family: 'sfregular';"> Settings </h5>
+   
+  </div>
+</ion-header> -->
+
+<ion-header>
+  <div class="category-header">
+     <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+   
+    <div class="tet"> Settings </div>
+    <ion-button fill="clear" class="icon-button">
+      <!-- <ion-icon name="basket-outline"></ion-icon> -->
+    </ion-button>
+  </div>
+</ion-header>
+<ion-content [fullscreen]="true">
+
+  <ion-item style="padding: 20px;">
+    <div style="padding: 10px;" [routerLink]="['/profile']">
+      <ion-label style="font-family: 'sfregular';font-weight: 800;">Edit Profile</ion-label>
+      <ion-text style="font-family: 'sfregular';">Change your name and profile photo.</ion-text>
+    </div>
+  </ion-item>
+
+  <ion-item style="padding: 20px;">
+    <div style="padding: 10px;" [routerLink]="['/notification']">
+      <ion-label style="font-family: 'sfregular';font-weight: 800;">Notification Settings</ion-label>
+      <ion-text style="font-family: 'sfregular';">Define Notifications </ion-text>
+    </div>
+  </ion-item>
+
+  <ion-item style="padding: 20px;">
+    <div style="padding: 10px;" >
+      <ion-label style="font-family: 'sfregular';font-weight: 800;">Account Settings</ion-label>
+      <ion-text style="font-family: 'sfregular';" (click)="deleteAccount()">Delete your Account </ion-text>
+    </div>
+  </ion-item>
+
+</ion-content>

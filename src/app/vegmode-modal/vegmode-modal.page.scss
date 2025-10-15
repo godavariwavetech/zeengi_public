@@ -1,0 +1,55 @@
+.veg-alert-wrapper {
+  --background: rgba(0, 0, 0, 0.35);
+
+  .alert-box {
+    background: #fff;
+    border-radius: 18px;
+    padding: 24px;
+    text-align: center;
+    max-width: 90%;
+    margin: 30vh auto;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  }
+
+  .alert-icon {
+    background: #ffeaea;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .icon-red {
+    font-size: 36px;
+    color: #e53935;
+  }
+
+  .alert-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #222;
+  }
+
+  .alert-message {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 24px;
+  }
+
+  .switch-btn {
+    font-weight: 600;
+    color: #e53935 !important;
+    text-transform: none;
+  }
+
+  .keep-mode {
+    font-size: 15px;
+    color: #333;
+    margin-top: 12px;
+    cursor: pointer;
+  }
+}

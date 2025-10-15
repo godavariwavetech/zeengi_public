@@ -1,0 +1,72 @@
+<ion-header>
+  <div class="category-header">
+    <ion-button fill="clear" class="icon-button">
+      <!-- <ion-icon name="arrow-back-outline"></ion-icon> -->
+    </ion-button>
+    <div class="tet"> Menu </div>
+    <ion-button fill="clear" class="icon-button">
+      <!-- <ion-icon name="basket-outline"></ion-icon> -->
+    </ion-button>
+  </div>
+</ion-header>
+
+<ion-content [fullscreen]="true" #content>
+
+  <ion-row>
+    <ion-col size="4" *ngFor="let i of categories" (click)="selectCategory(i)"
+      style="background-image:url(../../assets/icon/menucard.svg);background-size: 100% 100%;padding: 5%;">
+      <div class="tets">{{i.category_name}}</div>
+      <img class="tetsimag" [src]="i.category_image">
+    </ion-col>
+  </ion-row>
+
+  <hr>
+
+  <ion-row #subcategorySection *ngIf="categories2.length>0">
+    <ion-col size="12" style="padding: 0px 10px;">
+      <h4>{{selectedCategory}}</h4>
+    </ion-col>
+
+    <ion-col size="4" *ngFor="let i of categories2" (click)="gotocategory(i)"
+      style="background-image:url(../../assets/icon/menucard.svg);background-size: 100% 100%;padding: 5%;">
+      <div class="tets">{{i.sub_category_name}}</div>
+      <img class="tetsimag" [src]="i.sub_category_image">
+    </ion-col>
+  </ion-row>
+
+
+
+
+
+
+</ion-content>
+
+<ion-footer style="height: 55px;">
+  <ion-row class="footerback">
+    <ion-col size="2.4" class="footer-item" (click)="gotopage('home')">
+      <img src="assets/icon/footer/1.svg"><br>
+      <span class="footin">Home</span>
+    </ion-col>
+    <ion-col size="2.4" class="footer-item" (click)="gotopage('more')">
+      <img src="assets/icon/footer/2.svg"><br>
+      <span class="footin">You</span>
+    </ion-col>
+    <ion-col size="2.4" class="footer-item active">
+      <img src="assets/icon/footer/66.svg"><br>
+      <span class="footin">Menu</span>
+    </ion-col>
+    <ion-col size="2.4" class="footer-item" (click)="gotopage('basket')">
+      <!-- <img src="assets/icon/footer/4.svg"><br> -->
+      <div class="icon-wrapper">
+        <img src="assets/icon/footer/4.svg">
+        <span class="badge" *ngIf="cartCount > 0">{{ cartCount }}</span>
+      </div><br>
+      <span class="footin">Cart</span>
+    </ion-col>
+    <ion-col size="2.4" class="footer-item" (click)="gotopage('orders')">
+      <img src="assets/icon/footer/5.svg"><br>
+      <span class="footin">Reorder</span>
+    </ion-col>
+
+  </ion-row>
+</ion-footer>

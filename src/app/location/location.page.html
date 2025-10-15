@@ -1,0 +1,36 @@
+<ion-content>
+  <div class="background">
+    <br>
+    <img src="assets/icon/slide/location.svg" style="margin-top: 5%;width: 60%;">
+
+    <div style="padding: 5%;">
+      <div class="location-container">
+        <div class="location-btn" (click)="gotolocation()">
+          <ion-icon style="color: white;" name="location"></ion-icon>
+          <span
+            style="white-space: nowrap;font-family: 'sfregular';color: white;text-transform: capitalize;    letter-spacing: 0.3px;">
+            Select Our Service Location
+          </span>
+        </div>
+
+        <div class="terms">
+          <a style="letter-spacing: 0.4px;"> <u> Terms & Conditions </u></a>
+          <br>
+          <a style="letter-spacing: 0.4px;"> <u> Privacy & Policy </u></a>
+        </div>
+        <br>
+        <div class="next-button" (click)="gotocontinuenextpage()">
+          <ion-icon name="arrow-forward-outline"></ion-icon>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <ion-toast [isOpen]="isToastOpen"
+    message="Your Current location don't have any Servies . Please Select the service Location " duration="3000"
+    cssClass="success-toast" (didDismiss)="isToastOpen = false">
+  </ion-toast>
+
+
+</ion-content>

@@ -1,0 +1,21 @@
+<ion-content [fullscreen]="true">
+
+  <div style="text-align: center;">
+    <img src="assets/icon/update.png">
+  </div>
+  <br>
+  <div class="update-container">
+    <h2>New update is available</h2>
+    <p>The current version of this application is no longer supported. We apologize for any inconvenience we may have
+      caused you.</p>
+    <br>
+    <ion-button expand="block" style="--background: #F07100; color: white;" (click)="updateApp()">
+      Update now
+    </ion-button>
+
+    <ion-button expand="block" fill="clear" style="color: #F07100;" (click)="closeApp()">
+      No, Thanks! Close the app
+    </ion-button>
+    
+  </div>
+</ion-content>

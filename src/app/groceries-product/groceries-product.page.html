@@ -1,0 +1,95 @@
+<ion-header>
+  <div class="category-header">
+    <ion-button fill="clear" class="icon-button" (click)="goBack()">
+      <ion-icon name="arrow-back-outline"></ion-icon>
+    </ion-button>
+    <!-- <img src="assets/icon/home/logoname.svg"> -->
+    <ion-button fill="clear" class="icon-button" (click)="openCart()">
+      <ion-icon name="basket-outline"></ion-icon>
+      <ion-badge *ngIf="cartCount > 0" class="cart-badge">{{ cartCount }}</ion-badge>
+    </ion-button>
+  </div>
+</ion-header>
+
+
+<ion-content [fullscreen]="true">
+  <div class="product-page">
+    <div class="product-image">
+      <img [src]="product.item_image" alt="Selected Product" (error)="onImageError($event)">
+    </div>
+    <div class="product-info">
+      <div class="gt">{{product.item_name}} - <span *ngIf="product.measurement_type">( {{product.measurement_type}}
+          )</span></div>
+      <div class="price">₹ {{product.selling_price}}
+        <span class="old-price" *ngIf="product.mrp_price>product.selling_price"><s> ₹ {{product.mrp_price}}</s></span>
+      </div>
+    </div>
+    <br>
+    <!-- Quantity Selector -->
+    <div class="quantity-selector">
+      <button (click)="decreaseQuantity()">−</button>
+      <input type="number" [(ngModel)]="quantity" min="1">
+      <button (click)="increaseQuantity(product)">+</button>
+    </div>
+
+
+    <!-- Product Details -->
+    <div class="product-details">
+      <h3 class="gb">Product Details</h3>
+      <p>
+        {{product.item_description}}
+      </p>
+    </div>
+
+    <!-- Skeleton for Related Products -->
+    <div class="related-products" *ngIf="relatedProducts.length == 0">
+      <ion-skeleton-text [animated]="true" class="thick-blue-skeleton"
+        style="width: 160px; height: 20px; border-radius: 6px; margin-bottom: 10px;">
+      </ion-skeleton-text>
+
+      <div class="related-list" style="display: flex; gap: 10px;">
+        <ion-skeleton-text *ngFor="let i of [1,2,3,4]" [animated]="true" class="thick-blue-skeleton"
+          style="width: 100px; height: 100px; border-radius: 12px;">
+        </ion-skeleton-text>
+      </div>
+
+      <ion-skeleton-text [animated]="true" class="thick-blue-skeleton"
+        style="width: 100px; height: 14px; margin-top: 10px; border-radius: 4px;">
+      </ion-skeleton-text>
+    </div>
+    <!-- Related Products -->
+    <div class="related-products" *ngIf="relatedProducts.length != 0">
+      <h3 class="gb">Related to {{product.item_name}}</h3>
+      <br>
+      <div class="related-list">
+        <div class="related-item" *ngFor="let related of relatedProducts">
+          <img (error)="onImageError($event)" [src]="related.item_image" alt="{{ related.item_name }}"
+            (click)="gotonext(related)" />
+          <p class="related-name">{{ related.item_name }}</p>
+          <div class="gt" *ngIf="product.measurement_type">
+            ⚖️
+            {{ product.measurement_type }}
+          </div>
+          <br>
+          <div class="price">₹{{product.selling_price}}
+            <span class="old-price" *ngIf="product.mrp_price>product.selling_price">
+              <s style="    color: #878787 !important;font-size: 12px;">
+                ₹{{product.mrp_price}}
+              </s>
+            </span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!------------------------------------------------------------------------>
+  </div>
+</ion-content>
+<br><br><br>
+<ion-footer class="buy-footer">
+  <div class="button-container">
+    <button ion-button class="buy-once" (click)="gotobuy(1)">BUY ONCE</button>
+    <!-- <button ion-button class="subscribe" (click)="gotosubscribe()">SUBSCRIBE</button> -->
+  </div>
+</ion-footer>

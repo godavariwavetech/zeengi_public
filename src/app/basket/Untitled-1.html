@@ -1,0 +1,792 @@
+<ion-header>
+  <div class="category-header">
+    <ion-button fill="clear" class="icon-button" (click)="goBack()">
+      <ion-icon name="arrow-back-outline"></ion-icon>
+    </ion-button>
+    <div class="tet"> Basket </div>
+    <ion-button fill="clear" class="icon-button">
+      <!-- <ion-icon name="basket-outline"></ion-icon> -->
+    </ion-button>
+  </div>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="delivery-info" *ngIf="cartdata.length">
+    <div class="location-container" (click)="gotomaplocation()">
+      <ion-icon name="home-outline" class="home-icon"></ion-icon>
+      <span class="time-info">{{locationaddress | slice :0:38}}..</span>
+      <ion-icon slot="end" name="chevron-down-outline" class="dropdown-icon"></ion-icon>
+    </div>
+  </div>
+
+  <div class="cart-summary" *ngIf="cartdata.length">
+    <p>Total Items ({{ totalItems }})</p>
+  </div>
+
+  <div *ngIf="nodata" style="font-family: 'sfregular';
+  font-size: 20px;text-align: center;margin-top: 50%;">
+    <img style="width: 35%;" src="assets/icon/emptycart.png"><br>
+    No items in Basket
+  </div>
+
+  <!-- Cart Items -->
+  <div class="cart-items" *ngIf="cartdata.length">
+    <div class="cart-item" *ngFor="let item of cartdata">
+      <div class="product-image">
+        <img [src]="item.item_image" alt="{{ item.name }}" (error)="onImageError($event)">
+      </div>
+      <div class="product-details">
+        <div class="nme">{{ item.item_name }}</div>
+        <div class="weight">{{ item.item_description | slice :0:25 }}..</div>
+        <div class="price">
+          <span class="price"> ₹ {{ item.selling_price }} </span>
+          <span class="delivery"> <s> ₹ {{ item.actual_price }} </s></span>
+        </div>
+        <div class="quantity-control">
+          <ion-row class="ion-justify-content-center ion-align-items-center">
+            <ion-col size="auto">
+              <div class="counter-box" (click)="decreaseQuantity(item)">
+                <ion-icon style="font-size: 15px;color: rgb(255, 255, 255);font-weight: 600;"
+                  name="remove-outline"></ion-icon>
+              </div>
+            </ion-col>
+            <ion-col size="auto">
+              <ion-text>
+                <h4>{{ item.itemscount }}</h4>
+              </ion-text>
+            </ion-col>
+            <ion-col size="auto">
+              <div class="counter-box" (click)="increaseQuantity(item)">
+                <ion-icon style="font-size: 15px;color: rgb(255, 255, 255);font-weight: 600;"
+                  name="add-outline"></ion-icon>
+              </div>
+            </ion-col>
+          </ion-row>
+        </div>
+      </div>
+      <ion-icon name="close-outline" class="remove-item" (click)="removeItem(item)"></ion-icon>
+    </div>
+  </div>
+
+  <ion-card class="alternate-coupon-card" *ngIf="cartdata.length && showslots == 1">
+    <div>
+      <span>Fast Delivery</span>
+      <input type="radio" (click)="setslot(0)" name="deliveryType" value="0">
+    </div>
+
+    <div *ngFor="let i of slots">
+      <span>Time Slot : {{i.slot_timings}}</span>
+      <input type="radio" (click)="setslot(i.slot_timings)" name="deliveryType">
+    </div>
+  </ion-card>
+
+  <ion-card (click)="openModal()" class="coupon-card" *ngIf="cartdata.length">
+    <div class="coupon">View All Coupons</div>
+  </ion-card>
+
+  <!-- Applied Coupon & Price Details -->
+  <ion-card class="summary-card" *ngIf="cartdata.length">
+    <ion-card-content>
+
+      <div class="summary-item">
+        <h4>Total MRP Price :</h4>
+        <strong>₹ {{ savings + itemstotalamount }}</strong>
+      </div>
+
+      <div class="summary-item">
+        <h4>Savings:</h4>
+        <strong>₹ {{ savings }}</strong>
+      </div>
+
+      <div class="summary-item">
+        <h4> Total Item Price :</h4>
+        <strong>₹ {{ itemstotalamount }}</strong>
+      </div>
+
+      <div class="summary-item" *ngIf="selectedCoupon &&  this.discountAmount!=0">
+        <h4 class="discount-text" style="display: flex;align-items: center;">
+          Discount Price: <span>({{ selectedCoupon.coupon_name }})</span>
+          <ion-icon name="close" (click)="removecoupon(1)"></ion-icon>
+        </h4>
+        <strong class="discount-amount">₹ {{ discountAmount }}</strong>
+      </div>
+
+      <div class="summary-item" *ngIf="selectedCoupon &&  this.discountAmount!=0">
+        <h4>Sub Total:</h4>
+        <strong>₹ {{ itemstotalamount - discountAmount }}</strong>
+      </div>
+
+      <div class="summary-item">
+        <h4>Delivery Charges:</h4>
+        <strong>₹ {{ del_charges }}</strong>
+      </div>
+
+      <div class="summary-item total">
+        <h4>Final Price:</h4>
+        <strong>₹ {{ grandTotal | number:'1.2-2' }}</strong>
+      </div>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
+
+<ion-footer class="order-footer" *ngIf="cartdata.length">
+
+  <div class="order-summary">
+    <div class="header" style="padding: 0px 10px;">
+      <p class="te"> &nbsp;Bill Summary</p>
+      <a class="view-more" (click)="openbill()"><u> View More </u></a>
+    </div>
+
+    <ion-item lines="none" style="border-top: 1px solid grey;" *ngIf="!show">
+      <ion-label class="ley">Total</ion-label>
+      <ion-text class="get"><strong> ₹ {{grandTotal | number:'1.2-2'}}</strong></ion-text>
+    </ion-item>
+
+    <div *ngIf="!show" class="place-order" (click)="gotopayment()">Select the Address</div>
+
+    <div *ngIf="show" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+      <div class="dropdown-container">
+        <!-- Payment Button -->
+        <div (click)="toggleMenu()">
+          <div style="white-space: nowrap;font-family: 'sfregular';">&nbsp; {{ selectedPaymentType }} ▼ </div>
+        </div>
+        <!-- Dropdown Menu (40% Width & Above Button) -->
+        <ion-list *ngIf="menuOpen" class="dropdown-menu">
+          <ion-item button *ngFor="let orderType of orderTypes; let i = index;"
+            style="font-family: 'sfregular'; font-weight: 600;" (click)="selectOnlyOne(i ,orderType.label)">{{
+            orderType.label }}
+          </ion-item>
+        </ion-list>
+      </div>
+
+      <div (click)="get()" class="place-order" style="margin-left: auto;  white-space: nowrap;">
+        ₹ <span style="font-size: 15px;">{{ grandTotal | number:'1.2-2' }}&nbsp;|</span>&nbsp;<b> Place
+          Order ► </b>
+      </div>
+    </div>
+    <br>
+  </div>
+</ion-footer>
+
+<ion-modal #modal [isOpen]="modalwe" [canDismiss]="canDismiss" [breakpoints]="[0, 0.7, 1]" [initialBreakpoint]="0.7">
+  <ng-template>
+    <ion-content class="ion-padding">
+      <p class="category-title2" style="font-family: 'sfregular';"> Select Order Type </p>
+      <p class="close-btn" style="position:fixed;" (click)="close()">✖ </p>
+      <ion-list>
+        <ion-item lines="none" *ngFor="let orderType of orderTypes; let i = index;"
+          style="--background: #fff; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); padding: 12px; display: flex; align-items: center;">
+          <ion-checkbox [checked]="orderType.selected" (ionChange)="selectOnlyOne(i ,  orderType.label  )"
+            color="success" slot="start">
+          </ion-checkbox>
+          <ion-label style="font-family: 'sfregular';">{{ orderType.label }}</ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-content>
+    <!-- <ion-footer>
+      <div *ngIf="show" class="place-order" (click)="get()">Place Order</div>
+    </ion-footer> -->
+  </ng-template>
+</ion-modal>
+
+<ion-modal #modal [isOpen]="namemodal" [canDismiss]="canDismiss" [breakpoints]="[1, 0.6, 0]" [initialBreakpoint]="0.5">
+  <ng-template>
+    <ion-content class="ion-padding">
+      <br>
+      <p class="category-title2" style="font-family: 'sfregular';">Please Enter the Name</p>
+      <p class="close-btn" style="position:fixed;" (click)="closenammemodal()">✖ </p>
+      <div>
+        <input style="border: 2px solid black; padding: 10px;border-radius: 5px;
+          width: 100%;" [(ngModel)]="customer_name" placeholder="Enter the Name">
+      </div>
+      <br>
+      <div class="place-order" (click)="submitname(customer_name)">Submit</div>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+<ion-modal #modal [isOpen]="billmodal" [canDismiss]="canDismiss" [breakpoints]="[0, 0.7, 1]" [initialBreakpoint]="0.7">
+  <ng-template>
+    <ion-content class="ion-padding">
+      <p class="category-title2" style="font-family: 'sfregular';">Bill Summary</p>
+      <p class="close-btn" style="position:fixed;" (click)="closebill()">✖ </p>
+      <div *ngIf="cartdata.length">
+        <div class="summary-item2">
+          <p>Item total : </p>
+          <strong>₹ {{ itemstotalamount }}</strong>
+        </div>
+        <div class="summary-item2" *ngIf="selectedCoupon &&  this.discountAmount!=0">
+          <p class="discount-text">
+            Discount: <span>({{ selectedCoupon.coupon_name }})</span>
+          </p>
+          <strong class="discount-amount">₹ {{ discountAmount }}</strong>
+        </div>
+        <div class="summary-item2" *ngIf="selectedCoupon &&  this.discountAmount!=0">
+          <p>Sub Total:</p>
+          <strong>₹ {{ itemstotalamount - discountAmount }}</strong>
+        </div>
+        <div class="summary-item2">
+          <p> Delivery Charges:</p>
+          <strong>
+            <!-- <span>( {{del_charges}} + {{(delivery_charges_gst - del_charges) | number:'1.1-1' }} )&nbsp;&nbsp;&nbsp;&nbsp;
+               </span> -->
+            ₹ {{delivery_charges_gst }}</strong>
+        </div>
+        <div class="summary-item2">
+          <p>Handling Charges : </p>
+          <strong>₹ {{ handling_charges }}</strong>
+        </div>
+        <div class="summary-item2">
+          <p>Packing Charges + Gst : </p>
+          <strong><span> ( {{shopdetails.packing_charges}} + {{(packingchargergst_amount +
+              shopdetails.packing_charges) - shopdetails.packing_charges | number:'1.1-1' }} )&nbsp;&nbsp;&nbsp;&nbsp;
+            </span> ₹ {{ shopdetails.packing_charges + packingchargergst_amount }}</strong>
+        </div>
+        <div class="summary-item2">
+          <p>Donate to feed : </p>
+          <strong style="color: #008000;font-family: 'sfregular';"> ₹ <input type="tel" [(ngModel)]="donation_charges"
+              class="doma" (keyup)="adddonation()" (blur)="donation_charges = donation_charges || 0">&nbsp;&nbsp;
+            <button (click)="adddonation()" *ngIf="maindonation_charges==0">
+              <span style="background: #008000;
+            color: white;padding: 3px;border-radius: 6px;font-family: 'sfmedium';"> Add </span>
+            </button>
+            <button (click)="cleardonation()" *ngIf="maindonation_charges!=0">
+              <span style="background: #008000;
+            color: white;padding: 3px;border-radius: 6px;font-family: 'sfmedium';"> Clear </span>
+            </button>
+          </strong>
+        </div>
+        <div class="summary-item2 total" style="white-space: nowrap;">
+          <p>Final Price:</p>
+          <strong>₹ {{ grandTotal | number:'1.2-2' }}</strong>
+        </div>
+        <div>
+          <div style="font-family: 'sfregular';letter-spacing: 1.8px;color: grey;font-size: 12px;">
+            CANCELLATION POLICY
+          </div>
+          <div style="font-family: 'sfregular';color: grey;font-size: 10px;letter-spacing: 0.4px;">
+            Please note that once an order is placed for food, groceries, electronics, or meat, the amount paid is
+            non-refundable. Your cooperation helps us minimize waste and improve efficiency.
+          </div>
+        </div>
+      </div>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+<ion-modal [isOpen]="isModalOpen" (didDismiss)="closeModal()">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title style="text-align: center;font-family: 'sfregular';"> Coupons </ion-title>
+        <ion-buttons slot="end">
+          <ion-button style="font-family: 'sfregular';" (click)="closeModal()">
+            <ion-icon name="close"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
+      <ion-searchbar [(ngModel)]="searchQuery" placeholder="Search Coupons" show-clear-button="always">
+      </ion-searchbar>
+      <ion-card *ngFor="let o of coupons" style="border-radius: 12px; box-shadow: 0px 4px 10px rgba(0,0,0,0.1);">
+        <ion-card-content>
+          <ion-row class="ion-align-items-center">
+            <ion-col size="9">
+              <h2 style="font-family: 'sfregular'; color: #333; margin-bottom: 4px;">
+                {{ o.coupon_name }}
+              </h2>
+              <p style="font-family: 'sfregular'; color: grey; font-size: 14px; margin-bottom: 6px;">
+                {{ o.coupon_description }}
+              </p>
+              <p style="color: red; font-family: 'sfregular'; font-size: 13px;">
+                {{ getErrorMessage(o) }}
+              </p>
+            </ion-col>
+            <ion-col size="3" class="ion-text-right" *ngIf="selectedCouponid != o.id">
+              <ion-button fill="solid" size="small" color="success" style="color: white;font-family: 'sfregular';"
+                (click)="toggleCoupon( 0 , o)">
+                Apply
+              </ion-button>
+            </ion-col>
+            <ion-col size="3" class="ion-text-right" *ngIf="selectedCouponid == o.id">
+              <ion-button fill="solid" size="small" color="success" style="color: white;font-family: 'sfregular';"
+                (click)="toggleCoupon(1  , o)">
+                Remove
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-card-content>
+      </ion-card>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+<style>
+  .category-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 0px 0px 15px 15px;
+    background: linear-gradient(135deg, #07772F, #268B4A);
+    color: white;
+    position: relative;
+    margin-top: -1px;
+  }
+
+  .tet {
+    font-family: 'sfregular';
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 23.87px;
+    letter-spacing: 0.1px;
+  }
+
+  .weight {
+    font-family: 'sfregular';
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 14px;
+    letter-spacing: 0px;
+    color: #404040;
+  }
+
+  .price {
+    font-family: 'sfmedium';
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 30px;
+    letter-spacing: 0px;
+    color: green;
+  }
+
+  .delivery {
+    font-family: 'sfmedium';
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 14px;
+    letter-spacing: 0px;
+    color: grey;
+  }
+
+  .icon-button {
+    color: white;
+  }
+
+  ion-icon {
+    font-size: 22px;
+  }
+
+  /* //----------------------------------------------------------------------------- */
+
+  .delivery-info {
+    background: #f8f8f8;
+    border-radius: 8px;
+    margin: 10px;
+    text-align: center;
+
+    .superfast {
+      font-family: 'sfregular';
+      font-weight: 700;
+      font-size: 12px;
+      line-height: 14.32px;
+      letter-spacing: 0.4px;
+      color: green;
+    }
+
+    .delivery-details {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'sfregular';
+      font-weight: 500;
+      font-size: 12px;
+      line-height: 14.32px;
+      letter-spacing: 0px;
+    }
+  }
+
+  .cart-summary {
+    font-family: 'sfregular';
+    display: flex;
+    justify-content: space-between;
+    padding: 0px 15px;
+    font-size: 16px;
+    font-weight: bold;
+    align-items: center;
+    letter-spacing: 0.3px;
+  }
+
+  .cart-item {
+    display: flex;
+    /* align-items: center; */
+    background: #fff;
+    padding: 10px;
+    border-radius: 12px;
+    margin: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+  }
+
+  .product-image {
+    position: relative;
+
+    img {
+      width: 100px;
+      height: 100px;
+      border-radius: 8px;
+    }
+  }
+
+  .nme {
+    font-family: 'sfregular';
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0px;
+
+  }
+
+  .discount-badge {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    background: orange;
+    color: #fff;
+    font-size: 12px;
+    padding: 3px 6px;
+    border-radius: 4px;
+  }
+
+  .product-details {
+    flex-grow: 1;
+    padding-left: 10px;
+  }
+
+  .price {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .current-price {
+    font-size: 18px;
+    color: green;
+    font-weight: bold;
+  }
+
+  .original-price {
+    font-size: 14px;
+    color: gray;
+    text-decoration: line-through;
+  }
+</style>
+
+.quantity-control {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.remove-item {
+  font-size: 22px;
+  font-weight: 600;
+  color: #B3B3B3;
+  cursor: pointer;
+}
+
+.location-container {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  font-size: 14px;
+  color: #333;
+
+  .home-icon {
+      font-size: 18px;
+      margin-right: 5px;
+  }
+
+  .time-info {
+      font-family: 'sfregular';
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 16.71px;
+      letter-spacing: 0px;
+  }
+
+  .divider {
+      margin: 0 5px;
+      color: #888;
+  }
+
+  .address {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 1;
+  }
+
+  .dropdown-icon {
+      font-size: 16px;
+      margin-left: 5px;
+  }
+
+
+}
+
+.clear-cart-btn {
+  --border-radius: 20px;
+  --color: red;
+  --border-color: red;
+  --ion-color-base: white;
+  font-weight: bold;
+  text-transform: none;
+  display: flex;
+  align-items: center;
+  font-family: 'sfregular';
+
+  ion-icon {
+      font-size: 16px;
+  }
+}
+
+.order-footer {
+  bottom: 0;
+  width: 100%;
+  background: white;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+}
+
+.order-summary {
+  border-radius: 10px;
+  box-shadow: none;
+  padding: 5px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 16px;
+}
+
+.view-more {
+  color: #666;
+  font-family: 'sfregular';
+  font-weight: 500;
+  font-size: 10px;
+  line-height: 11.93px;
+  letter-spacing: 0px;
+  text-decoration: underline;
+  text-decoration-style: solid;
+  text-decoration-thickness: Auto;
+
+}
+
+ion-item {
+  --inner-padding-end: 0;
+  font-size: 16px;
+}
+
+.place-order {
+  background-color: #008000;
+  color: white;
+  font-weight: bold;
+  gap: 10px;
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+  font-family: 'sfregular';
+  letter-spacing: 0.5px;
+}
+
+.te {
+  font-family: 'sfregular';
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 16.71px;
+  letter-spacing: 0.3px;
+  color: black;
+}
+
+.ley {
+  font-family: 'sfregular';
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 14.32px;
+  letter-spacing: 0px;
+}
+
+.get {
+  font-family: 'sfregular';
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 16.71px;
+  letter-spacing: 0px;
+  color: black;
+}
+
+ion-header {
+  --ion-box-shadow: none;
+  box-shadow: none !important;
+}
+
+.counter-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height: 30px;
+  background: green;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.coupon {
+  font-size: 15px;
+  padding: 10px;
+  font-family: "sfregular";
+  color: black;
+  letter-spacing: 0.4px;
+  font-weight: 700;
+}
+
+.coupon-card {
+  font-family: "sfregular";
+  font-size: 18px;
+  background-color: #f8f8f8;
+  padding: 10px;
+}
+
+.summary-card {
+  font-family: "sfregular";
+  margin-top: 10px;
+  padding: 15px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.summary-card {
+  padding: 10px;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  // font-size: 1.2rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.summary-item2 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  // padding: 10px 0;
+  // font-size: 1.2rem;
+  font-size: 14px;
+  font-family: 'sfregular';
+
+}
+
+
+.summary-item:last-child {
+  border-bottom: none;
+}
+
+.discount-text {
+  color: green;
+}
+
+.discount-amount {
+  color: green;
+}
+
+.total strong {
+  color: #e63946;
+}
+
+.alternate-coupon-card {
+  font-family: 'sfregular';
+  padding: 0px 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, #20b767, #149957);
+  /* Gradient background */
+  color: white;
+  transition: all 0.3s ease-in-out;
+}
+
+.alternate-coupon-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.alternate-coupon-card div {
+  font-family: 'sfregular';
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.alternate-coupon-card input[type="radio"] {
+  font-family: 'sfregular';
+  accent-color: #ffffff;
+  /* White radio button */
+  transform: scale(1.5);
+}
+
+.alternate-coupon-card div:first-child {
+  font-family: 'sfregular';
+  font-size: 18px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.doma {
+  width: 30px;
+  text-align: center;
+  border: 1px solid green;
+  border-radius: 5px;
+}
+
+.dropdown-container {
+  position: relative;
+  display: inline-block;
+  width: 40%;
+  /* Set width to 40% */
+}
+
+.dropdown-header {
+  text-align: center;
+  padding: 2%;
+  font-family: 'sfregular';
+  color: black;
+}
+
+.dropdown-menu {
+  font-family: 'sfregular';
+  position: absolute;
+  bottom: 100%;
+  /* Menu appears above */
+  left: 50%;
+  width: 100%;
+  /* 40% width inherited from container */
+  background: white;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  z-index: 1000;
+  transform: translateX(-50%) translateY(-10px);
+  /* Center & add space */
+}
+
+ion-item {
+  text-align: left;
+}

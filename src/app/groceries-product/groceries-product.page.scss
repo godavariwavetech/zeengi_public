@@ -1,0 +1,303 @@
+.category-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 0px 0px 15px 15px;
+    background: linear-gradient(180deg, #F57B00 0%, #B93800 100%);
+
+    color: white;
+    position: relative;
+    margin-top: -1px;
+}
+
+ion-header {
+    --ion-box-shadow: none;
+    box-shadow: none !important;
+}
+
+ion-searchbar {
+    flex: 1;
+    --background: white;
+    --color: black;
+    --border-radius: 10px;
+    --placeholder-color: gray;
+}
+
+.icon-button {
+    color: white;
+}
+
+ion-icon {
+    font-size: 22px;
+}
+
+//---------------------------------------------------header=-----------------------------------------
+
+.product-page {
+    padding: 10px;
+    background: #fff;
+}
+
+// Discount Badge
+.discount-badge {
+    position: absolute;
+    top: 15%;
+    left: 10px;
+    background: orange;
+    color: white;
+    padding: 5px 10px;
+    font-size: 12px;
+    border-radius: 4px;
+    font-family: "sfregular";
+    letter-spacing: 0.7px;
+}
+
+// Product Image
+.product-image {
+    text-align: center;
+
+    img {
+        width: 100%;
+        height: 235px;
+        max-width: 250px;
+        border-radius: 10px;
+    }
+}
+
+// Thumbnail Images
+.image-thumbnails {
+    display: flex;
+    // justify-content: center;
+    gap: 10px;
+    margin: 10px 0;
+    overflow-x: auto;
+
+    img {
+        width: 50px;
+        height: 50px;
+        border-radius: 6px;
+        border: 2px solid #00000047;
+        cursor: pointer;
+        transition: 0.3s ease-in-out;
+
+        &.selected {
+            border-color: green;
+            background-color: #07772e44;
+            // transform: scale(1.1);
+        }
+    }
+}
+
+
+// Product Info
+.product-info {
+    .gt {
+        font-family: 'sfmedium';
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 14px;
+        letter-spacing: 0px;
+
+    }
+
+    .price {
+        font-family: 'sfmedium';
+        font-weight: 700;
+        font-size: 20px;
+        line-height: 30px;
+        letter-spacing: 0px;
+        color: green;
+
+        .old-price {
+            font-family: 'sfregular';
+            font-weight: 400;
+            font-size: 12px;
+            line-height: 14px;
+            letter-spacing: 0px;
+            color: gray;
+        }
+    }
+
+    .delivery-info {
+        border-top: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
+        color: gray;
+        font-family: 'sfregular';
+        font-weight: 400;
+        font-size: 12px;
+        line-height: 30px;
+        letter-spacing: 0px;
+    }
+}
+
+// Product Details
+.product-details {
+    margin-top: 15px;
+
+    .gb {
+        margin-bottom: 5px;
+        font-family: 'sfregular';
+        font-weight: 700;
+        font-size: 16px;
+        line-height: 14px;
+        letter-spacing: 0px;
+
+    }
+
+    p {
+        font-family: 'sfregular';
+        font-weight: 400;
+        font-size: 12px;
+        line-height: 20px;
+        letter-spacing: 0.8px;
+        color: #555;
+    }
+}
+
+// Related Products
+.related-products {
+    margin-top: 15px;
+
+    .gb {
+        margin-bottom: 5px;
+        font-family: 'sfregular';
+        font-weight: 700;
+        font-size: 16px;
+        line-height: 14px;
+        letter-spacing: 0px;
+    }
+
+    .related-list {
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        white-space: nowrap;
+
+        img {
+            width: 100px;
+            height: 110px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+        }
+    }
+}
+
+// Action Buttons
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+
+    .buy-button {
+        background: green;
+        color: white;
+    }
+
+    .subscribe-button {
+        background: orange;
+        color: white;
+    }
+}
+
+.buy-footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: white;
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+button {
+    flex: 1;
+    height: 50px;
+    font-family: 'sfregular';
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 14px;
+    letter-spacing: 0.2px;
+    color: #fff;
+}
+
+.buy-once {
+    background-color: green;
+}
+
+.subscribe {
+    background-color: orange;
+}
+
+.quantity-selector {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    overflow: hidden;
+    background-color: #f9f9f9;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.quantity-selector button {
+    background-color: #fff;
+    border: none;
+    padding: 8px 12px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #333;
+    transition: background-color 0.2s ease;
+}
+
+.quantity-selector button:hover {
+    background-color: #f0f0f0;
+}
+
+.quantity-selector input {
+    width: 50px;
+    text-align: center;
+    border: none;
+    font-size: 16px;
+    padding: 8px 0;
+    outline: none;
+    background-color: #fff;
+}
+
+.related-list {
+    display: flex;
+    overflow-x: auto;
+    padding: 10px;
+    gap: 12px;
+    scroll-snap-type: x mandatory;
+}
+
+.related-item {
+    width: 120px;
+    flex-shrink: 0;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    text-align: center;
+    scroll-snap-align: start;
+}
+
+.related-item img {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.related-name {
+    font-size: 13px;
+    color: #333;
+    line-height: 1.2;
+    word-break: break-word;
+    // white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

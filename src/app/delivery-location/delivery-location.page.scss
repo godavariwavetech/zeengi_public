@@ -1,0 +1,298 @@
+/* Map container */
+#map {
+  height: 100%;
+  position: relative;
+  background-color: black;
+}
+
+/* Overlay containing the search bar */
+.map-center-overlay2 {
+  position: absolute;
+  // top: 4%;
+  /* Adjust to place input a bit lower from the top */
+  left: 46%;
+  transform: translateX(-50%);
+  /* Center input */
+  width: 90%;
+  z-index: 1000;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  /* Center content vertically */
+}
+
+.map-center-overlay1 {
+  position: absolute;
+  top: 80%;
+  /* Adjust this based on your layout needs */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  z-index: 1000;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Search input styling */
+#place-input {
+  width: 100%;
+  /* Input takes full width of the overlay */
+  padding: 12px 16px 12px 32px;
+  /* Add padding on the left to fit the icon */
+  font-size: 16px;
+  border-radius: 10px;
+  /* Rounded corners for input */
+  border: 1px solid #faa652d9;
+  /* Light green border */
+  background-color: white;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  /* Optional shadow */
+  outline: none;
+}
+
+/* Placeholder text style */
+#place-input::placeholder {
+  color: #5c5c5c;
+}
+
+/* Focused input style */
+#place-input:focus {
+  border-color: #759cff;
+  /* Blue border on focus */
+}
+
+/* Search icon styling */
+.search-icon {
+  font-size: 20px;
+  color: #0cb14b;
+  position: absolute;
+  left: 10px;
+  /* Position it inside the input */
+  cursor: pointer;
+}
+
+/* Hover effect on the search icon */
+.search-icon:hover {
+  color: #759cff;
+}
+
+
+.clear-icon {
+  font-size: 20px;
+  color: #0cb14b;
+  position: absolute;
+  right: 7px;
+  /* Position it inside the input */
+  cursor: pointer;
+}
+
+/* Hover effect on the search icon */
+.clear-icon:hover {
+  color: #759cff;
+}
+
+
+
+
+
+
+
+
+.footer-text {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.location {
+  margin: 5px 0;
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+}
+
+.city {
+  margin: 5px 0;
+  font-size: 16px;
+  color: #555;
+}
+
+.pests {
+  font-family: 'sfregular';
+  background: white;
+  padding: 4%;
+  border-radius: 15px;
+  border: 1px solid #F57B00;
+  color: #F57B00;
+  align-items: center;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  text-transform: capitalize;
+}
+
+.search-container {
+  padding: 10px;
+}
+
+.receiver-details {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+}
+
+.tag-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+}
+
+
+
+.filter-container {
+  display: flex;
+  align-items: center;
+  gap: 0px;
+  padding: 0px;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.filter-btn {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: 15px;
+  height: 30px;
+  border: 1px solid #07772F;
+}
+
+.filters {
+  font-family: "sfregular";
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 16.71px;
+  letter-spacing: 0px;
+}
+
+.button-native {
+  --border-radius: 10px !important;
+}
+
+
+.custom-green-button {
+  --background: #F57B00;
+  /* Bootstrap-style green */
+  --background-hover: #218838;
+  --color: #fff;
+  /* Text color */
+  --border-radius: 4px;
+}
+
+
+ion-button.selected-tag {
+  --background: #f9e0c7;
+  --color: #F57B00;
+  --background-hover: #f9e0c7;
+  border: 1px solid #f9e0c7;
+}
+
+ion-button.unselected-tag {
+  --background: #ffffff; // Light gray (unselected)
+  --color: #3b3e41; // Black text
+  --background-hover: #ffffff;
+}
+
+
+
+
+
+
+
+
+ion-footer {
+  padding: 0px;
+}
+
+.footer-toolbar {
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 16px;
+  --padding-bottom: 16px;
+  background-color: #f8f9fa;
+  /* Light background */
+  border-top: 1px solid #dcdcdc;
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.footer-title {
+  font-family: 'sfregular';
+  font-size: 13px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.address-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: #f9e0c7;
+  border: 1px solid #F57B00;
+  padding: 4px 2px;
+  border-radius: 4px;
+}
+
+.location-icon {
+  color: #F57B00;
+  font-size: 40px;
+}
+
+.city-text {
+  font-family: 'sfregular';
+  font-size: 15px;
+  margin: 0;
+  color: #ec9c4c;
+}
+
+.address-item {
+  --background: #ffffff;
+  border-radius: 6px;
+  margin-top: 8px;
+}
+
+.input-item {
+  --background: #ffffff;
+  --inner-border-width: 0;
+  padding: 0;
+  margin-top: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.custom-input {
+  padding: 12px;
+  font-size: 15px;
+  font-family: 'sfregular';
+  color: #333;
+}
+
+.input-standalone {
+  width: 100%;
+  padding: 12px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #fff;
+  font-family: 'sfregular';
+  color: #333;
+  margin-top: 12px;
+}

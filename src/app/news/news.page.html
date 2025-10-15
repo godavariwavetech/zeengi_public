@@ -1,0 +1,15 @@
+<ion-header class="dynamic-header" [ngClass]="{ 'hide-header': isHidden }">
+  <ion-toolbar>
+    <ion-title>Scroll Effect</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [scrollEvents]="true" (ionScroll)="onScroll($event)">
+  <!-- Parallax Image -->
+  <div class="parallax-image" #parallaxImage></div>
+
+  <!-- Content -->
+  <div class="content">
+    <p *ngFor="let item of items">Scroll down to see effects...</p>
+  </div>
+</ion-content>

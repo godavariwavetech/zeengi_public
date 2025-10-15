@@ -1,0 +1,839 @@
+<ion-header class="custom-header2">
+  <br>
+  <!-- (click)="gotoback()" -->
+  <ion-row style="align-items: center;">
+    <ion-col size="7.5" (click)="gotoback()">
+      <ion-icon name="arrow-back-outline" defaultHref="/"></ion-icon>
+      <!-- <ion-back-button defaultHref="/"></ion-back-button> -->
+    </ion-col>
+    <ion-col size="4.5" class="header-icons">
+      <span>
+        <ion-icon style="background-color: white;border-radius: 50%;padding: 4px;" name="heart-outline"
+          *ngIf="shop_wishlist_ind==false" (click)="shopupdatewishlist(shop_wishlist_ind,0)"></ion-icon>
+        <ion-icon name="heart" style="color:#2dd55b; background-color: white; border-radius: 50%; padding: 4px;"
+          (click)="shopupdatewishlist(shop_wishlist_ind,restaurantdata.wishlist_id)"
+          *ngIf="shop_wishlist_ind==true"></ion-icon>
+        <ion-icon style="background-color: white;border-radius: 50%;padding: 4px;" (click)="shareShop()" shareshop
+          name="share-outline"></ion-icon>
+        <ion-icon (click)="openshopdetails()" style="background-color: white;border-radius: 50%;padding: 4px;"
+          name="ellipsis-vertical"></ion-icon>
+      </span>
+    </ion-col>
+  </ion-row>
+
+  <!-- HEADER SECTION -->
+  <div class="restaurant-header"
+    style="display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 15px; border-bottom: 1px solid #eee;">
+
+    <!-- Restaurant Name and Info Icon -->
+    <div class="netd" style="display: flex; align-items: center;">
+      <p style="margin: 0; font-size: 18px; font-weight: 500; text-transform: capitalize; display: flex; align-items: center;"
+        class="platform-fee" (click)="getrelativeoutlets(restaurantdata)" [title]="restaurantdata.shop_name">
+        {{ restaurantdata.shop_name.length > 30 ? (restaurantdata.shop_name | slice:0:30) + '…' :
+        restaurantdata.shop_name }}
+        <ion-icon name="information-circle-outline"
+          style="cursor: pointer; margin-left: 8px; font-size: 18px; color: #666;">
+        </ion-icon>
+      </p>
+    </div>
+
+    <!-- Rating Section -->
+    <div class="rating-score" style="display: flex; flex-direction: column; align-items: flex-end;">
+      <div style="display: flex; align-items: center; font-size: 14px; color: #333;">
+        <img src="assets/icon/star.svg" alt="Rating" style="width: 14px; height: 14px; margin-right: 4px;">
+        {{restaurantdata.shop_rating}}
+      </div>
+      <span
+        style="font-size: 12px;color: gray;display: inline;background-image: linear-gradient(to right, black 0%, black 100%);background-size: 100% 1px;background-repeat: repeat-x;background-position: 0px 1.2em;padding-bottom: 2px;"
+        (click)="gotoshopratingllist(restaurantdata)"> {{restaurantdata.rating_count}} ratings</span>
+    </div>
+  </div>
+
+  <!-- DELIVERY INFO SECTION -->
+  <div class="delivery-info" style=" font-size: 14px; color: #444; display: flex; align-items: center;">
+    <ion-icon name="time-outline" style="font-size: 20x; color: #666;"></ion-icon>
+    <span style="margin-left: 6px;">
+      {{ restaurantdata.delivery_time || '20-25 min' }} |
+      {{ location_name | slice:0:20 }}{{ location_name.length > 20 ? '...' : '' }} Locality
+    </span>
+  </div>
+
+  <div class="delivery-info" style="border-bottom: 1px dashed gray;padding:8px 6px;" (click)="setslot(1)">
+    <ion-icon slot="start" name="calendar-outline"></ion-icon>
+    <ion-label *ngIf="deliveryType==0">Schedule for later</ion-label>
+    <ion-label *ngIf="deliveryType==1">{{selectedTime}}</ion-label>
+    <ion-icon name="chevron-down-outline"></ion-icon>
+  </div>
+
+  <div class="delivery-offers" *ngIf="offerscount !== 0">
+    <ion-icon name="bicycle-outline"></ion-icon>
+    <div class="offer-ticker">
+      <div *ngFor="let item of shop_offerslist; let i = index" class="offer-item" [class.active]="i === currentIndex">
+        &nbsp;{{ item.coupon_description }}
+      </div>
+    </div>
+    <span class="offer-count" (click)="oepnordersmodal();">{{ shop_offerslist.length }} Offers ▼</span>
+  </div>
+
+  <div *ngIf="restaurantdata.shop_active_status == 1" class="status-card" style="text-align: center;">
+    <div class="status-badge" style="letter-spacing: 0.5px;">✅ Currently Not Delivered</div>
+    <p>The merchant is not accepting orders at the moment. it should reopen soon.</p>
+  </div>
+
+</ion-header>
+
+<ion-content *ngIf="notdatastatus === 1" class="no-items-content">
+  <div class="no-items-container">
+    <p>No items are available.</p>
+  </div>
+</ion-content>
+
+
+<ion-content *ngIf="items.length > 0">
+  <div class="filter-container">
+    <div class="filter-chip" (click)="openfiltermodal()">
+      <span class="filters"> Filter ▼</span>
+    </div>
+    <div class="filter-chip" (click)="filterItems('All')">
+      <span class="filters">All &nbsp;&nbsp;</span>
+    </div>
+    <div class="filter-chip" *ngFor="let i of filterskey" (click)="filterItems(i)">
+      <img *ngIf="i=='Veg'" src="assets/icon/category/veg.svg">
+      <img *ngIf="i=='Non Veg'" src="assets/icon/category/non-veg.svg">
+      <span class="filters">{{i}} &nbsp;&nbsp;</span>
+    </div>
+  </div>
+
+  <!--  banner itmes list-->
+  <div *ngIf="banneritmeslist.length > 0">
+    <ion-card style="border: 1px solid #ffd1d1; border-radius: 10px; padding: 0px;">
+      <!-- Card Header with Title & Optional Cart -->
+      <ion-card-header
+        style="background-color: #ffe9e9; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+        <ion-card-title style="font-size: 14px; color: #d70000; font-weight: 600;">
+          🎉 {{restaurantdata?.banner_offer_title}}
+        </ion-card-title>
+      </ion-card-header>
+
+      <!-- Offer Item List -->
+      <ion-card-content style="padding: 0;">
+        <ion-item *ngFor="let item of banneritmeslist" [ngClass]="{'out-of-stock': item.active_status == 1}">
+          <ion-label>
+            <span (click)="openitemmodal(item,1)">
+              <h2 style="white-space: nowrap;">
+                <img
+                  [src]="item.filter_two === 'Non Veg' ? 'assets/icon/category/non-veg.svg' : 'assets/icon/category/veg.svg'"
+                  alt="Food Type" style="width: 17px;" /> {{ item.item_name }}
+              </h2>
+              <p *ngIf="item.item_description" style="line-height: 1rem;color: #9b9b9b;">
+                {{ item.item_description }}
+              </p>
+              <div class="price-container">
+                <h4 style="font-size: 15px;">
+                  ₹{{ item.selling_price }}
+                  &nbsp;
+                  <span class="original-price" style="font-size: 14px;">
+                    <s *ngIf="item.actual_price > item.selling_price">
+                      ₹{{ item.actual_price }}
+                    </s>
+                  </span>
+                </h4>
+              </div>
+              <p style="display:flex">
+                <img src="assets/icon/star.svg" alt="Rating" style="width: 12px;" /> &nbsp;
+                {{ item.random_rating }}
+              </p>
+            </span>
+            <div style="display: flex;">
+              <ion-icon name="bookmark-outline" style="background-color: #e2fbed;border-radius: 50%;padding: 4px;"
+                *ngIf="item.item_wishlist_ind==false" (click)="itemupdatewishlist(item)">
+              </ion-icon>
+              <ion-icon name="bookmark"
+                style="background-color: #e2fbed;color:#2dd55b; border-radius: 50%; padding: 4px;"
+                *ngIf="item.item_wishlist_ind==true" (click)="itemupdatewishlist(item)">
+              </ion-icon>
+              <ion-icon (click)="share(item)" style="background-color: #e2fbed; border-radius: 50%; padding: 4px;"
+                name="share-outline">
+              </ion-icon>
+            </div>
+          </ion-label>
+
+
+          <ion-thumbnail slot="end" class="thumbnail-container">
+            <div class="image-wrapper">
+              <img [src]="item.item_image" alt="{{ item.item_name }}"
+                (error)="item.item_image = 'assets/icon/noimg.png'" />
+
+              <!-- Overlay Button/Controls -->
+              <div class="add-button-wrapper" [ngClass]="{'inactive': restaurantdata.shop_active_status == 1}">
+                <span *ngIf="item.itemscount==0 && item.active_status == 1" class="add-button">Add 1 +</span>
+
+                <span
+                  *ngIf="item.itemscount==0 && item.active_status != 1 && (restaurantdata.common_item_ind==0 && item.quantity_type==0)"
+                  (click)="restaurantdata.shop_active_status == 0 ? additem2(item,1) : null" class="add-button">Add
+                  +</span>
+
+                <span
+                  *ngIf="item.itemscount==0 && item.active_status != 1 && (restaurantdata.common_item_ind==1 && item.quantity_type==1)"
+                  (click)="restaurantdata.shop_active_status == 0 ? addmoreitem(item,banneritmeslist) : null"
+                  class="add-button">Add +</span>
+
+                <span
+                  *ngIf="item.itemscount==0 && item.active_status != 1 && (restaurantdata.common_item_ind==0 && item.quantity_type==1)"
+                  (click)="restaurantdata.shop_active_status == 0 ? addmoreitem(item,banneritmeslist) : null"
+                  class="add-button">Add +</span>
+
+                <span
+                  *ngIf="item.itemscount==0 && item.active_status != 1 && (restaurantdata.common_item_ind==1 && item.quantity_type==0)"
+                  (click)="restaurantdata.shop_active_status == 0 ? addmoreitem(item,banneritmeslist) : null"
+                  class="add-button">Add +</span>
+
+                <span *ngIf="item.itemscount!=0" class="add-button counter-buttons">
+                  <ion-icon name="remove" (click)="removeitem2(item.id,item)"></ion-icon>
+                  <input type="tel" readonly [(ngModel)]="item.itemscount">
+                  <ion-icon name="add" (click)="additem2(item,1)"></ion-icon>
+                </span>
+              </div>
+            </div>
+          </ion-thumbnail>
+
+
+          <!-- <ion-thumbnail slot="end">
+            <div style="text-align: center;">
+              <img [src]="item.item_image" alt="{{ item.item_name }}"
+                style="width: 70px;height: 70px; border-radius: 5px;"
+                (error)="item.item_image = 'assets/icon/noimg.png'" />
+            </div>
+
+            <div [ngClass]="{'inactive': restaurantdata.shop_active_status == 1}">
+              <span *ngIf="item.itemscount==0 && item.active_status == 1" class="add-button">Add 1 +</span>
+              <span
+                *ngIf="item.itemscount==0 && item.active_status != 1 &&  (restaurantdata.common_item_ind==0 && item.quantity_type==0)"
+                (click)="restaurantdata.shop_active_status == 0 ? additem2(item,1) : null" class="add-button">Add  +
+              </span>
+              <span
+                *ngIf="item.itemscount==0 && item.active_status != 1 && (restaurantdata.common_item_ind==1 && item.quantity_type==1)"
+                (click)="restaurantdata.shop_active_status == 0 ? addmoreitem(item,banneritmeslist) : null"
+                class="add-button">Add + </span>
+              <span
+                *ngIf="item.itemscount==0 && item.active_status != 1 && (restaurantdata.common_item_ind==0 && item.quantity_type==1)"
+                (click)="restaurantdata.shop_active_status == 0 ? addmoreitem(item,banneritmeslist) : null"
+                class="add-button">Add + </span>
+              <span
+                *ngIf="item.itemscount==0 && item.active_status != 1 && (restaurantdata.common_item_ind==1 && item.quantity_type==0) "
+                (click)="restaurantdata.shop_active_status == 0 ? addmoreitem(item,banneritmeslist) : null"
+                class="add-button">Add +</span>
+              <span *ngIf="item.itemscount!=0" class="add-button"
+                style="display: flex;align-items: center;font-family: sfregular;">
+                <ion-icon name="remove" (click)="removeitem2(item.id,item)"></ion-icon>
+                <input type="tel" readonly [(ngModel)]="item.itemscount"
+                  style="border: none; width: 30px;text-align: center;">
+                <ion-icon name="add" (click)="additem2(item,1)"></ion-icon>
+              </span>
+            </div>
+
+          </ion-thumbnail> -->
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- banner itmes list -->
+  <div *ngFor="let category of items">
+    <div (click)="toggleCategory(category)"
+      style="display: flex; align-items: center; justify-content: space-between;padding:0px 25px 0px 10px;">
+      <h3 class="category-title">{{ category.sub_category_name }}</h3>
+      <ion-icon [name]="category.open ? 'chevron-up' : 'chevron-down'"></ion-icon>
+    </div>
+    <div *ngIf="category.open" style="margin-top: -5%;">
+      <ion-item *ngFor="let item of category.items" [ngClass]="{'out-of-stock': item.active_status == 1}">
+        <ion-label>
+          <span (click)="openitemmodal(item,0)">
+            <h2 style="white-space: nowrap;">
+
+              <img *ngIf="item.filter_two == 'Non Veg'" src='assets/icon/category/non-veg.svg' alt="Food Type"
+                style="width: 10px;" />
+              <img *ngIf="item.filter_two == 'Veg'" src='assets/icon/category/veg.svg' alt="Food Type"
+                style="width: 10px;" />
+
+              {{ item.item_name }}
+              <!-- {{ item.unique_item_count }} -->
+            </h2>
+            <p *ngIf="item.item_description" style="line-height: 1rem;    color: #9b9b9b;">{{ item.item_description }}
+            </p>
+
+            <div class="price-container">
+              <h4 style="font-size: 15px;">
+                ₹{{ item.selling_price }}
+                &nbsp;
+                <span class="original-price" style="font-size: 14px;">
+                  <s *ngIf="item.actual_price > item.selling_price">
+                    ₹{{ item.actual_price }}
+                  </s>
+                </span>
+              </h4>
+            </div>
+            <p style="display:flex">
+              <img src="assets/icon/star.svg" alt="Rating" /> &nbsp; {{ item.random_rating }}
+            </p>
+          </span>
+          <div style="display: flex;">
+            <ion-icon name="bookmark-outline" style="background-color: #e2fbed;border-radius: 50%;padding: 4px;"
+              *ngIf="item.item_wishlist_ind==false" (click)="itemupdatewishlist(item)">
+            </ion-icon>
+            <ion-icon name="bookmark" style="background-color: #e2fbed;color:#2dd55b; border-radius: 50%; padding: 4px;"
+              *ngIf="item.item_wishlist_ind==true" (click)="itemupdatewishlist(item)">
+            </ion-icon>
+            <ion-icon (click)="share(item)" style="background-color: #e2fbed; border-radius: 50%; padding: 4px;"
+              name="share-outline">
+            </ion-icon>
+          </div>
+        </ion-label>
+
+        <ion-thumbnail slot="end" class="thumbnail-container">
+          <div class="image-wrapper">
+            <img [src]="item.item_image" alt="{{ item.item_name }}"
+              (error)="item.item_image = 'assets/icon/noimg.png'" />
+
+            <!-- Button / Counter over image -->
+            <div class="add-button-wrapper" [ngClass]="{'inactive': restaurantdata.shop_active_status == 1}">
+              <span *ngIf="item.itemscount==0 && item.active_status == 1" class="add-button">
+                Add +
+              </span>
+
+              <span  *ngIf="item.itemscount==0 && item.active_status != 1 && (restaurantdata.common_item_ind==0 && item.quantity_type==0)"  (click)="restaurantdata.shop_active_status == 0 ? additem(item.id,1) : null" class="add-button">
+                Add +
+              </span>
+
+              <span  *ngIf="item.itemscount==0 && item.active_status != 1 && (restaurantdata.common_item_ind==1 && item.quantity_type==1)"
+                (click)="restaurantdata.shop_active_status == 0 ? addmoreitem(item,category.items) : null"
+                class="add-button">
+                Add +
+              </span>
+
+              <span *ngIf="item.itemscount==0 && item.active_status != 1 && (restaurantdata.common_item_ind==0 && item.quantity_type==1)"
+                (click)="restaurantdata.shop_active_status == 0 ? addmoreitem(item,category.items) : null"
+                class="add-button">
+                Add +
+              </span>
+
+              <span *ngIf="item.itemscount==0 && item.active_status != 1 && (restaurantdata.common_item_ind==1 && item.quantity_type==0)"
+                (click)="restaurantdata.shop_active_status == 0 ? addmoreitem(item,category.items) : null"
+                class="add-button">
+                Add +
+              </span>
+
+              <span *ngIf="item.itemscount!=0" class="add-button counter-buttons">
+                <ion-icon name="remove" (click)="removeitem(item.id,item)"></ion-icon>
+                <input type="tel" readonly [(ngModel)]="item.itemscount">
+                <ion-icon name="add" (click)="additem(item.id,1)"></ion-icon>
+              </span>
+            </div>
+          </div>
+        </ion-thumbnail>
+      </ion-item>
+    </div>
+  </div>
+
+  <!-----------------------------------------------Inactive Items ------------------------------------->
+
+  <div *ngIf="inactiveItems.length">
+    <div (click)="toggleCategory2()"
+      style="display: flex; align-items: center; justify-content: space-between;padding:0px 25px 0px 10px;">
+      <h3 class="category-title">Out of Stock</h3>
+      <ion-icon [name]="unavailableitems ? 'chevron-up' : 'chevron-down'"></ion-icon>
+    </div>
+    <div *ngIf="unavailableitems" style="margin-top: -5%;">
+      <ion-item *ngFor="let item of inactiveItems" [ngClass]="{'out-of-stock': item.active_status == 1}">
+        <ion-label>
+          <span>
+            <h2 style="white-space: nowrap;">
+              <img *ngIf="item.filter_two == 'Non Veg'" src='assets/icon/category/non-veg.svg' alt="Food Type"
+                style="width: 10px;" />
+              <img *ngIf="item.filter_two == 'Veg'" src='assets/icon/category/veg.svg' alt="Food Type"
+                style="width: 10px;" />
+              {{ item.item_name }}
+            </h2>
+            <p *ngIf="item.item_description" style="line-height: 1rem;    color: #9b9b9b;">{{ item.item_description }}
+            </p>
+
+            <div class="price-container">
+              <h4 *ngIf="item.selling_price > 0" style="font-size: 15px;">
+                ₹{{ item.selling_price }}
+                &nbsp;
+                <span class="original-price" style="font-size: 14px;">
+                  <s *ngIf="item.actual_price > item.selling_price">
+                    ₹{{ item.actual_price }}
+                  </s>
+                </span>
+              </h4>
+            </div>
+          </span>
+          <div style="display: flex;">
+            <ion-icon name="bookmark-outline" style="background-color: #e2fbed;border-radius: 50%;padding: 4px;">
+            </ion-icon>
+            <ion-icon (click)="share(item)" style="background-color: #e2fbed; border-radius: 50%; padding: 4px;"
+              name="share-outline">
+            </ion-icon>
+          </div>
+        </ion-label>
+
+        <ion-thumbnail slot="end" class="thumbnail-container">
+          <div class="image-wrapper">
+            <img [src]="item.item_image" alt="{{ item.item_name }}"
+              (error)="item.item_image = 'assets/icon/noimg.png'" />
+            <!-- Button / Counter over image -->
+            <div class="add-button-wrapper" [ngClass]="{'inactive': restaurantdata.shop_active_status == 1}">
+              <span *ngIf="item.itemscount==0 && item.active_status == 1" class="add-button">Add +</span>
+            </div>
+          </div>
+        </ion-thumbnail>
+      </ion-item>
+    </div>
+
+  </div>
+</ion-content>
+
+
+<ion-footer>
+  <ion-toolbar>
+    <div style="display: flex;">
+      <span slot="start">
+        <ion-searchbar style="font-family: 'sfregular';" [(ngModel)]="searchQuery" (ionInput)="searchdata()"
+          placeholder="Search" showClearButton="always">
+        </ion-searchbar>
+      </span>
+      <span slot="end">
+        <ion-button color="dark" (click)="openMenuModal()">
+          <ion-icon slot="start" style="color:white;" name="restaurant"></ion-icon>
+          <span style="font-family: 'sfregular';color:white;"> Menu</span>
+        </ion-button>
+      </span>
+    </div>
+    <div *ngIf="cartData.length!=0"
+      style="text-align: center; background-color: #2dd55b; padding: 10px 0px; color: white; letter-spacing: 0.5px; font-family: 'sfregular';"
+      (click)="gotobasket()">
+      <div style="display: flex; justify-content: center; align-items: center; gap: 5px;">
+        {{totalItems}} Items Added
+        <ion-icon name="arrow-forward-outline" style="color: white;"></ion-icon>
+      </div>
+      <p style="margin: 5px 0 0 0;" *ngIf="offertagline!=0 && exclusive_show_indicator==0">{{offertagline}}</p>
+    </div>
+  </ion-toolbar>
+</ion-footer>
+
+<!-- Menu Modal -->
+<ion-modal #modal [isOpen]="modalopens" [breakpoints]="[1, 0, 0]" (didDismiss)="close()" [initialBreakpoint]="0.7">
+  <ng-template>
+    <ion-content class="ion-padding" scroll-y="true">
+      <p style="font-family: 'sfregular';"> Sub Categories </p>
+      <p class="close-btn" style="position: fixed;" (click)="close()">✖ </p>
+
+      <ion-item lines="full" (click)="filtersubcategory('All')">
+        <ion-label class="menu-label">All</ion-label>
+      </ion-item>
+
+      <ion-item *ngFor="let a of othermainitems" lines="full" (click)="filtersubcategory(a.sub_category_name)">
+        <ion-label class="menu-label">{{ a.sub_category_name }}</ion-label>
+        <ion-badge class="menu-badge">{{ a.items.length }}</ion-badge>
+        <ion-button fill="clear" class="add-btn" *ngIf="a.addable">
+          <ion-icon name="add-circle-outline"></ion-icon>
+        </ion-button>
+      </ion-item>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+<ion-modal #modal [isOpen]="itemmodal" [breakpoints]="[1, 0, 0]" [initialBreakpoint]="0.7"
+  (didDismiss)="closeitemmodal()">
+  <ng-template>
+    <div class="ion-padding" style="text-align: center;">
+      <p style="font-family: 'sfregular';text-align: left;">Item Details </p>
+      <p class="close-btn" style="position:fixed;    top: 6px;" (click)="closeitemmodal()">✖ </p>
+      <img style="border-radius: 20px 20px 20px 20px;" [src]="itemdetails.item_image" alt="Dish Image" />
+      <!-- height: 200px;width: 100%; -->
+      <!-- <ion-badge color="warning" style="letter-spacing: 0.5px;font-family: 'sfregular';">Bestseller</ion-badge> -->
+      <h2 style="font-family: 'sfmedium';text-align: left;">{{ itemdetails.item_name }}</h2>
+      <p *ngIf="itemdetails.item_description" style="font-family: 'sfregular';text-align: left;">{{
+        itemdetails.item_description }}
+      </p>
+      <p *ngIf="itemdetails.full_description" style="font-family: 'sfregular';text-align: left;">{{
+        itemdetails.full_description }}
+      </p>
+      <p class="rating-score" style="text-align: left;">
+        <img src="assets/icon/star.svg">&nbsp;{{itemdetails.random_rating}}
+      </p>
+      <!-- <div class="quantity-price">
+        <ion-button size="small">-</ion-button>
+        <span>{{ quantity }}</span>
+        <ion-button size="small">+</ion-button>
+      </div> -->
+
+      <!-- <ion-button expand="block" color="danger" *ngIf="restaurantdata.shop_active_status == 0"
+        (click)="additem(itemdetails.id,1)" style="letter-spacing: 0.5px;font-family: 'sfregular';">
+        Add item ₹{{ itemdetails.selling_price }}
+      </ion-button> -->
+
+      <span *ngIf="ofermodalind==0">
+        <ion-button expand="block" color="danger" *ngIf="itemdetails.itemscount==0 && itemdetails.active_status == 1"
+          style="letter-spacing: 0.5px;font-family: 'sfregular';">
+          Add item ₹{{ itemdetails.selling_price }}
+        </ion-button>
+
+
+        <ion-button expand="block" color="danger"
+          *ngIf="itemdetails.itemscount==0 && itemdetails.active_status != 1 &&  (restaurantdata.common_item_ind==0 && itemdetails.quantity_type==0)"
+          (click)="restaurantdata.shop_active_status == 0 ? additem(itemdetails.id,1) : null"
+          style="letter-spacing: 0.5px;font-family: 'sfregular';">
+          Add item ₹{{ itemdetails.selling_price }}
+        </ion-button>
+        <ion-button expand="block" color="danger"
+          *ngIf="itemdetails.itemscount==0 && itemdetails.active_status != 1 && (restaurantdata.common_item_ind==0 && itemdetails.quantity_type==1) "
+          (click)="restaurantdata.shop_active_status == 0 ? addmoreitem(itemdetails,'') : null"
+          style="letter-spacing: 0.5px;font-family: 'sfregular';">
+          Add item ₹{{ itemdetails.selling_price }}
+        </ion-button>
+
+
+        <ion-button expand="block" color="danger"
+          *ngIf="itemdetails.itemscount==0 && itemdetails.active_status != 1 && (restaurantdata.common_item_ind==1 && itemdetails.quantity_type==1) "
+          (click)="restaurantdata.shop_active_status == 0 ? addmoreitem(itemdetails,'') : null"
+          style="letter-spacing: 0.5px;font-family: 'sfregular';">
+          Add item ₹{{ itemdetails.selling_price }}
+        </ion-button>
+
+        <ion-button expand="block" color="danger"
+          *ngIf="itemdetails.itemscount==0 && itemdetails.active_status != 1 && (restaurantdata.common_item_ind==1 && itemdetails.quantity_type==1) "
+          (click)="restaurantdata.shop_active_status == 0 ? addmoreitem(itemdetails,'') : null"
+          style="letter-spacing: 0.5px;font-family: 'sfregular';">
+          Add item ₹{{ itemdetails.selling_price }}
+        </ion-button>
+
+        <ion-button expand="block" color="danger"
+          *ngIf="itemdetails.itemscount==0 && itemdetails.active_status != 1 && (restaurantdata.common_item_ind==1 && itemdetails.quantity_type==0)"
+          (click)="restaurantdata.shop_active_status == 0 ? addmoreitem(itemdetails,'') : null"
+          (click)="restaurantdata.shop_active_status == 0 ? addmoreitem(itemdetails,'') : null"
+          style="letter-spacing: 0.5px;font-family: 'sfregular';">
+          Add item ₹{{ itemdetails.selling_price }}
+        </ion-button>
+      </span>
+
+
+      <span *ngIf="ofermodalind==1">
+        <ion-button expand="block" color="danger"
+          *ngIf="itemdetails.itemscount==0 && itemdetails.active_status != 1 &&  (restaurantdata.common_item_ind==0 && itemdetails.quantity_type==0)"
+          (click)="restaurantdata.shop_active_status == 0 ? additem2(itemdetails,1) : null"
+          style="letter-spacing: 0.5px;font-family: 'sfregular';">
+          Add item ₹{{ itemdetails.selling_price }}
+        </ion-button>
+
+        <ion-button expand="block" color="danger"
+          *ngIf="itemdetails.itemscount==0 && itemdetails.active_status != 1 && (restaurantdata.common_item_ind==1 && itemdetails.quantity_type==1)"
+          (click)="restaurantdata.shop_active_status == 0 ? addmoreitem(itemdetails,banneritmeslist) : null"
+          style="letter-spacing: 0.5px;font-family: 'sfregular';">
+          Add item ₹{{ itemdetails.selling_price }}
+        </ion-button>
+
+        <ion-button expand="block" color="danger"
+          *ngIf="itemdetails.itemscount==0 && itemdetails.active_status != 1 && (restaurantdata.common_item_ind==0 && itemdetails.quantity_type==1)"
+          (click)="restaurantdata.shop_active_status == 0 ? addmoreitem(itemdetails,banneritmeslist) : null"
+          style="letter-spacing: 0.5px;font-family: 'sfregular';">
+          Add item ₹{{ itemdetails.selling_price }}
+        </ion-button>
+
+        <ion-button expand="block" color="danger"
+          *ngIf="itemdetails.itemscount==0 && itemdetails.active_status != 1 && (restaurantdata.common_item_ind==1 && itemdetails.quantity_type==0) "
+          (click)="restaurantdata.shop_active_status == 0 ? addmoreitem(itemdetails,banneritmeslist) : null"
+          style="letter-spacing: 0.5px;font-family: 'sfregular';">
+          Add item ₹{{ itemdetails.selling_price }}
+        </ion-button>
+      </span>
+    </div>
+  </ng-template>
+</ion-modal>
+
+<ion-modal #modal [isOpen]="shopdetailsmodal" (didDismiss)="closeshopdetails()" [breakpoints]="[1, 0.8, 0]"
+  [initialBreakpoint]="1">
+  <ng-template>
+    <!-- Main Modal Content -->
+    <ion-content class="ion-padding modal-content" [fullscreen]="true">
+
+      <!-- Shop Details List -->
+      <ion-list lines="none">
+
+        <ion-item>
+          <ion-icon name="storefront-outline" slot="start"></ion-icon>
+          <ion-label>{{ restaurantdata.shop_name }}</ion-label>
+        </ion-item>
+
+        <ion-item>
+          <ion-icon name="location-outline" slot="start"></ion-icon>
+          <ion-label>{{ restaurantdata.shop_address }}</ion-label>
+        </ion-item>
+
+        <!-- Open Status -->
+        <ion-item>
+          <ion-icon name="time-outline" slot="start"></ion-icon>
+          <ion-label>
+            <ng-container *ngIf="restaurantdata.shop_active_status == 0">
+              Open Now · Closes {{ convertTo12Hour(restaurantdata.shop_close_time) }}
+            </ng-container>
+            <ng-container *ngIf="restaurantdata.shop_active_status == 1">
+              ● Closed Now · Opens at {{ convertTo12Hour(restaurantdata.shop_open_time) }}
+            </ng-container>
+          </ion-label>
+        </ion-item>
+
+        <!-- Other Info -->
+        <ion-item>
+          <ion-icon name="calendar-outline" slot="start"></ion-icon>
+          <ion-label>Live on Zeegni since {{ restaurantdata.shop_since || '2025' }}</ion-label>
+        </ion-item>
+
+        <!-- <ion-item>
+          <ion-icon name="call-outline" slot="start"></ion-icon>
+          <ion-label>{{ restaurantdata.shop_phone_number }}</ion-label>
+        </ion-item> -->
+
+        <ion-item>
+          <ion-icon name="bicycle-outline" slot="start"></ion-icon>
+          <ion-label>Delivery: {{ restaurantdata.delivery_time }}</ion-label>
+        </ion-item>
+
+        <ion-item>
+          <ion-label><strong>GST Number:</strong> {{ restaurantdata.shop_gst_number }}</ion-label>
+        </ion-item>
+
+        <ion-item>
+          <ion-label><strong>FSSAI Lic No:</strong> {{ restaurantdata.shop_fssai_lic }}</ion-label>
+        </ion-item>
+      </ion-list>
+
+      <!-- Shop Interior Images -->
+      <ion-grid>
+        <ion-row>
+          <ion-col size="12" *ngIf="restaurantdata?.shop_interiors_image1">
+            <ion-img [src]="restaurantdata.shop_interiors_image1"></ion-img>
+          </ion-col>
+          <ion-col size="12" *ngIf="restaurantdata?.shop_interiors_image2">
+            <ion-img [src]="restaurantdata.shop_interiors_image2"></ion-img>
+          </ion-col>
+          <ion-col size="12" *ngIf="restaurantdata?.shop_interiors_image3">
+            <ion-img [src]="restaurantdata.shop_interiors_image3"></ion-img>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+    </ion-content>
+
+    <!-- Sticky Footer Button -->
+    <ion-footer class="ion-no-border" style="background: white;">
+      <ion-toolbar style="--background: white;">
+        <ion-button expand="block" fill="solid" shape="round"
+          style="--background: #a1f1c4; --color: #000; margin: 12px 16px;" (click)="closeshopdetails()">
+          <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
+          Go Back to Menu
+        </ion-button>
+      </ion-toolbar>
+    </ion-footer>
+  </ng-template>
+</ion-modal>
+
+<!-- Menu Modal -->
+<ion-modal #modal [isOpen]="filtermodal" class="menu-modal3" [breakpoints]="[0, 0.7, 1]" [initialBreakpoint]="0.4"
+  [backdropDismiss]="false">
+  <ng-template>
+    <ion-content class="filter-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Filters and Sorting</h2>
+        <button class="close-btn" (click)="clossefiltermodal()">✖</button>
+      </div>
+
+      <div class="section">
+        <h3 class="section-title">Sort by</h3>
+        <div class="button-group">
+          <ion-chip (click)="selectFilter('lowHigh');clossefiltermodal();" style="font-family: 'sfregular';">Price - low
+            to high</ion-chip>
+          <ion-chip (click)="selectFilter('highLow');clossefiltermodal();" style="font-family: 'sfregular';">Price -
+            high to low</ion-chip>
+          <ion-chip (click)="selectFilter('az');clossefiltermodal();" style="font-family: 'sfregular';">A - Z</ion-chip>
+          <ion-chip (click)="selectFilter('za');clossefiltermodal();" style="font-family: 'sfregular';">Z - A</ion-chip>
+        </div>
+      </div>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+<ion-modal #modal [isOpen]="outletmodal" class="menu-modal3" [breakpoints]="[0, 0.7, 1]" [initialBreakpoint]="0.6"
+  [backdropDismiss]="false">
+  <ng-template>
+    <ion-content class="filter-content" scrollY="true">
+
+      <!-- Modal Header -->
+      <div class="modal-header horizontal-layout">
+        <img [src]="restaurantdata?.shop_image" alt="Shop Image" class="shop-image" />
+        <div class="shop-details">
+          <span>All Delivery outlets for</span>
+          <h4 class="modal-title">{{ restaurantdata?.shop_name }}</h4>
+        </div>
+        <button class="close-btn" (click)="closseoutletmodal()">✖</button>
+      </div>
+
+      <!-- Outlet Cards -->
+      <div class="card-grid">
+        <ion-card *ngFor="let item of outletshoplist" class="outlet-card" (click)="shopitemspage(item)">
+          <ion-card-header style="    text-align: left;">
+            <ion-card-title>
+              <!-- <ion-icon name="storefront-outline"></ion-icon> -->
+              <!-- <img [src]="item.shop_image" alt="{{ item.shop_name }}" /> -->
+              <!-- {{ item.shop_name }} -->
+              <ion-item>
+                <ion-icon name="storefront-outline" slot="start"></ion-icon>
+                <ion-label>{{ item.shop_name }}</ion-label>
+              </ion-item>
+            </ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="card-info-row">
+              <ion-icon name="time-outline"></ion-icon>
+              <span>{{ item.delivery_time }}</span>
+
+              <ion-icon name="location-outline" class="icon-spacing"></ion-icon>
+              <span>{{ item.delivery_distance | number:'1.2-2' }} km</span>
+
+              <ion-icon name="star" class="icon-spacing" color="warning"></ion-icon>
+              <span>{{ item.shop_rating }}</span>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </div>
+
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+<ion-modal #modal [isOpen]="offermodal" class="menu-modal3" [breakpoints]="[0, 0.7, 1]" [initialBreakpoint]="0.6"
+  [backdropDismiss]="false">
+  <ng-template>
+    <ion-content class="offer-modal-content">
+      <div class="modal-header horizontal-layout">
+        <!-- <img [src]="restaurantdata?.shop_image" alt="Shop Image" class="shop-image" /> -->
+        <div class="shop-details">
+          <div class="modal-title">Offer at {{ restaurantdata?.shop_name }}</div>
+        </div>
+        <button class="close-btn" style="top: 4px;" (click)="closeoffersmodal()">✖</button>
+      </div>
+
+
+      <ion-list lines="none">
+        <ion-card *ngFor="let offer of shop_offerslist" class="offer-card">
+          <ion-card-header>
+            <ion-card-title class="offer-title">
+              <ion-icon *ngIf="offer.coupon_percentage > 0" name="pricetag-outline" color="success">
+              </ion-icon>
+              <ion-icon *ngIf="offer.offer_type === 1" name="car-outline" color="primary">
+              </ion-icon>
+              <ion-icon *ngIf="offer.coupon_percentage === 0 && offer.offer_type !== 1" name="cash-outline"
+                color="warning">
+              </ion-icon>
+              {{ offer.coupon_name }}
+            </ion-card-title>
+          </ion-card-header>
+
+          <ion-card-content>
+            <p class="desc">{{ offer.coupon_description }}</p>
+            <div *ngIf="offer.coupon_percentage > 0">
+              <ion-badge color="success" class="offer-badge">{{ offer.coupon_percentage }}% OFF</ion-badge>
+            </div>
+            <div *ngIf="offer.offer_type === 1">
+              <ion-badge color="primary" class="offer-badge">Save upto Rs 10 on Delivery</ion-badge>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ion-list>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+<ion-modal [isOpen]="moreitemsmodal" (didDismiss)="closemoreitemsmodal(moreitemsdata)" #modal class="menu-modal3"
+  [breakpoints]="[0, 0.7, 1]" [initialBreakpoint]="1" [backdropDismiss]="false">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar color="light">
+        <ion-title>{{moreitemsdata.item_name}}</ion-title>
+        <ion-buttons slot="end" (click)="closemoreitemsmodal1(moreitemsdata)">
+          <ion-button fill="clear">
+            <ion-icon name="close"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding page-content">
+
+      <!-- Quantity Selector -->
+      <div class="section-card" *ngFor="let item of moreitemslist">
+        <div class="section-header">
+          <div>
+            <strong>{{ item.title }}</strong>
+            <p *ngIf="item.user_selection == 0">Required • Select any 1 option</p>
+            <p *ngIf="item.user_selection == 1">Select up to {{ item.subarray.length }} option</p>
+          </div>
+        </div>
+
+        <ion-list *ngFor="let sub_teim of item.subarray">
+          <ion-radio-group *ngIf="item.user_selection==0" [(ngModel)]="selectedItemId"
+            (click)="selecte_items_value(sub_teim,0)">
+            <ion-item lines="none">
+              <div slot="start" style="width: 15px; height: 15px; margin-inline-end: 0px; border-radius: 0px;">
+                <img *ngIf="sub_teim.food_type == 'Veg'" src="assets/icon/category/veg.svg">
+                <img *ngIf="sub_teim.food_type == 'Non Veg'" src="assets/icon/category/non-veg.svg">
+              </div>
+              <ion-label> {{sub_teim.extra_item_name}}</ion-label>
+              <ion-note slot="end" *ngIf="sub_teim.price!=0">₹{{sub_teim.price}}</ion-note>
+              <ion-radio slot="end" [value]="sub_teim.id"></ion-radio>
+            </ion-item>
+          </ion-radio-group>
+
+          <ion-item lines="none" *ngIf="item.user_selection==1" (click)="selecte_items_value(sub_teim,1)">
+            <div slot="start" style="    width: 15px; height: 15px; margin-inline-end: 0px; border-radius: 0px;">
+              <img *ngIf="sub_teim.food_type == 'Veg'" src="assets/icon/category/veg.svg">
+              <img *ngIf="sub_teim.food_type == 'Non Veg'" src="assets/icon/category/non-veg.svg">
+            </div>
+            <ion-label>{{sub_teim.extra_item_name}}</ion-label>
+            <ion-note slot="end" *ngIf="sub_teim.price!=0">₹{{sub_teim.price}}</ion-note>
+            <ion-checkbox slot="end"></ion-checkbox> <!-- RIGHT SIDE -->
+          </ion-item>
+        </ion-list>
+      </div>
+
+      <!-- Cooking Request -->
+      <div class="section-card">
+        <div class="section-header">
+          <strong>Add a request (optional)</strong>
+          <ion-icon name="information-circle-outline"></ion-icon>
+        </div>
+
+        <ion-textarea placeholder="Write something here that you're referring to." maxlength="100"
+          [(ngModel)]="extra_more_items_commants"></ion-textarea>
+        <!-- <div class="char-count">543</div> -->
+      </div>
+
+    </ion-content>
+
+    <!-- Footer -->
+    <ion-footer>
+      <div class="footer-bar">
+        <div class="counter-box">
+          <ion-button fill="clear" class="counter-btn" (click)="removeextracount()">-</ion-button>
+          <span>{{extra_cart_count}}</span>
+          <ion-button fill="clear" class="counter-btn" (click)="addextracount()">+</ion-button>
+        </div>
+        <ion-button color="danger" class="add-button" (click)="addtocart2(moreitemsdata)">
+          Add item ₹{{extra_finalAmount}}
+        </ion-button>
+      </div>
+    </ion-footer>
+
+  </ng-template>
+</ion-modal>
+

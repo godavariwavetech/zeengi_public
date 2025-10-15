@@ -1,0 +1,24 @@
+@font-face {
+  font-family: "sfbold";
+  src: url("../assets/fonts/static/SFPRODISPLAYBOLD.otf");
+}
+
+@font-face {
+  font-family: "sflight";
+  src: url("../assets/fonts/static/SFPRODISPLAYULTRALIGHTITALIC.otf");
+}
+
+@font-face {
+  font-family: "sfregular";
+  src: url("../assets/fonts/static/SFPRODISPLAYREGULAR.otf");
+}
+
+@font-face {
+  font-family: "sfmedium";
+  src: url("../assets/fonts/static/SFPRODISPLAYMEDIUM.otf");
+}
+
+:root {
+  --ion-loading-background: rgba(0, 0, 0, 0.8); /* Background color */
+  --ion-loading-color: white; /* Text and spinner color */
+}

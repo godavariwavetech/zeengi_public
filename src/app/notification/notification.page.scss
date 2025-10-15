@@ -1,0 +1,199 @@
+ion-segment {
+    --background: #FFE5B4;
+    --indicator-color: #D2691E;
+    --button-background: transparent;
+    --color-checked: #D2691E;
+    --color: black;
+    --button-border-radius: 20px;
+    --font-size: 10px;
+    border-radius: 20px;
+    font-family: 'sfmedium';
+}
+
+ion-segment-button {
+    --indicator-color: #D2691E;
+    --color: black;
+    --button-background-checked: #D2691E;
+    border-radius: 20px;
+    font-size: 10px;
+}
+
+ion-segment-button[aria-pressed="true"] {
+    --color: white;
+    /* Text color when selected */
+    --button-background: #D2691E;
+    /* Background color for selected button */
+}
+
+.notification {
+    background-color: #e0f7fa;
+    border-left: 5px solid #00bcd4;
+    padding: 16px;
+    margin: 8px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    font-family: 'sfmedium';
+    text-transform: capitalize;
+}
+
+.hrae {
+  text-align: center;
+  font-family: "sfregular";
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+.notification p {
+    margin: 0;
+}
+
+.notification-link {
+    color: #ff9800;
+    text-decoration: none;
+}
+
+.notification-link:hover {
+    text-decoration: underline;
+}
+
+.close-btn {
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.notification-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.head {
+  text-align: center;
+  font-family: "sfregular";
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  padding: 20px 0px;
+}
+
+.notification-date {
+    font-size: 12px;
+    color: #888;
+}
+
+/* Customize styles for different message types */
+.info {
+    background-color: #e0f7fa;
+    border-left-color: #00bcd4;
+}
+
+.alert {
+    background-color: #fff3e0;
+    border-left-color: #ffa726;
+}
+
+.important {
+    background-color: #ffebee;
+    border-left-color: #f44336;
+    /* Red for important notifications */
+}
+
+//==========================================================================================================================================
+
+.filter-bar {
+    display: flex;
+    justify-content: space-around;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-family: 'notobold';
+    background-color: #FFE5B4;
+  }
+  
+  .filter-btn {
+    padding: 5px 10px;
+    background-color: #FFE5B4;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    color: black !important;
+  }
+  
+  .filter-btn2 {
+    padding: 5px 10px;
+    background-color: #FFE5B4;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 10px;
+  }
+  
+  .filter-btn:hover {
+    background-color: #D2691E;
+    color: black !important;
+  }
+  
+  .grievance-card {
+    display: flex;
+    justify-content: space-between;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 10px 0;
+    padding: 15px;
+  }
+  
+  .grievance-image img {
+    width: 100px;
+    height: 100px;
+    border-radius: 8px;
+  }
+  
+  .no-image {
+    width: 100px;
+    height: 100px;
+    background-color: #f2f2f2;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+  }
+  
+  .grievance-details {
+    flex: 1;
+    padding-left: 15px;
+  }
+  
+  .grievance-status {
+    padding: 5px 10px;
+    border-radius: 5px;
+    text-transform: capitalize;
+  }
+  
+  .grievance-status.rejected {
+    background-color: #ff7979;
+    color: white;
+  }
+  
+  .grievance-status.acknowledged {
+    background-color: #f39c12;
+    color: white;
+  }
+  
+  .center-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    text-align: center;
+  }
+  
+  .trsd {
+    font-size: 18px; /* Adjust size as desired */
+    color: #666; /* Adjust color as desired */
+  }

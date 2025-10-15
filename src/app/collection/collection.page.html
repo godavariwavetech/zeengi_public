@@ -1,0 +1,84 @@
+<ion-header>
+  <div class="category-header">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <div class="tet"> Collection </div>
+    <ion-button fill="clear" class="icon-button">
+    </ion-button>
+  </div>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+  <ion-segment [(ngModel)]="filterorder" color="warning">
+    <ion-segment-button value="dish" style="font-family: 'sfregular';" (click)="getfilteroderlist('dish')">
+      Dish
+    </ion-segment-button>
+    <ion-segment-button value="Shops" style="font-family: 'sfregular';" (click)="getfilteroderlist('Shops')">
+      Shops
+    </ion-segment-button>
+  </ion-segment>
+
+
+  <div *ngIf="filterorder=='dish'">
+
+    <ion-item *ngFor="let item of items" style="height: 100px;" (click)="gotocategory(item)">
+      <ion-thumbnail slot="end">
+        <div style="text-align: center;">
+          <img [src]="item.item_image" alt="{{ item.item_name }}" style="width: 70px; height: 70px; border-radius: 5px;"
+            (error)="item.item_image = 'assets/icon/noimg.png'" />
+        </div>
+      </ion-thumbnail>
+      <ion-label>
+        <span>
+          <h6 style="white-space: nowrap; display: flex; align-items: center;font-family: 'sfmedium';">
+            <img [src]="item.filter_one === 'Non Veg' ? 'assets/icon/category/non-veg.svg' : 'assets/icon/category/veg.svg'"
+              alt="Food Type" style="width: 16px; height: 16px; margin-right: 6px;" />
+            {{ item.item_name }}
+          </h6>
+          <p style="display: flex; align-items: center; margin-top: 4px;font-family: 'sfmedium';">
+            <img src="assets/icon/star.svg" alt="Rating" style="width: 14px; height: 14px; margin-right: 4px;" /> {{
+            item.random_rating || '4.2' }}
+          </p>
+          <div class="price-container" style="margin-top: 4px;font-family: 'sfregular';">
+            <h4 style="font-family: 'sfmedium';">
+              ₹ {{ item.selling_price }} &nbsp;
+              <span class="original-price" style="font-size: 12px; color: #999;">
+                <s style="font-family: 'sfmedium';">₹ {{ item.actual_price }}</s>
+              </span>
+              &nbsp;
+              <ion-badge color="success" *ngIf="item.discount_percentage" style="font-family: 'sfmedium';">
+                {{ (((item.actual_price * 1) - (item.selling_price * 1)) / (item.actual_price * 1)) * 100 |
+                number:'1.0-0' }}% OFF
+              </ion-badge>
+            </h4>
+          </div>
+        </span>
+      </ion-label>
+    </ion-item>
+  </div>
+
+  <div *ngIf="filterorder=='Shops'">
+    <ion-card *ngFor="let a of shops" class="custom-card" [ngClass]="{'inactive': a.shop_active_status == 1}"
+      (click)="a.shop_active_status == 0 ? gotorestaurant(a) : null">
+      <div class="image-container">
+        <img [src]="a.shop_image" class="card-image" [alt]="a.shop_name" />
+        <div class="tag">{{ a.tag }}</div>
+      </div>
+      <ion-card-content>
+        <div class="header">
+          <h6 class="title">{{ a.shop_name }}</h6>
+          <span class="rating">{{ a.shop_rating }} ★ </span>
+        </div>
+        <div class="header">
+          <h6 class="title">{{ a.shop_address }}</h6>
+        </div>
+        <div class="offer" *ngIf="a.special_offer_name!=''">🎉 {{ a.special_offer_name }} </div>
+        <div class="not-delivered-label" *ngIf="a.shop_active_status == 1 ">
+          ✅ Currently Not Delivered
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

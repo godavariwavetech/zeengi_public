@@ -1,0 +1,438 @@
+/* Typography */
+.sf-regular {
+  font-family: 'sfregular', sans-serif;
+}
+
+/* Header Styling */
+.category-header {
+  background: linear-gradient(180deg, #F57B00 0%, #B93800 100%);
+
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  color: white;
+}
+
+/* Segment Buttons */
+ion-segment-button {
+  font-family: 'sfregular';
+}
+
+/* Order Card Container */
+.order-card {
+  margin-bottom: 12px;
+  padding: 1px;
+  border-radius: 10px;
+  background-color: #ffffff;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+/* Order Info Section */
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 8px;
+}
+
+.order-details {
+  padding-top: 8px;
+  font-family: 'sfregular';
+  color: #444;
+}
+
+/* Order Status */
+.order-status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.status-placed {
+  color: #53B175;
+}
+
+.status-accepted {
+  color: #007AFF;
+}
+
+.status-pickup {
+  color: #FFA500;
+}
+
+.status-delivered {
+  color: #28A745;
+}
+
+.status-cancelled {
+  color: brown;
+}
+
+.status-rejected {
+  color: #FF3B30;
+}
+
+.status-notreceived {
+  color: #FF9500;
+}
+
+/* Footer */
+.footerback {
+  background-color: #ffffff;
+  border-top: 1px solid #ccc;
+  padding-top: 5px;
+  text-align: center;
+
+  height: 71px;
+  margin: 0px 0px 0px 0px;
+  padding: 2px;
+}
+
+.order-card.no-padding {
+  margin: 0;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
+}
+
+.card-grid.no-padding {
+  --ion-grid-padding: 0;
+  --ion-grid-column-padding: 1px;
+  /* Added some padding between columns */
+}
+
+.info-row {
+  display: flex;
+  justify-content: flex-start;
+  /* Align to left */
+  align-items: center;
+  padding: 3px 0;
+  /* Some space between rows */
+}
+
+//   .label {
+//     font-size: 12px;
+//     color: #888;
+//     flex: 0 0 40%; /* Adjust the width of the label to allow more space for values */
+//   }
+
+.value {
+  font-weight: 500;
+  font-size: 14px;
+  color: #333;
+  text-align: left;
+  /* Align values to the left */
+}
+
+.small-text {
+  font-size: 13px;
+  color: #555;
+  line-height: 1.4;
+}
+
+.status {
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-weight: 500;
+  font-size: 13px;
+  display: inline-block;
+}
+
+.status.delivered {
+  background-color: #e0f7e9;
+  color: #2e7d32;
+}
+
+.status.pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.status.cancelled {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+
+
+
+
+
+
+
+
+
+
+/* General Card Styling */
+.order-card {
+  margin: 2px;
+  padding: 2px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.order-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+}
+
+.order-item {
+  display: flex;
+  align-items: center;
+  padding: 2px 0;
+}
+
+.order-id {
+  font-family: 'sfregular', sans-serif;
+  font-size: 16px;
+  margin: 0;
+}
+
+.order-status {
+  font-family: 'sfregular', sans-serif;
+  font-size: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.status.placed {
+  color: #53B175;
+}
+
+.status.accepted {
+  color: #007AFF;
+}
+
+.status.pickup {
+  color: #FFA500;
+}
+
+.status.delivered {
+  color: #28A745;
+}
+
+.status.cancelled {
+  color: brown;
+}
+
+.status.rejected {
+  color: #FF3B30;
+}
+
+.status.not-received {
+  color: #FF9500;
+}
+
+/* Order Info Row */
+.order-info {
+  margin-top: 1px;
+  font-family: 'sfregular', sans-serif;
+  color: #333;
+}
+
+.order-date {
+  font-size: 12px;
+  color: #999;
+}
+
+.order-total {
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+}
+
+
+/* Address Row */
+.order-address {
+  margin-top: 10px;
+  font-family: 'sfregular', sans-serif;
+}
+
+.address,
+.shop-name {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #555;
+}
+
+.icon {
+  // font-size: 18px;
+  color: #888;
+  margin-right: 8px;
+}
+
+.iconw {
+  font-size: 22px;
+  color: #888;
+  margin-right: 10px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .order-card {
+    margin: 8px;
+    padding: 8px;
+  }
+
+  .order-id {
+    font-size: 14px;
+  }
+
+  .order-status {
+    font-size: 12px;
+  }
+
+  .order-info,
+  .order-address {
+    font-size: 12px;
+  }
+
+  .order-total {
+    font-size: 13px;
+  }
+}
+
+
+:host {
+  --inner-padding-end: 16px !important;
+}
+
+
+// .cancel-button {
+//   font-family: 'sfregular';
+//   margin: 10px auto 16px auto;
+//   padding: 0 16px;
+//   --border-radius: 20px;
+//   --color: #e74c3c;
+//   --border-color: #e74c3c;
+//   --padding-start: 10px;
+//   --padding-end: 10px;
+// }
+
+.cancel-button {
+  font-family: "sfregular";
+  margin: 10px auto 16px auto;
+  padding: 0 16px;
+  --border-radius: 20px;
+  --ion-color-base: #35ba73;
+  --ion-color-primary: #35ba73;
+  --ion-color-primary-contrast: white;
+  color: #35ba73;
+  --border-color: #35ba73;
+}
+
+
+
+
+.icon-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.badge {
+  position: absolute;
+  top: -12px;
+  right: -14px;
+  background-color: #F57B00;
+  color: white;
+  font-size: 10px;
+  line-height: 2;
+  border-radius: 10px;
+  text-align: center;
+  height: 20px;
+  width: 20px;
+}
+
+ion-footer {
+  text-align: center;
+  border-top: 1px solid #AA5000;
+}
+
+.emoji-icon {
+  display: inline-block;
+  transform: scaleX(-1);
+  /* Flip emoji */
+  color: green;
+  /* Note: emoji color may not change on all devices */
+  font-size: 1.2em;
+  margin-right: 0px;
+}
+
+
+
+ion-card-content {
+  padding: 12px 16px;
+}
+
+
+.order-info,
+.order-address {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.order-total {
+  font-weight: 600;
+  color: #000;
+}
+
+.shop-name,
+.address {
+  display: flex;
+  align-items: center;
+}
+
+//------------------------------------------------------------------------------------------
+
+.order-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0px 12px;
+  border-radius: 8px;
+  background: #f9fafc;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.btn-cancel {
+  font-size: 14px;
+  font-family: 'sfregular';
+  font-weight: 500;
+  --border-width: 1.5px;
+  --border-radius: 8px;
+  --padding-start: 10px;
+  --padding-end: 10px;
+}
+
+.btn-cancel ion-icon {
+  font-size: 16px;
+}
+
+.timer-badge {
+  font-family: 'sfregular';
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  background: #ffe9e9;
+  padding: 8px 18px;
+  border-radius: 8px;
+  display: inline-block;
+}

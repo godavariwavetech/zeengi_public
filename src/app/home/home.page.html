@@ -1,0 +1,361 @@
+<ion-content [scrollEvents]="true" (ionScroll)="onScroll($event) ">
+  <div style="background: linear-gradient(180deg, #F57B00 0%, #B93800 100%);">
+    <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+      <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+    <br>
+    <div class="header-container">
+      <div class="top-row" (click)="gotomaplocation()">
+        <div class="home-section">
+          <ion-icon name="location-outline"></ion-icon>
+          <span style="font-family: 'sfregular';">{{location_name}}</span>
+          <ion-icon name="chevron-down"></ion-icon>
+        </div>
+        <div class="address" style="font-family: 'sfregular';text-transform: capitalize;">
+          {{ address | slice:0:29 }} ...
+        </div>
+      </div>
+      <div class="icons" style="margin-top: 2%;">
+        <div class="relative" [routerLink]='["/notification"]'>
+          <img src="assets/icon/home/bell.svg">
+        </div>
+        <!-- <div class="icon-wrapper" (click)="gotopage('basket')">
+          <img src="assets/icon/footer/cart.svg">
+          <span class="badge" *ngIf="cartCount > 0">{{ cartCount }}</span>
+        </div>
+        <br> -->
+      </div>
+    </div>
+
+    <div class="header-container scroll-up" *ngIf="bannerskeletonstatus == true">
+      <div class="top-row">
+        <div class="home-section">
+          <ion-skeleton-text [animated]="true" class="thick-blue-skeleton"
+            style="width: 100px; height: 16px; border-radius: 8px;">
+          </ion-skeleton-text>
+        </div>
+        <div class="address">
+          <ion-skeleton-text [animated]="true" class="thick-blue-skeleton"
+            style="width: 200px; height: 14px; border-radius: 8px;">
+          </ion-skeleton-text>
+        </div>
+      </div>
+    </div>
+    <br>
+    <ion-grid class="sticky-element" *ngIf="!isScrolled" [class.scrolled]="isScrolled">
+      <ion-searchbar showCancelButton="focus" (click)="searchstatus()" class="custom custom-searchbar" #searchbar>
+      </ion-searchbar>
+      <span class="custom-placeholder" [ngClass]="{ 'animate-placeholder': animate }">
+        {{ placeholderText }}
+      </span>
+    </ion-grid>
+
+    <div *ngIf="showVegConfirmBox" class="veg-confirm-popup">
+      <div class="veg-confirm-card">
+        <div class="alert-icon">
+          <ion-icon name="alert-circle" class="icon-red"></ion-icon>
+        </div>
+
+        <h2 class="alert-title">Switch off Veg Mode?</h2>
+        <p class="alert-message">
+          You’ll see all Merchants, including those serving non-veg dishes
+        </p>
+
+        <ion-button expand="block" color="danger" fill="clear" class="switch-btn" (click)="confirmVegModeOff()">
+          Switch off
+        </ion-button>
+        <div class="keep-mode" (click)="keepVegMode()">Keep using this mode</div>
+      </div>
+    </div>
+
+    <div class="category-tabs">
+      <div class="tab-item" *ngFor="let cat of categories" [ngClass]="{ 'active': selectategory === cat.category_name }"
+        (click)="change(cat.category_name);selectCategory(cat)">
+        &nbsp;<img [src]="cat.category_image" style="border-radius: 4px;" />&nbsp;
+        <span> {{ cat.category_name }}</span>
+      </div>
+    </div>
+
+    <div class="category-content" *ngFor="let cat of categories" [hidden]="selectategory !== cat.category_name">
+      <ion-row>
+        <ion-col size="8">
+          <p style="margin-bottom:3%">{{ cat.category_name }}</p>
+          <ion-button color="light" class="offer-btn">
+            <strong>Get 15% Off</strong>
+          </ion-button>
+          <p>On your First Delivery</p>
+        </ion-col>
+        <ion-col size="4">
+          <img class="banner-image" [src]="cat.category_image" />
+        </ion-col>
+      </ion-row>
+    </div>
+  </div>
+
+  <ion-grid class="sticky-element" *ngIf="isScrolled" [class.scrolled]="isScrolled">
+    <ion-row>
+      <ion-col size="12" style="padding: 0px;">
+        <ion-searchbar showCancelButton="focus" (click)="searchstatus()" class="custom custom-searchbar" #searchbar>
+        </ion-searchbar>
+        <span class="custom-placeholder" [ngClass]="{ 'animate-placeholder': animate }">
+          {{ placeholderText }}
+        </span>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <!-- Floating Modal Box -->
+  <div *ngIf="showVegBox" class="veg-box-popup">
+    <div class="veg-box-content">
+      <div class="veg-box-header">See veg dishes from</div>
+
+      <ion-radio-group [(ngModel)]="vegOption">
+        <ion-item lines="none">
+          <label style="display:flex; align-items:center; width:100%; cursor:pointer;">
+            <ion-radio slot="start" value="all"></ion-radio>
+            <span style="padding-left: 10px;" (click)="selectvegmodeoption('all')">All Merchants</span>
+          </label>
+        </ion-item>
+
+        <ion-item lines="none">
+          <label style="display:flex; align-items:center; width:100%; cursor:pointer;">
+            <ion-radio slot="start" value="pure"></ion-radio>
+            <span style="padding-left: 10px;" (click)="selectvegmodeoption('pure')">Pure Veg Merchants only</span>
+          </label>
+        </ion-item>
+      </ion-radio-group>
+
+
+      <ion-button expand="block" color="success" size="small" (click)="applyVegFilter()"
+        style="color: white !important;">Apply</ion-button>
+      <div class="more-settings" (click)="openMoreSettings()">Close</div>
+    </div>
+  </div>
+
+  <div style="padding:1%">
+    <!-- Skeleton version shown while loading -->
+    <div class="sticky-element2" *ngIf="categories2.length == 0" style="padding: 3% 0%; text-align: center;">
+      <swiper-container [slidesPerView]="4.5" [spaceBetween]="20">
+        <swiper-slide *ngFor="let i of [1,2,3,4,5,6]">
+          <div>
+            <ion-skeleton-text [animated]="true" class="thick-blue-skeleton"
+              style="width: 50px; height: 50px; border-radius: 50%;">
+            </ion-skeleton-text>
+          </div>
+          <ion-skeleton-text [animated]="true" class="thick-blue-skeleton"
+            style="width: 40px; height: 14px; border-radius: 4px; margin: 4px auto 0;">
+          </ion-skeleton-text>
+        </swiper-slide>
+      </swiper-container>
+    </div>
+
+    <span *ngIf="menuItems.length>0">
+      <swiper-container (slidechange)="swiperSlideChanged($event)"
+        autoplay='{"delay": 2500, "disableOnInteraction": false}' loop="true" pagination='{"clickable": true}'
+        class="custom-swiper">
+        <swiper-slide *ngFor="let item of menuItems" style="text-align: center;">
+          <ng-container>
+            <ion-row>
+              <ion-col size="12" (click)="gotoshop(item.shop_id,item)">
+                <div class="image-container">
+                  <img [src]="item.banner_image" style="width: 100%;height:190px;border-radius:8px;"
+                    [alt]="item.banner_image" loading="lazy" (error)="onImageError($event)"
+                    (load)="onImageLoad3($event)" />
+                </div>
+              </ion-col>
+            </ion-row>
+          </ng-container>
+        </swiper-slide>
+      </swiper-container>
+    </span>
+
+    <!-- Offer Banners Slider -->
+    <span *ngIf="offer_banners.length>0">
+      <div class="category-header">
+        <span class="category-title">Explore available offers</span>
+        <div class="category-line"></div>
+      </div>
+      <swiper-container autoplay='{"delay": 2500, "disableOnInteraction": false}' loop="true"
+        pagination='{"clickable": true}' class="custom-swiper" (slidechange)="swiperSlideChanged($event)">
+        <swiper-slide *ngFor="let item of offer_banners">
+          <ion-row>
+            <ion-col size="12" (click)="gotoshoporders(item)">
+              <div class="image-container">
+                <img [src]="item.banner_image" style="width: 100%;    height: 140px;  border-radius: 8px;"
+                  [alt]="item.banner_image" loading="lazy" (error)="onImageError($event)"
+                  (load)="onImageLoad4($event)" />
+              </div>
+            </ion-col>
+          </ion-row>
+        </swiper-slide>
+      </swiper-container>
+    </span>
+
+    <div class="sticky-element2" *ngIf="categories2.length!=0" style="padding: 2% 0%;text-align: center;">
+      <swiper-container [slidesPerView]="4.5" [spaceBetween]="20">
+        <swiper-slide *ngFor="let category of categories2" (click)="gotocategory(category)">
+          <div class="category-card" [class.selected]="category.name === selectedCategory2">
+            <img [src]="category.sub_category_image" [alt]="category.name" loading="lazy" (error)="onImageError($event)"
+              (load)="onImageLoad2($event)" />
+            <ion-icon *ngIf="category.sub_category_name === selectedCategory2" name="checkmark-circle"></ion-icon>
+          </div>
+          <span *ngIf="category?.sub_category_name?.length > 12; else fullName" class="category-name"
+            style="text-transform: capitalize;">
+            {{ category.sub_category_name | slice:0:12 }}
+          </span>
+          <ng-template #fullName style="text-align: center;">
+            <span class="category-name">{{ category.sub_category_name }}</span>
+          </ng-template>
+        </swiper-slide>
+        <swiper-slide style="text-align: center;" *ngIf="categories2.length>=7">
+          <div class="category-card" (click)="open()">
+            <ion-icon name="arrow-dropdown-circle"></ion-icon>
+          </div>
+          <span class="category-name">All</span>
+        </swiper-slide>
+      </swiper-container>
+    </div>
+
+    <div class="category-header" *ngIf="restaurants.length!=0" style="padding:0% 2%;">
+      <span class="ert-title "> See Items You Want </span>
+    </div>
+
+    <ion-card *ngFor="let a of restaurants" class="custom-card" [ngClass]="{'inactive': a.shop_active_status == 1}"
+      (click)="gotorestaurant(a)">
+      <ion-row>
+        <ion-col size="4">
+          <div class="image-container">
+            <img [src]="a.shop_image" class="card-image" [alt]="a.shop_name" loading="lazy"
+              (error)="onImageError($event)" (load)="onImageLoad5($event)" />
+          </div>
+        </ion-col>
+        <ion-col size="8">
+          <div class="header">
+            <p class="title"
+              style="text-transform: capitalize;text-transform: capitalize;  white-space: nowrap;overflow: hidden;text-overflow: ellipsis;display: block;max-width: 80%;font-size: 18px;">
+              {{ a.shop_name }}
+            </p>
+            <span class="rating">
+              <ion-button fill="clear" slot="end" size="small" color="medium">
+                <ion-icon slot="icon-only" name="ellipsis-vertical">
+                </ion-icon>
+              </ion-button>
+            </span>
+          </div>
+          <div class="info">
+            <span class="emoji-icon">
+              <img style="transform: scaleX(-1);" src="assets/icon/home/star.svg">
+            </span>{{ a.shop_rating }}
+            <span> • {{a.delivery_time}} </span>
+          </div>
+
+          <div class="info" *ngIf="a.short_address">
+            <span>{{ a.short_address }} •{{a.delivery_distance| number:'1.1-1'}} km </span>
+          </div>
+          <div class="info">
+            <div class="offer-tag" *ngIf="a.special_offer_name">
+              🎉 {{ a.special_offer_name }}
+            </div>
+          </div>
+          <div class="not-delivered-label" *ngIf="a.shop_active_status == 1 ">
+            ✅ Currently Not Delivered
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-card>
+
+    <div class="category-header" *ngIf="inactive_restaurants.length!=0">
+      <span class="category-title"> {{inactive_restaurants.length}} Merchants are not delivering to you.</span>
+      <div class="category-line"></div>
+    </div>
+
+    <ion-card *ngFor="let a of inactive_restaurants" class="custom-card"
+      [ngClass]="{'inactive': a.shop_active_status == 1}" (click)="gotorestaurant(a)">
+      <ion-row>
+        <ion-col size="4">
+          <div class="image-container">
+            <img [src]="a.shop_image" class="card-image" [alt]="a.shop_name" loading="lazy"
+              (error)="onImageError($event)" (load)="onImageLoad5($event)" />
+          </div>
+        </ion-col>
+        <ion-col size="8">
+          <div class="header">
+            <p class="title"
+              style="text-transform: capitalize;text-transform: capitalize;  white-space: nowrap;overflow: hidden;text-overflow: ellipsis;display: block;max-width: 80%;font-size: 18px;">
+              {{ a.shop_name }}
+            </p>
+            <span class="rating">
+              <ion-button fill="clear" slot="end" size="small" color="medium">
+                <ion-icon slot="icon-only" name="ellipsis-vertical">
+                </ion-icon>
+              </ion-button>
+            </span>
+          </div>
+          <div class="info">
+            <span class="emoji-icon">
+              <img style="transform: scaleX(-1);" src="assets/icon/home/star.svg">
+            </span>{{ a.shop_rating }}
+            <span> • {{a.delivery_time}} </span>
+          </div>
+
+          <div class="info" *ngIf="a.short_address">
+            <span>{{ a.short_address }} • {{a.delivery_distance| number:'1.1-1'}} km </span>
+          </div>
+          <div class="info">
+            <div class="offer-tag" *ngIf="a.special_offer_name">
+              🎉 {{ a.special_offer_name }}
+            </div>
+          </div>
+          <!-- <div class="not-delivered-label" *ngIf="a.shop_active_status == 1 ">
+            ✅ Currently Not Delivered
+          </div> -->
+        </ion-col>
+      </ion-row>
+    </ion-card>
+  </div>
+</ion-content>
+<ion-footer style="height: 55px;">
+  <ion-row class="footerback">
+    <ion-col size="2.4" class="footer-item active">
+      <img src="assets/icon/footer/11.svg"><br>
+      <span class="footac">Home</span>
+    </ion-col>
+    <ion-col size="2.4" class="footer-item" (click)="gotopage('more')">
+      <img src="assets/icon/footer/2.svg"><br>
+      <span class="footin">You</span>
+    </ion-col>
+    <ion-col size="2.4" class="footer-item" (click)="gotopage('menu')">
+      <img src="assets/icon/footer/6.svg"><br>
+      <span class="footin">Menu</span>
+    </ion-col>
+    <ion-col size="2.4" class="footer-item" [routerLink]="['/basket']">
+      <div class="icon-wrapper">
+        <img src="assets/icon/footer/4.svg">
+        <span class="badge" *ngIf="cartCount > 0">{{ cartCount }}</span>
+      </div>
+      <span class="footin">Cart</span>
+    </ion-col>
+    <ion-col size="2.4" class="footer-item" (click)="gotopage('orders')">
+      <img src="assets/icon/footer/5.svg"><br>
+      <span class="footin">Reorder</span>
+    </ion-col>
+  </ion-row>
+</ion-footer>
+
+<ion-modal #modal [isOpen]="isModalOpen" [breakpoints]="[0, 0.9, 1]" [initialBreakpoint]="0.9">
+  <ng-template>
+    <ion-content class="ion-padding">
+      <p class="category-title2"> Sub Categories </p>
+      <p class="close-btn" style="position:fixed;" (click)="close()"> ✖ </p>
+      <br>
+      <div class="grid-container">
+        <div class="grid-item" *ngFor="let item of categories2" style="overflow: auto;">
+          <img [src]="item.sub_category_image" style="width:55px;height: 55px;border-radius: 50%;"
+            (click)="gotocategory(item)" [alt]="item.sub_category_image" loading="lazy" (error)="onImageError($event)"
+            (load)="onImageLoad2($event)" />
+          <p>{{ item.sub_category_name }}</p>
+        </div>
+      </div>
+    </ion-content>
+  </ng-template>
+</ion-modal>

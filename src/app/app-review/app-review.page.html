@@ -1,0 +1,53 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start" style="font-family: 'sfregular';">
+      <ion-back-button defaultHref="/more"></ion-back-button>
+    </ion-buttons>
+    <ion-title style="font-family: 'sfregular';text-align: center;">Review</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <!-- <ion-icon style="font-family: 'sfregular';" slot="icon-only" name="cart-outline"></ion-icon> -->
+        .</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content [fullscreen]="true">
+  <ion-card class="rating-card">
+    <ion-card-header>
+      <ion-card-title class="rating-title">Rate this Zeengi</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <form #registerForm="ngForm" class="rating-form">
+        <!-- Star Rating -->
+        <ion-item class="rating-item" lines="none">
+          <ion-label class="rating-label">Rating</ion-label>
+          <div class="star-rating">
+            <ion-icon *ngFor="let star of stars; let i = index" [name]="productrating > i ? 'star' : 'star-outline'"
+              class="rating-star" (click)="setRating(i + 1)">
+            </ion-icon>
+          </div>
+        </ion-item>
+
+        <!-- Comment Box -->
+        <ion-item class="rating-item" lines="none">
+          <ion-label class="rating-label">Comments</ion-label>
+        </ion-item>
+        <ion-textarea  class="rating-textarea" name="productcommand" [(ngModel)]="productcommand" required
+            placeholder="Write your review here...">
+          </ion-textarea>
+
+        <!-- Submit Button -->
+        <div class="submit-container">
+          <ion-button expand="full" class="submit-button" style="font-family: 'sfregular';"
+            (click)="addproductcommand(productcommand, productrating)" [disabled]="!registerForm.form.valid">
+            Submit
+          </ion-button>
+        </div>
+      </form>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>

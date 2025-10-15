@@ -1,0 +1,424 @@
+@import "@ionic/angular/css/core.css";
+
+/* Basic CSS for apps built with Ionic */
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+@import "@ionic/angular/css/display.css";
+
+/* Optional CSS utils that can be commented out */
+@import "@ionic/angular/css/padding.css";
+@import "@ionic/angular/css/float-elements.css";
+@import "@ionic/angular/css/text-alignment.css";
+@import "@ionic/angular/css/text-transformation.css";
+@import "@ionic/angular/css/flex-utils.css";
+
+//------------------------------------------toast------------------------------------
+
+.ion-loading::part(content) {
+  background: rgba(0, 0, 0, 0.9);
+  /* Darker background */
+  color: #ffffff;
+  /* White text */
+  border-radius: 12px;
+  /* Rounded corners */
+}
+
+.ion-loading::part(spinner) {
+  width: 50px;
+  height: 50px;
+}
+
+
+@media (prefers-color-scheme: dark) {
+  ion-loading::part(content) {
+    background: rgba(255, 255, 255, 0.9);
+    color: #000;
+  }
+}
+
+.custom-loading::part(content) {
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 10px;
+  color: white;
+}
+
+// -------------------------------------------Loading Controller------------------------------------------
+.success-toast {
+  --ion-toast-background: #28a745;
+  /* Green background */
+  --ion-toast-color: #ffffff;
+  /* White text */
+  --ion-toast-border-radius: 8px;
+  --ion-toast-box-shadow: 0px 4px 10px rgba(0, 128, 0, 0.3);
+}
+
+.success-toast::part(message) {
+  // font-weight: bold;
+  text-align: center;
+  letter-spacing: 0.4px;
+}
+
+.success-toast::part(button) {
+  color: #ffff99;
+  /* Light yellow button text */
+  font-weight: bold;
+}
+
+
+
+//--------------------------------------------Footer icons -------------------------------------------
+
+// .transparent-header {
+//   // --background: transparent;
+//   --ion-safe-area-top: env(safe-area-inset-top);
+//   // padding-top: 45%;
+//   color: white; // Change text color if needed
+// }
+
+.footac {
+  color: #008000;
+  font-family: 'sfregular';
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 14.32px;
+  letter-spacing: 0px;
+  text-align: center;
+
+}
+
+.footin {
+  color: rgb(62, 61, 61);
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 14.32px;
+  letter-spacing: 0px;
+  text-align: center;
+  font-family: 'sfregular';
+  white-space: nowrap;
+}
+
+.footerback {
+  text-align: center;
+  height: 60px;
+  margin: 2px 0px 0px -2px;
+  padding: 2px;
+}
+
+.footerback {
+  background: white;
+  text-align: center;
+  // border-top: 1px solid #e0e0e0; /* Light border for structure */
+}
+
+.footer-item {
+  position: relative;
+  padding: 8px 0;
+}
+
+.footer-item img {
+  width: 18px;
+  /* Adjust icon size */
+  height: 18px;
+}
+
+.footer-item span {
+  font-size: 12px;
+  color: gray;
+}
+
+/* Active state */
+.footer-item.active span {
+  color: green;
+  /* Active text color */
+  font-family: 'sfregular';
+}
+
+.footer-item.active::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  /* Centers the border */
+  width: 25%;
+  height: 4px;
+  background: green;
+  /* Green top border */
+  border-radius: 2px;
+}
+
+//--------------------------------------------Footer icons -------------------------------------------
+
+//--------------------------------------------Sub category -------------------------------------------
+
+.category-card2 {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2px solid #ffa500;
+  background-color: antiquewhite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.category-card2.selected2 {
+  border-color: #0cb14b;
+}
+
+.category-card2 img {
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.category-card2 ion-icon {
+  position: absolute;
+  bottom: -5px;
+  right: -5px;
+  font-size: 18px;
+  color: #0cb14b;
+}
+
+.category-name2 {
+  margin-top: 5px;
+  font-size: 14px;
+  color: black;
+  text-align: center;
+}
+
+
+//--------------------------------------------Sub category -------------------------------------------
+
+.next-button {
+  border-radius: 50%;
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #F07100;
+  color: white;
+  font-size: 22px;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+//--------------------------------------------skde button -----------------------------------------------
+
+.header {
+  font-family: 'sfregular';
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 18px;
+  letter-spacing: 0px;
+  color: white;
+  letter-spacing: 0.8px;
+}
+
+//---------------------------------------------modal-----------------------------------------------------
+
+
+::ng-deep ion-modal {
+  --background: transparent !important;
+  --backdrop-opacity: 0 !important;
+  --border-radius: 20px;
+}
+
+.transparent-modal {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+}
+
+.modal-content {
+  padding: 16px;
+  text-align: center;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: #9b8d8d8f;
+  color: black;
+  /* font-size: 20px; */
+  padding: 4px 8px;
+  border-radius: 20px;
+  width: 30px;
+  height: 30px;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.grid-item {
+  text-align: center;
+}
+
+.grid-item img {
+  width: 60px;
+  object-fit: cover;
+}
+
+.grid-item p {
+  font-family: 'sfregular';
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 14.32px;
+  letter-spacing: 0.4px;
+  color: #000000;
+}
+
+
+//-------------------------------------------------modal -------------------------------------------------
+
+//------------------------------------resturetnt view ----------------------------------------------
+
+.custom-card {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+// .image-container {
+//   position: relative;
+// }
+
+// .card-image {
+//   width: 100%;
+//   height: 180px;
+//   object-fit: cover;
+// }
+
+.tag {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 4px;
+  font-family: 'sfregular';
+}
+
+.icon-eye {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  color: white;
+  font-size: 18px;
+}
+
+.details {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: gray;
+  font-size: 14px;
+  font-family: 'sfregular';
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  // margin-top: 6px;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #000;
+}
+
+.rating {
+  font-family: 'sfregular';
+  // background: green;
+  // color: white;
+  // padding: 4px 6px;
+  // border-radius: 6px;
+  // font-size: 14px;
+}
+
+.info {
+  font-family: 'sfregular';
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: gray;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.offer {
+  background: #e0f2ff;
+  color: #007aff;
+  padding: 6px;
+  border-radius: 6px;
+  font-size: 14px;
+  margin-top: 8px;
+  text-align: center;
+  font-family: 'sfregular';
+}
+
+//------------------------------------------restaruant---------------------------------------------------
+
+.delete-alert {
+  --backdrop-opacity: 0.75;
+  font-family: 'sfregular';
+
+
+}
+
+.alert-cancel {
+  color: #3880ff !important; // Blue color for cancel button
+  font-weight: bold;
+  font-family: 'sfregular';
+
+}
+
+.alert-delete {
+  color: #ff3b30 !important; // Red color for delete button
+  font-weight: bold;
+  font-family: 'sfregular';
+}
+
+::ng-deep .alert-wrapper {
+  border-radius: 12px;
+  background: #fff;
+  font-family: 'sfregular';
+}
+
+::ng-deep .alert-message {
+  font-size: 16px;
+  color: #333;
+  font-family: 'sfregular';
+  letter-spacing: 0.4px;
+
+}
+
+::ng-deep .alert-button-group {
+  justify-content: space-between;
+}
+
+.delete-btn {
+  background: linear-gradient(45deg, #ff3b30, #ff5e57);
+  color: white;
+  font-weight: bold;
+  border-radius: 8px;
+  font-family: 'sfregular';
+}

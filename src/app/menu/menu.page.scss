@@ -1,0 +1,82 @@
+.tets {
+    font-family: 'sfmedium';
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 0px;
+    height: 38px;
+}
+
+.tetsimag {
+    width: 100px;
+    height: 75px;
+}
+
+
+.tets3 {
+    font-family: 'sfregular';
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 14px;
+    letter-spacing: 0px;
+}
+
+.category-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 0px 0px 15px 15px;
+    background: linear-gradient(180deg, #F57B00 0%, #B93800 100%);
+    color: white;
+    position: relative;
+    margin-top: -1px;
+}
+
+ion-footer {
+    text-align: center;
+    border-top: 1px solid #AA5000;
+}
+
+.tet {
+    font-family: 'sfregular';
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 23.87px;
+    letter-spacing: 0.1px;
+}
+
+ion-header {
+    --ion-box-shadow: none;
+    box-shadow: none !important;
+}
+
+
+
+.icon-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.badge {
+    position: absolute;
+    top: -12px;
+    right: -14px;
+    background-color: #F57B00;
+    color: white;
+    font-size: 10px;
+    line-height: 2;
+    border-radius: 10px;
+    text-align: center;
+    height: 20px;
+    width: 20px;
+}
+
+.emoji-icon {
+    display: inline-block;
+    transform: scaleX(-1);
+    /* Flip emoji */
+    color: green;
+    /* Note: emoji color may not change on all devices */
+    font-size: 1.2em;
+    margin-right: 0px;
+}

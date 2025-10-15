@@ -1,0 +1,481 @@
+.category-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px;
+    border-radius: 0px 0px 15px 15px;
+    background: linear-gradient(263deg, #D8ABFF, #9B3DFF);
+    color: white;
+    position: relative;
+    // height: 150px;
+}
+
+.back-icon {
+    font-size: 22px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+}
+
+.text-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    // justify-content: center;
+}
+
+.category-image {
+    height: 100px;
+    // object-fit: contain;
+}
+
+.heder {
+    font-family: "sfregular";
+    font-weight: 700;
+    font-size: 17px;
+    // line-height: 45.87px;
+    letter-spacing: 0.4px;
+}
+
+.hede {
+    font-family: "sfregular";
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 14.32px;
+    letter-spacing: 0.6px;
+}
+
+///////////////////////////////////////////////////////////////
+
+.filter-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.filter-btn {
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    border-radius: 20px;
+    // padding: 5px 12px;
+    height: 35px;
+    --border-color: #ccc;
+    --color: #333;
+}
+
+// wrong css
+
+.filter-chip {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-size: 14px;
+    height: 35px;
+    color: #333;
+    background: white;
+}
+
+.filters {
+    font-family: "sfregular";
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 16.71px;
+    letter-spacing: 0px;
+
+}
+
+//------------------------------------------------------------------------------------------
+
+.search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+ion-searchbar {
+    flex: 1;
+    --background: #f5f5f5;
+    --border-radius: 10px;
+    --padding-start: 15px;
+    --box-shadow: none;
+    font-family: 'sfregular';
+}
+
+.search-icon,
+.voice-icon {
+    position: absolute;
+    right: 15px;
+    font-size: 24px;
+    color: green;
+}
+
+.search-icon {
+    right: 50px;
+}
+
+.voice-icon {
+    right: 15px;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+// .restaurant-card {
+//     display: flex;
+//     align-items: center;
+//     border-bottom: 1px dotted #e0e0e0;
+// }
+
+// .thumbnail img {
+//     width: 70px;
+//     height: 70px;
+//     border-radius: 8px;
+// }
+
+.content {
+    flex: 1;
+}
+
+// .restaurant-name {
+//     font-family: 'sfregular';
+//     font-weight: 700;
+//     font-size: 16px;
+//     line-height: 19.09px;
+//     letter-spacing: 0.3px;
+// }
+
+.details {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #666;
+}
+
+// wrong css
+
+.star-icon {
+    color: #fbbf24;
+    margin-right: 4px;
+}
+
+.rating2 {
+    color: black;
+    font-family: 'sfregular';
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 18.71px;
+    letter-spacing: 0.3px;
+}
+
+.categories,
+.location {
+    color: #777;
+    font-family: 'sfregular';
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 18.51px;
+    letter-spacing: 0.2px;
+}
+
+.discount {
+    font-size: 14px;
+    color: #008000;
+    font-weight: bold;
+    margin-top: 6px;
+    font-family: 'sfregular';
+    font-weight: 700;
+    font-size: 10px;
+    line-height: 11.93px;
+    letter-spacing: 0.5px;
+}
+
+.favorite-btn {
+    --padding-start: 0;
+    --padding-end: 0;
+}
+
+.heart-icon {
+    font-size: 20px;
+    color: red;
+}
+
+.food-container {
+    position: relative;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.food-image {
+    width: 108px;
+    height: 100px;
+    // object-fit: cover;
+    border-radius: 5px;
+}
+
+.favorite-btn {
+    position: absolute;
+    // top: 5px;
+    right: 4px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+}
+
+.heart-icon {
+    font-size: 18px;
+    color: red;
+}
+
+/* Black & White Effect for Inactive Shops */
+.inactive {
+    filter: grayscale(100%);
+    opacity: 0.5;
+    position: relative;
+}
+
+/* Ensure "Currently Not Delivered" Text Stays Green */
+.not-delivered-label {
+    color: green;
+    padding: 0px 10px;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 10px;
+    font-family: 'sfregular';
+
+    /* Remove grayscale from the green label */
+    filter: none;
+    opacity: 1;
+}
+
+.vendor-card {
+    --ion-card-padding: 0;
+    margin: 8px;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.vendor-card ion-thumbnail {
+    --size: 70px;
+    border-radius: 8px;
+}
+
+.vendor-card h2 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.vendor-card .rating-time {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.vendor-card .rating-time ion-icon {
+    font-size: 14px;
+}
+
+.vendor-card .rating-time .dot {
+    font-size: 6px;
+    color: #555;
+}
+
+.vendor-card p {
+    font-size: 13px;
+    margin: 2px 0;
+    color: #666;
+}
+
+.vendor-card .location {
+    font-size: 12px;
+    color: #999;
+}
+
+.offer-banner {
+    background: #eaf8ee;
+    padding: 6px 12px;
+    border-top: 1px solid #d7e7da;
+}
+
+.offer-banner ion-label {
+    font-size: 13px;
+}
+
+
+
+.custom-header {
+    background: linear-gradient(180deg, #F57B00 0%, #B93800 100%);
+    padding: 20px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+
+    .header-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .back-icon {
+            font-size: 24px;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .text-section {
+            flex-grow: 1;
+            padding-left: 12px;
+            color: #fff;
+
+            .title {
+                margin: 0;
+                font-size: 20px;
+                font-weight: 700;
+                color: #fff;
+            }
+
+            .subtitle {
+                margin: 4px 0 0 0;
+                font-size: 14px;
+            }
+        }
+
+        .biryani-img {
+            width: 90px;
+            height: auto;
+            border-radius: 10px;
+            margin-left: auto;
+            object-fit: cover;
+            width: 120px;
+            height: 99px;
+            margin-top: -27px;
+        }
+    }
+}
+
+
+.back-icon {
+    font-size: 22px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    color: white;
+}
+
+
+
+/* Swiper container layout */
+swiper-container {
+    width: 100%;
+    padding: 10px 0;
+}
+
+swiper-slide {
+    //   display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.restaurant-pair {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.restaurant-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    padding: 10px;
+    width: 96%;
+    ;
+    /* Adjust width as needed */
+    transition: transform 0.2s;
+    cursor: pointer;
+}
+
+.restaurant-card:hover {
+    transform: scale(1.02);
+}
+
+.restaurant-card.inactive {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.restaurant-image {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+h3 {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.rating-distance {
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    color: #666;
+    margin-top: 5px;
+}
+
+ion-icon {
+    font-size: 16px;
+    color: #999;
+}
+
+
+
+.category-header2 {
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding-bottom: 5px;
+    font-family: 'sfregular';
+    padding-top: 10px;
+}
+
+.category-title2 {
+    color: #000;
+    z-index: 1;
+    background: #fff;
+    /* To prevent text overlap with the line */
+    padding-right: 10px;
+    font-family: 'sfmedium';
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 14px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 0px 10px;
+}
+
+.category-line {
+    flex-grow: 1;
+    height: 1px;
+    background: #ccc;
+    /* Adjust the color to match the design */
+    margin-left: -5px;
+    /* Fine-tune to align with text */
+}

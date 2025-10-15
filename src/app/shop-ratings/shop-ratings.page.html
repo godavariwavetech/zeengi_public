@@ -1,0 +1,50 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="goBack()">
+        <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>
+      Customer Reviews
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="no-reviews-container" *ngIf="customer_reviews.length==0">
+    <ion-icon name="chatbubbles-outline" class="no-reviews-icon"></ion-icon>
+    <p class="no-reviews-text">No reviews are available</p>
+  </div>
+  <div *ngIf="customer_reviews.length>0">
+    <div *ngFor="let feedback of customer_reviews" class="feedback-item">
+      <!-- Customer Image and Name -->
+      <div class="customer-info">
+        <!-- <img [src]="feedback.imageUrl" alt="Customer Image" class="customer-image"> -->
+        <ng-container *ngIf="feedback.imageUrl; else noImage">
+          <img 
+            [src]="feedback.imageUrl" 
+            alt="Customer Image" 
+            class="customer-image"
+            (error)="feedback.imageUrl = null" />
+        </ng-container>
+        <ng-template #noImage>
+          <div class="customer-placeholder">
+            👤
+          </div>
+        </ng-template>
+        <div class="name-rating">
+          <h3>{{ feedback.customer_name }}</h3>
+        </div>
+        <!-- Display rating as a single star with count on the right -->
+        <p class="rating-text">
+          {{ feedback.order_rating }} ★
+        </p>
+      </div>
+      
+      <!-- Customer Comment -->
+      <p class="comment">{{ feedback.order_comments }}</p>
+    </div>
+  </div>
+  
+</ion-content>

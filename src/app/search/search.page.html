@@ -1,0 +1,80 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="gotoback()">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title style="font-family: 'sfregular';"> Search Items</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-searchbar (ionInput)="onSearch($event)" style="font-family: 'sfregular';" class="custom">
+  </ion-searchbar>
+
+  <ion-list style="padding: 3%;">
+    <ion-item lines="none" *ngFor="let item of recent_search; let i = index" (click)="searchlistitem(item)">
+      <ion-avatar slot="start">
+        <img [src]="item.search_image" alt="{{ item.search_text }}" (error)="onImageError($event)">
+      </ion-avatar>
+      
+      <ion-label style="font-family: 'sfregular';">
+        {{ item.search_text }} <br>
+        <div style="color: grey;">{{ item.search_tagline }}</div>
+      </ion-label>
+
+      <!-- Cross icon to remove the item -->
+      <ion-icon
+        name="close"
+        slot="end"
+        color="medium"
+        (click)="removeItem(i); $event.stopPropagation();">
+      </ion-icon>
+    </ion-item>
+
+
+    <ion-item lines="none" (click)="onCategoryClick(sub_category_data)" *ngIf="sub_category_data?.sub_category_name">
+      <ion-avatar slot="start">
+        <img [src]="sub_category_data.sub_category_image" alt="{{ sub_category_data.sub_category_name }}" (error)="onImageError($event)">
+      </ion-avatar>
+      <ion-label style="font-family: 'sfregular';">
+        {{ sub_category_data.sub_category_name }} <br>
+        <div style="    color: #ff0000;
+    font-size: 12px;
+    font-weight: 200;
+    font-family: initial;
+    line-height: 18px;
+">See all Merchants <i class="fa fa-play" aria-hidden="true" style="font-size: 8px;"></i>
+</div>
+      </ion-label>
+    </ion-item>
+
+
+    <ion-item lines="none" *ngFor="let item of searchList" (click)="searchlistitem(item)">
+      <ion-avatar slot="start">
+        <img [src]="item.search_image" alt="{{ item.search_text }}" (error)="onImageError($event)">
+      </ion-avatar>
+      <ion-label style="font-family: 'sfregular';">{{ item.search_text }} <br>
+        <div style="color: grey;" >{{ item.search_tagline }}</div>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <div class="category-header" style="padding: 3%;">
+    <span class="category-title">WHAT'S ON YOUR MIND</span>
+    <div class="category-line"></div>
+  </div>
+  <div class="grid-container" style="padding: 0px 8px;">
+    <div class="grid-item" *ngFor="let item of subcategory" style="overflow: auto;">
+      <img [src]="item.sub_category_image" style="width: 60px;height:60px;    border-radius: 50%;"
+        alt="{{ item.sub_category_name }}" (click)="onCategoryClick(item)" (error)="onImageError($event)" />
+      <p style="    font-weight: 400;
+    font-size: 15px;
+    line-height: 15.32px;
+    letter-spacing: 0.2px;
+    color: #000000;">{{ item.sub_category_name }}</p>
+    </div>
+  </div>
+
+</ion-content>

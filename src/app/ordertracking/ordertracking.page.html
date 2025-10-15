@@ -1,0 +1,325 @@
+<ion-header>
+  <div class="category-header" style="padding: 1px 8px;">
+    <ion-buttons slot="start">
+      <ion-button (click)="gotoback()">
+        <ion-icon style="color: white;" slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title style="font-family: 'sfregular';">Order Tracking</ion-title>
+  </div>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <ion-card>
+
+    <ion-row class="order-header">
+      <ion-col size="10" class="order-id">
+        Contact Support
+      </ion-col>
+      <ion-col size="2" class="order-id">
+        <a [href]="'tel:+91' + customer_number">
+          <img src="assets/icon/phoneicon.svg" style="width: 30px;">
+        </a>
+      </ion-col>
+    </ion-row>
+    <ion-list class="order-list">
+      <ion-row class="order-header">
+        <ion-col size="6" class="order-id">
+          #{{ mainorderdata.order_id }}
+        </ion-col>
+        <ion-col size="6" class="order-status">
+          <span *ngIf="mainorderdata.order_status == 0">Placed</span>
+          <span *ngIf="mainorderdata.order_status == 1 || mainorderdata.order_status == 8">Accepted</span>
+          <span *ngIf="mainorderdata.order_status == 2">Pickup Delivery boy</span>
+          <span *ngIf="mainorderdata.order_status == 3">Delivered</span>
+          <span *ngIf="mainorderdata.order_status == 4">Canceled</span>
+          <span *ngIf="mainorderdata.order_status == 5">Rejected</span>
+          <span *ngIf="mainorderdata.order_status == 6">User Not Received</span>
+          <span *ngIf="mainorderdata.order_status == 7">Waiting for Payment</span>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="order-meta">
+        <ion-col size="6" class="order-date">
+          {{ mainorderdata.order_date_time | date :"dd-MM-YYYY hh:mm a" }}
+        </ion-col>
+        <ion-col size="6" class="order-total">
+          {{ mainorderdata.grand_total | currency: 'INR' }}/-
+        </ion-col>
+      </ion-row>
+
+      <ion-item lines="none" class="order-address">
+        <ion-icon name="radio-button-on" slot="start" class="address-icon"></ion-icon>
+        <ion-label style="font-family: 'sfregular';">{{ mainorderdata.shop_address }}</ion-label>
+      </ion-item>
+
+      <ion-item lines="none" class="order-address">
+        <ion-icon name="location-outline" slot="start" class="address-icon"></ion-icon>
+        <ion-label style="font-family: 'sfregular';">{{ mainorderdata.delivery_address }}</ion-label>
+      </ion-item>
+    </ion-list>
+
+
+  </ion-card>
+  <ion-card>
+    <ion-row class="ion-align-items-center ion-justify-content-center">
+      <ion-col size="2" class="icon-col">
+        <ion-icon name="navigate"
+          [ngClass]="mainorderdata.order_status == 0 ? 'active-icon' : 'inactive-icon'"></ion-icon>
+      </ion-col>
+
+      <ion-col size="1" class="separator-col">
+        <div class="separator-line"></div>
+      </ion-col>
+
+      <ion-col size="2" class="icon-col">
+        <ion-icon name="checkmark"
+          [ngClass]="mainorderdata.order_status == 1 || mainorderdata.order_status == 8 ? 'active-icon' : 'inactive-icon'"></ion-icon>
+      </ion-col>
+
+      <ion-col size="1" class="separator-col">
+        <div class="separator-line"></div>
+      </ion-col>
+
+      <ion-col size="2" class="icon-col">
+        <ion-icon name="bicycle"
+          [ngClass]="mainorderdata.order_status == 2 ? 'active-icon' : 'inactive-icon'"></ion-icon>
+      </ion-col>
+
+      <ion-col size="1" class="separator-col">
+        <div class="separator-line"></div>
+      </ion-col>
+
+      <ion-col size="2" class="icon-col">
+        <ion-icon *ngIf="mainorderdata.order_status <= 8" name="location-outline"
+          [ngClass]="mainorderdata.order_status == 3 ? 'active-icon' : 'inactive-icon'">
+        </ion-icon>
+
+        <ion-icon
+          *ngIf="mainorderdata.order_status == 4 || mainorderdata.order_status == 5 || mainorderdata.order_status == 6 "
+          name="close" class="active-icon">
+        </ion-icon>
+      </ion-col>
+    </ion-row>
+
+
+    <ion-row class="ion-justify-content-center">
+      <ion-col size="2" class="text-col">
+        <p>Placed</p>
+      </ion-col>
+      <ion-col size="1"></ion-col>
+      <ion-col size="2" class="text-col">
+        <p>Accepted</p>
+      </ion-col>
+      <ion-col size="1"></ion-col>
+      <ion-col size="2" class="text-col">
+        <p>Ongoing</p>
+      </ion-col>
+      <ion-col size="1"></ion-col>
+      <ion-col size="2" class="text-col">
+        <!-- <p *ngIf="mainorderdata.order_status == 0">Placed</p>
+        <p *ngIf="mainorderdata.order_status == 1">Accepted</p> -->
+        <!-- <p *ngIf="mainorderdata.order_status == 2">Pickup Delivery boy</p> -->
+        <p
+          *ngIf="mainorderdata.order_status == 3 || mainorderdata.order_status == 0 || mainorderdata.order_status == 1 || mainorderdata.order_status == 2 || mainorderdata.order_status == 8">
+          Delivered</p>
+        <p *ngIf="mainorderdata.order_status == 4">Canceled</p>
+        <p *ngIf="mainorderdata.order_status == 5">Rejected</p>
+        <p *ngIf="mainorderdata.order_status == 6">User Not Received</p>
+        <p *ngIf="mainorderdata.order_status == 7">Waiting for Payment</p>
+      </ion-col>
+    </ion-row>
+  </ion-card>
+
+
+  <ion-card>
+    <ion-grid style="background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+
+      <!-- Heading -->
+      <ion-row>
+        <ion-col size="12">
+          <h2 style="color: #F57B00; font-family: 'sfregular'; font-size: 1.2rem; margin-bottom: 10px;">
+            Payment Receipt
+          </h2>
+        </ion-col>
+      </ion-row>
+
+      <!-- Total Items -->
+      <ion-row>
+        <ion-col size="6">Total Items</ion-col>
+        <ion-col size="6" class="ion-text-right" style="font-weight: 500;">
+          {{ mainorderdata.item_count }}
+        </ion-col>
+      </ion-row>
+
+      <!-- Total Items Amount -->
+      <ion-row>
+        <ion-col size="6">Total Items Amount</ion-col>
+        <ion-col size="6" class="ion-text-right">
+          {{ mainorderdata.actual_total_amount | currency:'INR' }}/-
+        </ion-col>
+      </ion-row>
+
+      <!-- Savings -->
+      <ion-row *ngIf="mainorderdata.total_saving_amount != 0">
+        <ion-col size="6">Items Saving</ion-col>
+        <ion-col size="6" class="ion-text-right" style="color: #f44336;">
+          (-) {{ mainorderdata.total_saving_amount | currency:'INR' }}/-
+        </ion-col>
+      </ion-row>
+
+      <!-- Delivery Charges -->
+      <ion-row>
+        <ion-col size="6">Delivery Charges</ion-col>
+        <ion-col size="6" class="ion-text-right" style="color: #555;">
+          (+) {{ mainorderdata.delivery_charges | currency:'INR' }}/-
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col size="6">Gst And Platform Fee</ion-col>
+        <ion-col size="6" class="ion-text-right" style="color: #555;">
+          (+) {{diffamount | currency:'INR' }}/-</ion-col>
+      </ion-row>
+
+      <!-- Coupon Discount -->
+      <ion-row *ngIf="mainorderdata.coupon_amount != 0">
+        <ion-col size="6">Coupon Discount</ion-col>
+        <ion-col size="6" class="ion-text-right" style="color: #f44336;">
+          (-) {{ mainorderdata.coupon_amount | currency:'INR' }}/-
+        </ion-col>
+      </ion-row>
+
+      <!-- Grand Total -->
+      <ion-row style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee;">
+        <ion-col size="6">
+          <strong style="font-size: 0.9rem;">Grand Total</strong>
+        </ion-col>
+        <ion-col size="6" class="ion-text-right">
+          <strong style="font-size: 0.9rem;">{{ mainorderdata.grand_total | currency:'INR' }}/-</strong>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card>
+
+  <ion-card style="padding: 3px;font-family: 'sfregular'" *ngIf="mainorderdata.order_status==3">
+    <ion-button expand="full" (click)="reorder()" style="font-family: 'sfregular'">Re-Order</ion-button>
+  </ion-card>
+
+  <ion-card style="padding: 7px;">
+    <div *ngFor="let i of orderitemdetails" class="order-item">
+      <ion-thumbnail class="item-thumbnail">
+        <img [src]="i.item_image" (error)="onImageError($event)" />
+      </ion-thumbnail>
+
+      <div class="item-details" style="display: flex; justify-content: space-between; width: 100%; padding: 12px 0;">
+        <div style="flex: 1;">
+          {{ i.item_name }} <br>
+          <span *ngIf="i.item_description" style="color: #b1b1b1;font-size: 10px;">{{i.item_description}}</span>
+          <br>
+          {{ i.sub_item_count }} x Rs.{{ i.item_price }}
+        </div>
+        <div style="text-align: right; min-width: 80px;font-weight: 600;">
+          <br> Rs.{{ i.item_total_amount }}
+        </div>
+      </div>
+
+    </div>
+  </ion-card>
+
+  <!-- <ion-card *ngIf="mainorderdata.order_status==2"
+    style="border-radius: 7px; width: calc(100% - 0px); font-size: 1.4rem; background: #fff;">
+    <ion-row>
+      <ion-col size="12">
+        <h4 style="padding: 6px;text-align: center;">OTP Verification</h4>
+        <p style="text-align: center; color: #F57B00;font-weight: bold;">{{mainorderdata.customer_otp}}</p>
+      </ion-col>
+    </ion-row>
+  </ion-card> -->
+
+
+
+  <ion-card style="border-radius: 12px;padding: 3px;" *ngIf="mainorderdata.order_status==8">
+    <ion-card-header>
+      <ion-card-title style="text-align: center;font-size: 1.1rem;">Delivery boy Details</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content *ngFor="let d of deliveryboyarr">
+      <ion-row>
+        <ion-col size="6">{{d.delivery_boy_name}} </ion-col>
+        <ion-col size="6" style="text-align: right;">
+          <a href="tel:{{d.delivery_boy_mobile_number}}">
+            <ion-icon name="call" style="color: #F57B00;font-size: 19px;"></ion-icon> {{d.delivery_boy_mobile_number}}
+          </a>
+        </ion-col>
+      </ion-row>
+    </ion-card-content>
+  </ion-card>
+
+
+  <ion-card class="rating-card" *ngIf="mainorderdata.order_rating_status!=0 ">
+    <ion-label>
+      <b class="rating-title">Rating</b>
+    </ion-label>
+    <form #registerForm="ngForm" class="rating-form">
+      <ion-item class="rating-item" lines="none">
+        <span style="font-family: 'sfregular';">Rating&nbsp;&nbsp;</span>
+        <div class="star-rating">
+          <ion-icon *ngFor="let star of stars; let i = index" [name]="productrating > i ? 'star' : 'star-outline'"
+            (click)="setRating(i + 1)">
+          </ion-icon>
+        </div>
+      </ion-item>
+
+      <ion-item class="rating-item">
+        <ion-label style="font-family: 'sfregular';" position="stacked">Comments</ion-label>
+        <ion-textarea style="font-family: 'sfregular';" name="productcommand" [(ngModel)]="productcommand" required
+          placeholder="Write your review here..."></ion-textarea>
+      </ion-item>
+
+      <div style="text-align: center;">
+        <ion-button expand="full" style="font-family: 'sfregular';"
+          (click)="addproductcommand(productcommand, productrating)" [disabled]="!registerForm.form.valid">
+          Submit Review
+        </ion-button>
+      </div>
+    </form>
+  </ion-card>
+
+  <ion-card class="review-card" *ngIf="mainorderdata.order_rating_status">
+    <ion-card-content>
+      <div style=" font-family: 'sfregular' ;">Your Rating</div><br>
+      <div class="rating-stars">
+        <ion-icon *ngFor="let star of [1,2,3,4,5]" name="star"
+          [class.filled]="star <= + mainorderdata.order_rating_status">
+        </ion-icon>
+        <span class="rating-value">{{ mainorderdata.order_rating_status }}/5</span>
+      </div>
+
+      <p class="review-comment">“{{ mainorderdata.rating_comment }}”</p>
+    </ion-card-content>
+  </ion-card>
+
+
+  <!-- <ion-card style="padding: 10px;" *ngIf="mainorderdata.order_rating_status==0">
+    <ion-label><b style="color: #53B175; font-size: 18px;">Delivery Rating</b></ion-label>
+    <ion-label>Rating</ion-label>
+    <form #registerForm2="ngForm">
+      <ion-item>
+        <ion-label>Comments</ion-label>
+        <ion-input type="text" name="deliverycommand" [(ngModel)]="deliverycommand" required
+          style="border-bottom: 1px solid;"></ion-input>
+      </ion-item>
+      <ion-item style="text-align: center;">
+        <button ion-button round outline (click)="adddeliverycommand(deliverycommand,deliveryrating,mainorderdata)"
+          [disabled]="!registerForm2.form.valid">Submit</button>
+      </ion-item>
+    </form>
+  </ion-card> -->
+
+
+
+</ion-content>

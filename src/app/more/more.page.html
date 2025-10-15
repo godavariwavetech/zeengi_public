@@ -1,0 +1,168 @@
+<ion-header>
+  <!-- Top Header Row -->
+  <div class="category-header"
+    style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px;">
+
+    <!-- Left Section: Logo and Button -->
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <img src="assets/icon/small_logo.svg" alt="Logo">
+      <ion-button fill="clear" class="icon-button">
+        <!-- <ion-icon name="basket-outline"></ion-icon> -->
+      </ion-button>
+    </div>
+
+    <!-- Right Section: Profile Info -->
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <div class="test" *ngIf="!profile_image">
+        {{ firstName }}
+      </div>
+      <div class="test" *ngIf="profile_image">
+        <img [src]="profile_image" alt="Profile Image" class="profile-img" />
+      </div>
+      <div>
+        <span style="font-family: 'sfregular'; text-transform: capitalize;">Hello, {{ nme }}</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Profile Completion Row -->
+  <ion-item lines="none" style="--padding-start: 12px; --inner-padding-end: 12px;">
+    <ion-avatar slot="start">
+      <ion-icon name="person-circle-outline" size="large"></ion-icon>
+    </ion-avatar>
+    <ion-label class="ref" style="font-family: 'sfregular'; font-size: 16px;">Your profile</ion-label>
+    <ion-badge color="warning" slot="end" style="font-family: 'sfregular'; letter-spacing: 0.3px;">
+      {{ profileCompletion }}% completed
+    </ion-badge>
+  </ion-item>
+</ion-header>
+
+
+
+<ion-content [fullscreen]="true">
+
+  <!-- User Info -->
+
+
+  <ion-row>
+    <ion-col size="6" (click)="gotoprofile()">
+      <ion-button class="getsd" expand="block" fill="outline" color="medium">Your Account</ion-button>
+    </ion-col>
+
+    <ion-col size="6" (click)="gotoorders(1)">
+      <ion-button class="getsd" expand="block" fill="outline" color="medium">Your Orders</ion-button>
+    </ion-col>
+  </ion-row>
+
+  <!-- <ion-row>
+    <ion-col size="6" (click)="gotocollection()">
+      <ion-button class="getsd" expand="block" fill="outline" color="medium">Your Collection</ion-button>
+    </ion-col>
+  </ion-row> -->
+
+  <ion-item button (click)="gotocollection()">  
+    <ion-icon slot="start" class="icone" name="thumbs-up-outline"></ion-icon>
+    <ion-label class="ref">Your Collection</ion-label>
+    <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+  </ion-item>
+
+  <ion-item button [routerLink]="['/about']">
+    <ion-icon slot="start" class="icone" name="information-circle-outline"></ion-icon>
+    <ion-label class="ref">About</ion-label>
+    <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+  </ion-item>
+
+  <ion-item button [routerLink]="['/support']">
+    <ion-icon slot="start" class="icone" name="help-circle-outline"></ion-icon>
+    <ion-label class="ref">Support</ion-label>
+    <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+  </ion-item>
+
+  <ion-item button [routerLink]="['/app-review']">
+    <ion-icon slot="start" class="icone" name="phone-portrait-outline"></ion-icon>
+    <ion-label class="ref">App Feedback</ion-label>
+    <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+  </ion-item>
+
+  <ion-item button (click)="gotoaddress()">
+    <ion-icon slot="start" class="icone" name="map-outline"></ion-icon>
+    <ion-label class="ref">Address Book</ion-label>
+    <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+  </ion-item>
+
+
+  <!-- <ion-item button [routerLink]="['/terms']">
+      <ion-icon slot="start" class="icone" name="document-text-outline"></ion-icon>
+      <ion-label class="ref">Terms & Conditions</ion-label>
+      <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+    </ion-item> -->
+
+  <!-- <ion-item button [routerLink]="['/privacy']">
+      <ion-icon slot="start" class="icone" name="help-outline"></ion-icon>
+      <ion-label class="ref">Privacy Policy</ion-label>
+      <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+    </ion-item> -->
+
+  <!-- <ion-item button [routerLink]="['/refund']">
+      <ion-icon slot="start" class="icone" name="text-outline"></ion-icon>
+      <ion-label class="ref">Refund Policy</ion-label>
+      <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+    </ion-item> -->
+
+  <ion-item button (click)="share()">
+    <ion-icon slot="start" class="icone" name="share-social-outline"></ion-icon>
+    <ion-label class="ref">Share</ion-label>
+    <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+  </ion-item>
+
+  <ion-item button [routerLink]="['/settings']">
+    <ion-icon slot="start" class="icone" name="settings"></ion-icon>
+    <ion-label class="ref">Settings</ion-label>
+    <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+  </ion-item>
+
+  <ion-item button (click)="Logout()" *ngIf="login">
+    <ion-icon slot="start" class="icone" name="power-outline"></ion-icon>
+    <ion-label class="ref">Log out</ion-label>
+    <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+  </ion-item>
+
+  <ion-item button (click)="loginUser()" *ngIf="!login">
+    <ion-icon slot="start" class="icone" name="log-in-outline"></ion-icon>
+    <ion-label class="ref">Log in</ion-label>
+    <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+  </ion-item>
+  <!-- </ion-card> -->
+</ion-content>
+
+<ion-footer style="height: 55px;">
+  <ion-row class="footerback">
+    <ion-col size="2.4" class="footer-item" [routerLink]="['/home']">
+      <img src="assets/icon/footer/1.svg"><br>
+      <span class="footac">Home</span>
+    </ion-col>
+    <ion-col size="2.4" class="footer-item active" [routerLink]="['/more']">
+      <img src="assets/icon/footer/22.svg"><br>
+      <span class="footin">You</span>
+    </ion-col>
+    <ion-col size="2.4" class="footer-item" [routerLink]="['/menu']">
+      <img src="assets/icon/footer/6.svg"><br>
+      <span class="footin">Menu</span>
+    </ion-col>
+    <ion-col size="2.4" class="footer-item" [routerLink]="['/basket']">
+      <div class="icon-wrapper">
+        <img src="assets/icon/footer/4.svg">
+        <span class="badge" *ngIf="cartCount > 0">{{ cartCount }}</span>
+      </div>
+      <br>
+      <!-- <img src="assets/icon/footer/4.svg"><br> -->
+      <span class="footin">Cart</span>
+    </ion-col>
+    <ion-col size="2.4" class="footer-item " (click)="gotoorders(0)">
+      <img src="assets/icon/footer/5.svg"><br>
+      <span class="footin">Reorder</span>
+    </ion-col>
+
+  </ion-row>
+</ion-footer>

@@ -1,0 +1,84 @@
+
+
+<ion-content [fullscreen]="true" >
+  <br>
+  <ion-row>
+    <ion-col size="2" style="display: flex;align-items: center;font-size: 20px;text-align: center;">
+      <ion-icon name="arrow-back"></ion-icon>
+    </ion-col>
+    <ion-col size="10" class="reg">
+      <span>{{'Complete_the_following_Details' | translate}} </span>
+    </ion-col>
+  </ion-row>
+  <br>
+  <form [formGroup]="detailsForm" style="padding: 0px 15px;">
+    <ion-list>
+      <ion-item>
+        <ion-label class="name" position="stacked">Enter Name</ion-label>
+        <ion-input class="textfield" formControlName="name" type="text"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label class="name" position="stacked">Phone Number</ion-label>
+        <ion-input class="textfield" readonly formControlName="phoneNumber" max-length="10" min-length="10"
+          type="tel"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label class="name" position="stacked">Age</ion-label>
+        <ion-input class="textfield" formControlName="age" type="number"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label class="name" position="stacked">Father Name / Husband Name / Other</ion-label>
+        <ion-input class="textfield" formControlName="fatherName" type="text"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label class="name" position="stacked">Location</ion-label>
+        <ion-textarea class="textfield" rows="2" formControlName="location"></ion-textarea>
+      </ion-item>
+
+      <ion-item>
+        <ion-label class="name" position="stacked">Constituency</ion-label>
+        <ion-select class="textfield" style="width: 100%;" formControlName="constituency"
+          (ionChange)="onConstituencyChange($event)">
+          <ion-select-option value="" disabled selected>
+            Select the Constituency
+          </ion-select-option>
+          <ion-select-option *ngFor="let item of constituency" [value]="item.constituency_id">
+            {{ item.constituency_name }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item style="width: 100%;">
+        <ion-label class="name" position="stacked">Mandalam</ion-label>
+        <ion-select class="textfield" formControlName="mandalam" (ionChange)="onMandalsChange($event)" (click)="hotom('2')">
+          <ion-select-option value="" disabled selected>
+            Select the Mandalam
+          </ion-select-option>
+          <ion-select-option *ngFor="let item of filteredmandal" [value]="item.mandal_id">
+            {{ item.mandal_name }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label class="name" position="stacked">Village</ion-label>
+        <ion-select class="textfield" style="width: 100%;" formControlName="village" (click)="hotom('3')">
+          <ion-select-option value="" disabled selected>
+            Select the Village
+          </ion-select-option>
+          <ion-select-option *ngFor="let item of filteredvillages" [value]="item.id">
+            {{ item.village_name }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-list>
+
+    <button class="red" type="submit" (click)="onSubmit()">
+      Save
+    </button>
+  </form>
+</ion-content>

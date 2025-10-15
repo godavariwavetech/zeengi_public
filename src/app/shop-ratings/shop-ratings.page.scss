@@ -1,0 +1,88 @@
+.feedback-item {
+    border-bottom: 1px solid #ccc;
+    padding: 15px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 15px;
+  }
+  
+  .customer-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Ensures rating moves to the right */
+    margin-bottom: 10px;
+    width: 100%; /* Make sure it spans the full width */
+  }
+  
+  .customer-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 15px;
+  }
+  
+  .name-rating {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Makes the name container take up all available space */
+  }
+  
+  h3 {
+    margin: 0;
+    font-size: 1.2em;
+  }
+  
+  .rating-text {
+    margin-left: 15px;
+    font-size: 1.1em;
+    color: rgb(255, 217, 0);
+    white-space: nowrap;
+    background: #07772F;
+    padding: 2px 9px;
+    border-radius: 5px;
+}
+  
+  .comment {
+    font-style: italic;
+    color: #555;
+    margin: 10px 0;
+  }
+
+
+
+  .customer-placeholder {
+    width: 80px;
+    height: 80px;
+    font-size: 40px;
+    background-color: #e0e0e0;
+    color: #555;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+  }
+  
+
+
+  .no-reviews-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    color: #666;
+  }
+  
+  .no-reviews-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+    color: #999;
+  }
+  
+  .no-reviews-text {
+    font-size: 18px;
+  }
+  

@@ -1,0 +1,40 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title style="font-family: 'sfregular';">Select your delivery time</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="closseslottimingmodal()">
+        <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="delivery-time-picker">
+
+  <!-- Date Picker -->
+  <div class="date-scroll-wrapper">
+    <div class="date-scroll">
+      <div class="date-item" *ngFor="let date of dateOptions" [class.selected]="date === selectedDate"
+        (click)="selectDate(date)" style="font-family: 'sfregular';">
+        <p class="date">{{ date.display }}</p>
+        <p class="label">{{ date.label }}</p>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- Time Picker -->
+  <div #timeScroll class="time-scroll-wrapper" (scroll)="onScrollTime()">
+    <div class="time-scroll">
+      <div class="time-scroll-spacer"></div> <!-- top spacer -->
+      <div class="time-item" *ngFor="let time of timeOptions" [class.selected]="time === selectedTime"
+        (click)="selectTime(time)">
+        {{ time }}
+      </div>
+      <div class="time-scroll-spacer"></div> <!-- bottom spacer -->
+    </div>
+  </div>
+  <!-- Confirm Button -->
+  <ion-button expand="block" class="confirm-button" (click)="selectslotanddate()">Confirm</ion-button>
+</ion-content>

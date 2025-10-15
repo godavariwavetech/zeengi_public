@@ -1,0 +1,831 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="goBack()">
+        <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-item button detail lines="true"
+      style="display: flex; align-items: center; padding-left: 0; font-size: 14px; color: #555; font-family: 'sfregular';padding-right: 12px;">
+      <ion-label style="font-family: 'sfregular';font-size: 18px;" (click)="gotomaplocation()">
+        {{ shopdetails?.shop_name }} <br>
+        <span
+          style="display: inline-block; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;font-size: 12px;">
+          {{ shopdetails?.delivery_time || '20-25 min' }} {{address_type}} | {{ locationaddress }}
+        </span>
+      </ion-label>
+    </ion-item>
+  </ion-toolbar>
+</ion-header>
+
+
+
+<ion-content [fullscreen]="true">
+
+  <ng-container *ngIf="distanceLoading">
+    <!-- Skeleton for Cart Items -->
+    <ion-card class="delivery-card">
+      <ion-card-content>
+        <!-- Repeat Skeletons for Placeholder Cart Items -->
+        <ng-container *ngFor="let skeleton of [1,2,3]">
+          <ion-item lines="none">
+            <ion-label>
+              <ion-skeleton-text animated style="width: 40%; height: 14px;"></ion-skeleton-text>
+              <ion-skeleton-text animated style="width: 60%; height: 12px; margin-top: 4px;"></ion-skeleton-text>
+            </ion-label>
+            <ion-skeleton-text animated style="width: 50px; height: 20px;" slot="end"></ion-skeleton-text>
+          </ion-item>
+          <div style="border-bottom: 1px dashed #ccc; margin: 8px 0;"></div>
+        </ng-container>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card class="delivery-card">
+      <ion-card-content>
+        <!-- Label Skeleton -->
+        <ion-item lines="none">
+          <ion-label>
+            <ion-skeleton-text animated style="width: 60%; height: 14px;"></ion-skeleton-text>
+          </ion-label>
+        </ion-item>
+
+        <!-- Input Field Placeholder -->
+        <ion-item lines="none">
+          <ion-label>
+            <ion-skeleton-text animated style="width: 100%; height: 36px;"></ion-skeleton-text>
+          </ion-label>
+        </ion-item>
+
+        <!-- Image Placeholder (for uploaded prescription) -->
+        <div style="text-align: center; margin-top: 12px;">
+          <ion-skeleton-text animated style="width: 80%; height: 120px; border-radius: 6px;"></ion-skeleton-text>
+        </div>
+
+        <!-- Button Skeleton -->
+        <div style="text-align: center; margin-top: 12px;">
+          <ion-skeleton-text animated style="width: 100px; height: 32px; border-radius: 4px;"></ion-skeleton-text>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+
+  </ng-container>
+
+
+  <div *ngIf="nodata" style="font-family: 'sfregular';font-size: 20px;text-align: center;margin-top: 50%;">
+    <img style="width: 35%;" src="assets/icon/emptycart.png"><br>
+    Your Cart is Empty!
+  </div>
+
+  <div class="cart-summary" *ngIf="cartdata.length && !distanceLoading">
+    <p>Total Items ({{ totalItems }})</p>
+  </div>
+
+  <ion-card class="delivery-card">
+    <div *ngIf="cartdata.length && !distanceLoading" style="box-shadow:1px 0px 8px 2px rgba(0, 0, 0, 0.1);padding: 0%;">
+      <div class="cart-item" *ngFor="let item of cartdata; let last = last">
+        <div class="product-details">
+          <div class="nme">
+            <p style="color: #ff5252;" *ngIf="item?.prescription_required">📄 Prescription required</p>
+            <span *ngIf="item.filterone">
+              <img *ngIf="item.filterone == 'Non Veg'" src='assets/icon/category/non-veg.svg' alt="Food Type"
+                style="width: 10px;" />
+              <img *ngIf="item.filterone == 'Veg'" src='assets/icon/category/veg.svg' alt="Food Type"
+                style="width: 10px;" />
+            </span>
+            {{ item.item_name | slice:0:30 }}{{ item.item_name.length > 30 ? '...' : '' }}
+            <p style="color: #7f7f7f;">{{item?.final_more_itmes}}</p>
+          </div>
+          <div class="price">
+            <span class="price"> ₹{{ item.selling_price * item.itemscount}} </span>
+          </div>
+        </div>
+
+        <div class="quantity-control">
+          <div class="counter-box" (click)="decreaseQuantity(item)">
+            <ion-icon name="remove-outline"></ion-icon>
+          </div>
+          <ion-text>
+            <h4>{{ item.itemscount }}</h4>
+          </ion-text>
+          <div class="counter-box" (click)="increaseQuantity(item)">
+            <ion-icon name="add-outline"></ion-icon>
+          </div>
+        </div>
+
+        <!-- Only show <hr> if it's not the last item -->
+        <!-- <div class="custom-line" *ngIf="!last"></div> -->
+
+      </div>
+
+      <div>
+        <span style="padding: 0px 18px; color: #F57B00 ;" (click)="callbackpage()">+ Add more items</span>
+      </div>
+      <div style="border-top: 2px dashed #80808066; padding: 2%;">
+        <div (click)="opennotemodal()" style=" border: 1px solid #d5d5d56e; padding: 8px; border-radius: 9px;
+              font-family: 'sfregular'; color: #505050; font-size: 14px; display: flex; align-items: center;
+              gap: 8px; cursor: pointer; ">
+          <ion-icon name="document-text-outline" style="color: #F57B00 ;font-size: 20px;"></ion-icon>
+          <span>Add a note for the Merchant </span>
+        </div>
+      </div>
+
+    </div>
+  </ion-card>
+
+  <!-- Upload Prescription Section -->
+  <ion-card class="delivery-card" *ngIf="cartdata.length && !distanceLoading">
+    <div *ngIf="prescriptionRequired" style="padding: 16px; border-top: 1px dashed #ccc;">
+      <label *ngIf="!showprescription" style="font-weight: 500; color: #444; display: block; margin-bottom: 8px;">
+        📄 Upload Prescription
+      </label>
+
+      <div *ngIf="!showprescription">
+        <input type="file" (change)="onPrescriptionUpload($event)" accept="image/*" />
+      </div>
+
+      <div style="margin-top: 10px; text-align: center;" *ngIf="showprescription">
+        <p style="color: #F57B00 ; font-weight: 500;">✅ Prescription Uploaded:</p>
+        <img [src]="uploadedPrescription" alt="Prescription"
+          style="width: 100%; max-width: 300px; border: 1px solid #ccc; border-radius: 6px;" />
+        <button ion-button color="danger" (click)="removePrescription()"
+          style="margin-top: 10px;padding: 6px; border: 1px solid #F57B00 ; background: #daffda; border-radius: 3px;">
+          Remove
+        </button>
+      </div>
+    </div>
+  </ion-card>
+
+
+
+  <ion-card class="delivery-card" *ngIf="cartdata.length && !distanceLoading" style="padding: 0px 10px 0px 0px;">
+    <!-- Saved Delivery Section -->
+    <ion-item lines="none" *ngIf="saved_delivery" style="display: flex; align-items: center;">
+      <img style="width: 25px;" src="assets/icon/correct.svg">&nbsp;&nbsp;
+      <ion-label style="font-family: 'sfregular'; font-size: 14px;">
+        You saved ₹{{commonapis?.delivery_fixed_charges}} on delivery
+        <p style="font-size: 12px; margin-top: 4px;">Auto-applied as your order is above ₹{{valid_offer_amount}}</p>
+      </ion-label>
+    </ion-item>
+    <ion-item lines="none" *ngIf="!saved_delivery" style="display: flex; align-items: center;">
+      <img style="width: 25px;" src="assets/icon/correct.svg">&nbsp;&nbsp;
+      <ion-label style="font-family: 'sfregular'; font-size: 14px;">
+        Orders above ₹{{valid_offer_amount}} save ₹10 on delivery
+        <p style="font-size: 12px; margin-top: 4px;">Auto-applied as your order is above ₹{{valid_offer_amount}}</p>
+      </ion-label>
+    </ion-item>
+
+
+    <div style="border-bottom: 0.5px dashed rgb(206, 206, 206); margin: 8px 0;"></div>
+
+    <!-- Discount Section -->
+    <ion-item lines="none" *ngIf="selectedCoupon && coupon_discount_amount!=0"
+      style="display: flex; align-items: center;">
+      <img style="width: 25px;" src="assets/icon/correct.svg">&nbsp;&nbsp;
+      <ion-label style="font-family: 'sfregular';">You saved ₹{{ coupon_discount_amount }} with
+        {{selectedCoupon.coupon_name}}</ion-label>
+      <strong class="discount-amount" (click)="toggleCoupon(1, selectedCoupon)"
+        style="margin-left: auto; font-size: 14px; color: #F57B00 ;">Remove</strong>
+    </ion-item>
+
+    <!-- View Coupons Button -->
+    <ion-item button detail lines="none" (click)="openModal()"
+      style="display: flex; align-items: center; padding-left: 0;" *ngIf="banner_item_status==0">
+      <!-- <img style="width: 35px; margin-left: -4px;" src="assets/icon/coupon.png">&nbsp; -->
+      <ion-label style="font-family: 'sfregular';">View all coupons</ion-label>
+    </ion-item>
+  </ion-card>
+
+  <!-- Delivery Time and Location Section -->
+  <ion-card class="delivery-card" *ngIf="cartdata.length && !distanceLoading">
+    <ion-card-content>
+      <!-- Delivery Time Section -->
+      <ion-item lines="none" class="bill-summary" style="display: flex; align-items: center; padding-left: 0;">
+        <ion-icon slot="start" name="time-outline" style="font-size: 22px;"></ion-icon>
+        <!-- <ion-icon name="time"></ion-icon>
+        <ion-icon name="alarm-outline"></ion-icon> -->
+
+        <ion-label style="font-family: 'sfregular';">
+          <div style="display: flex; flex-direction: column;" *ngIf="deliveryType==0 ">
+            <span style="font-size: 15px; color: #333;">Delivery in {{shopdetails?.delivery_time}}</span>
+            <!-- <span style="font-size: 14px; color: #777;" (click)="setslot(1)">Want this later? <span
+                class="platform-fee">Schedule it</span> </span> -->
+          </div>
+          <div style="display: flex; flex-direction: column;" *ngIf="deliveryType==1 ">
+            <span style="font-size: 15px; color: #333;">Delivery in {{selectedDate?.display}} - {{selectedTime}}</span>
+            <span style="font-size: 14px; color: #777;" (click)="setslot(0)" *ngIf="shopdetails.slot_order==0">Want this
+              <span class="platform-fee"> Instant Order? </span></span>
+          </div>
+        </ion-label>
+      </ion-item>
+
+      <div style="border-bottom: 0.5px dashed rgb(206, 206, 206); padding: 8px;"></div>
+
+      <!-- Delivery Address Section -->
+      <ion-item button detail lines="none" class="bill-summary" style="display: flex; align-items: center;">
+        <ion-icon slot="start" name="briefcase-outline"></ion-icon>
+        <ion-label style="font-family: 'sfregular';">
+          <div style="display: flex; flex-direction: column;" (click)="gotomaplocation()">
+            <span style="font-size: 15px; color: #333;">Delivery at {{ address_type}}</span>
+            <span style="font-size: 12px; color: #777;">{{ locationaddress }}</span>
+          </div>
+          <br>
+          <span class="platform-fee" (click)="openinstructionmodal()" *ngIf="!selectedInstruction">Add Instructions for
+            delivery partner</span>
+          <span class="platform-fee" (click)="openinstructionmodal()"
+            *ngIf="selectedInstruction">{{selectedInstruction}} <span style="float: right;
+    color: #34ab34;">Edit</span></span>
+
+        </ion-label>
+      </ion-item>
+
+
+
+
+      <!-- Customer Info Section -->
+      <span *ngIf="customer_id" (click)="opennammemodal()">
+        <div style="border-bottom: 0.5px dashed rgb(206, 206, 206); padding: 8px;"></div>
+
+        <ion-item button detail lines="none" class="bill-summary" *ngIf="customer_id" (click)="opennammemodal()"
+          style="display: flex; align-items: center;">
+          <ion-icon slot="start" name="call-outline"></ion-icon>
+          <ion-label style="font-family: 'sfregular';">
+            <div style="display: flex; flex-direction: column;">
+              <span *ngIf="customer_name">
+                {{ customer_name }},
+              </span>
+              <span style="font-size: 15px; color: #333;">+91 {{customer_mobile_number}}</span>
+            </div>
+          </ion-label>
+        </ion-item>
+      </span>
+
+      <div style="border-bottom: 0.5px dashed rgb(206, 206, 206); padding: 8px;"></div>
+
+      <!-- Total Bill Section -->
+      <ion-item button detail lines="none" class="bill-summary" (click)="openbill()"
+        style="display: flex; align-items: center;">
+        <ion-icon slot="start" name="receipt-outline"></ion-icon>
+        <ion-label style="font-family: 'sfregular';">
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <!-- Total Bill Row -->
+            <div
+              style="display: flex; align-items: center; flex-wrap: wrap; gap: 2px; font-size: 12px; letter-spacing: 0.5px;">
+              <span>Total Bill</span>
+              <s style="font-size: 12px; color: #888;">₹{{ itemsstrikeamount | number:'1.2-2' }}</s><span>₹{{
+                grand_total | number:'1.2-2' }}</span>
+              <ion-badge class="save-badge" style="margin-left: auto;">Saved ₹{{ total_saving_amount | number:'1.2-2'
+                }}</ion-badge>
+            </div>
+
+            <!-- Tax Info -->
+            <div class="tax-info" style="font-size: 12px; color: #777;">Incl. taxes and charges</div>
+          </div>
+        </ion-label>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Cancellation Policy Section -->
+  <div style="padding: 4%;" *ngIf="cartdata.length && !distanceLoading">
+    <div style="font-family:'sfregular'; letter-spacing: 1.4px; color: grey; font-size: 13px;">
+      CANCELLATION POLICY
+    </div>
+    <div style="font-family: 'sfregular'; color: grey; font-size: 10px; letter-spacing: 0.4px;">
+      Please note that once an order is placed for food, groceries, electronics, or meat, the amount paid is
+      non-refundable. Your cooperation helps us minimize waste and improve efficiency.
+    </div>
+  </div>
+</ion-content>
+
+<ion-footer class="order-footer" *ngIf="cartdata.length && !distanceLoading">
+
+  <div class="order-summary">
+    <div class="header" style="padding: 0px 10px;">
+      <!-- <p class="te"> &nbsp;Bill Summary</p>
+      <a class="view-more" (click)="openbill()"><u> View More </u></a> -->
+    </div>
+
+    <ion-item lines="none" style="border-top: 1px solid grey;" *ngIf="!show">
+      <ion-label class="ley">Total</ion-label>
+      <ion-text class="get"><strong> ₹{{grand_total | number:'1.2-2'}}</strong></ion-text>
+    </ion-item>
+
+    <div *ngIf="!show" class="place-order" (click)="gotopayment()">Select the Address</div>
+
+    <div *ngIf="show" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+      <div class="dropdown-container">
+        <!-- Payment Button -->
+        <div (click)="toggleMenu()">
+          <div style="white-space: nowrap;font-family: 'sfregular';">&nbsp; {{ selectedPaymentType }} ▼ </div>
+        </div>
+        <!-- Dropdown Menu (40% Width & Above Button) -->
+        <ion-list *ngIf="menuOpen" class="dropdown-menu">
+          <ion-item button *ngFor="let orderType of orderTypes; let i = index;" style="font-family: 'sfregular'; "
+            (click)="selectOnlyOne(i ,orderType.label)">{{
+            orderType.label }}
+          </ion-item>
+        </ion-list>
+      </div>
+
+      <div (click)="checkloginandpay()" class="place-order" style="margin-left: auto;  white-space: nowrap;">
+        ₹ <span style="font-size: 15px;">{{ grand_total | number:'1.2-2' }}&nbsp;|</span>&nbsp; Place Order ►
+      </div>
+    </div>
+    <br>
+  </div>
+</ion-footer>
+
+
+<ion-modal #modal [isOpen]="modalwe" [canDismiss]="canDismiss" [breakpoints]="[0, 0.7, 1]" [initialBreakpoint]="0.7">
+  <ng-template>
+    <ion-content class="ion-padding">
+      <p class="category-title2" style="font-family: 'sfregular';"> Select Order Type </p>
+      <p class="close-btn" style="position:fixed;" (click)="close()">✖ </p>
+      <ion-list>
+        <ion-item lines="none" *ngFor="let orderType of orderTypes; let i = index;"
+          style="--background: #fff; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); padding: 12px; display: flex; align-items: center;">
+          <ion-checkbox [checked]="orderType.selected" (ionChange)="selectOnlyOne(i ,  orderType.label  )"
+            color="success" slot="start">
+          </ion-checkbox>
+          <ion-label style="font-family: 'sfregular';">{{ orderType.label }} </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-content>
+    <!-- <ion-footer>
+      <div *ngIf="show" class="place-order" (click)="get()">Place Order</div>
+    </ion-footer> -->
+  </ng-template>
+</ion-modal>
+
+<ion-modal #modal [isOpen]="namemodal" [canDismiss]="canDismiss" [breakpoints]="[1, 0.6, 0]" [initialBreakpoint]="0.4"
+  [backdropDismiss]="false">
+  <ng-template>
+    <ion-content class="ion-padding">
+
+      <!-- Close Button (top right) -->
+      <ion-button fill="clear" size="small" class="modal-close-btn" (click)="closenammemodal()"
+        style="position: absolute; top: 10px; right: 10px; z-index: 10;    background: #00b050; border-radius: 24px;">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+
+      <!-- Form Container -->
+      <div class="form-container">
+
+        <!-- Form Heading -->
+        <h2 class="ion-text-center form-heading">Receiver Info</h2>
+
+        <!-- Name Field -->
+        <ion-item lines="full">
+          <ion-label position="floating">Receiver Name</ion-label>
+          <ion-input [(ngModel)]="customer_name" type="text" placeholder="Enter name"></ion-input>
+        </ion-item>
+
+        <!-- Number Field -->
+        <ion-item lines="full" class="input-margin">
+          <ion-label position="floating">Receiver Number</ion-label>
+          <ion-input [(ngModel)]="customer_mobile_number" type="tel" placeholder="Enter number"></ion-input>
+        </ion-item>
+
+        <!-- Submit Button -->
+        <ion-button expand="block" shape="round" class="submit-btn"
+          (click)="submitname(customer_name,customer_mobile_number)" style="--background: #00aa3e;">
+          Submit
+        </ion-button>
+
+      </div>
+
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+<ion-modal #modal [isOpen]="billmodal" [canDismiss]="canDismiss" [breakpoints]="[0, 0.7, 1]" [initialBreakpoint]="0.9"
+  (didDismiss)="handleDismiss($event)">
+  <ng-template>
+    <ion-content class="ion-padding">
+      <p style="font-family: 'sfregular';font-size: 20px;"> Bill Summary</p>
+      <p class="close-btn" style="position:fixed;" (click)="closebill()">✖ </p>
+      <div *ngIf="cartdata.length" style="box-shadow: 1px 0px 8px 2px rgba(0, 0, 0, 0.1);
+      padding: 1% 4%;border-radius: 8px;">
+        <div class="summary-item2">
+          <p>Item total </p>
+          <strong><s style="color: #b8b8b8;">₹{{total_actual_amount}}</s> &nbsp; ₹{{ itemstotalamount }}</strong>
+        </div>
+
+        <!-- <div class="summary-item2" *ngIf="selectedCoupon && coupon_discount_amount!=0">
+          <p>Sub Total</p>
+          <strong>₹{{ itemstotalamount - coupon_discount_amount }}</strong>
+        </div> -->
+
+        <div class="summary-item2" (click)="showgstmarchantFeeAlert()">
+          <p class="platform-fee">GST and Merchant Charges </p>
+          <strong>₹{{ total_bill_value_gst_fee + packing_charges | number:'1.2-2' }}</strong>
+        </div>
+
+        <div class="summary-item2" (click)="showdeliveryFeeAlert()">
+          <!-- for {{distance | number:'1.1-2'}}km -->
+          <p class="platform-fee"> Delivery partner fee </p>
+          <strong> ₹{{final_del_charges }}</strong>
+        </div>
+
+        <div class="summary-item2" (click)="showPlatformFeeAlert()">
+          <p class="platform-fee">Platform Fee </p>
+          <strong>₹{{ handling_charges }}</strong>
+        </div>
+
+        <div class="summary-item2" *ngIf="surcharges>0" (click)="showSurchargeAlert2()">
+          <p class="platform-fee">Surcharges </p>
+          <strong>₹{{ surcharges }}</strong>
+        </div>
+
+        <div class="summary-item2">
+          <p>Donation &nbsp;&nbsp;
+            <span class="green" (click)="adddonations()" *ngIf="donation_charges==0">Add Donation</span>
+            <span class="red" (click)="removedonation()" *ngIf="donation_charges!=0">Remove Donation</span>
+          </p>
+          <strong>₹{{ donation_charges }}</strong>
+        </div>
+
+        <div class="summary-item2" *ngIf="maindonation_charges!=0">
+          <p>Delivery partner tip </p>
+          <strong>₹{{ maindonation_charges }}</strong>
+        </div>
+
+        <div class="summary-item2 total" style="white-space: nowrap;"
+          *ngIf="selectedCoupon && coupon_discount_amount!=0">
+          <p>Grand Total</p>
+          <strong>₹{{ sub_grand_total | number:'1.2-2' }}</strong>
+        </div>
+
+        <div class="summary-item2" *ngIf="selectedCoupon && coupon_discount_amount!=0">
+          <p class="discount-text">
+            Coupon <span>({{ selectedCoupon.coupon_name }})</span>
+          </p>
+          <strong class="discount-amount">-₹{{ coupon_discount_amount }}</strong>
+        </div>
+        <div class="summary-item2 total" style="white-space: nowrap;">
+          <p *ngIf="selectedCoupon && coupon_discount_amount!=0">To pay</p>
+          <p *ngIf="!selectedCoupon && coupon_discount_amount==0">Grand Total</p>
+          <strong>₹{{ grand_total | number:'1.2-2' }}</strong>
+        </div>
+        <div class="savings-banner" style="font-family: sfregular">
+          🥳 You saved ₹{{ total_saving_amount | number:'1.2-2' }} on this order
+        </div>
+      </div>
+      <div class="gratitude-card" style="box-shadow: 1px 0px 8px 2px rgba(0, 0, 0, 0.1);padding: 4%;
+    margin-top: 2%;">
+        <div style="font-family: 'sfregular';text-align: center;color: black;letter-spacing: 2px;">
+          GRATITUDE CORNER</div>
+        <br> <br>
+        <div class="tip-section">
+          <div>
+            <p style="font-family: 'sfregular';font-weight: bold;    font-size: 14px;">Tip your delivery partner</p>
+
+            <p style="font-family: 'sfregular';">your kindness is greatly appreciated. 100% of your tip will go delivery
+              partners.
+            </p>
+          </div>
+          <img src="assets/icon/bike.svg" alt="delivery person" class="tip-image" />
+        </div>
+        <div class="tip-options">
+          <div *ngFor="let amount of tipAmounts" [class.selected]="selectedTip === amount"
+            (click)="adddonation(amount); selectTip(amount)" class="tip-option">
+            ₹{{ amount }}
+          </div>
+          <span (click)="cleardonation()" style="color: brown;align-items: center; margin-top: 3%;">Clear </span>
+        </div>
+      </div>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+<ion-modal [isOpen]="isModalOpen" (didDismiss)="closeModal()">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title style="text-align: center;font-family: 'sfregular';"> Coupons </ion-title>
+        <ion-buttons slot="end">
+          <ion-button style="font-family: 'sfregular';" (click)="closeModal()">
+            <ion-icon name="close"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
+      <ion-searchbar style="font-family: 'sfregular';" (ionInput)="searchCoupons()" [(ngModel)]="searchQuery"
+        placeholder="Search Coupons" show-clear-button="always">
+      </ion-searchbar>
+
+      <div *ngIf="filteredCoupons.length>0">
+        <ion-card *ngFor="let o of filteredCoupons"
+          style="border-radius: 12px; box-shadow: 0px 4px 10px rgba(0,0,0,0.1);">
+          <ion-card-content>
+            <ion-row class="ion-align-items-center">
+              <ion-col size="9">
+                <h2 style="font-family: 'sfregular'; color: #333; margin-bottom: 4px;">
+                  {{ o.coupon_name }}
+                </h2>
+                <p style="font-family: 'sfregular'; color: grey; font-size: 14px; margin-bottom: 6px;">
+                  {{ o.coupon_description }}
+                </p>
+                <p style="color: red; font-family: 'sfregular'; font-size: 13px;">
+                  {{ getErrorMessage(o) }}
+                </p>
+              </ion-col>
+              <ion-col size="3" class="ion-text-right" *ngIf="selectedCouponid != o.id">
+                <ion-button fill="solid" size="small" color="success" style="color: white;font-family: 'sfregular';"
+                  (click)="toggleCoupon( 0 , o)">
+                  Apply
+                </ion-button>
+              </ion-col>
+              <ion-col size="3" class="ion-text-right" *ngIf="selectedCouponid == o.id">
+                <ion-button fill="solid" size="small" color="success" style="color: white;font-family: 'sfregular';"
+                  (click)="toggleCoupon(1  , o)">
+                  Remove
+                </ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-card-content>
+        </ion-card>
+      </div>
+      <div *ngIf="coupons.length>0">
+        <ion-card *ngFor="let o of coupons" style="border-radius: 12px; box-shadow: 0px 4px 10px rgba(0,0,0,0.1);">
+          <ion-card-content *ngIf="o.coupon_status==1">
+            <ion-row class="ion-align-items-center">
+              <ion-col size="9">
+                <h2 style="font-family: 'sfregular'; color: #333; margin-bottom: 4px;">
+                  {{ o.coupon_name }}
+                </h2>
+                <p style="font-family: 'sfregular'; color: grey; font-size: 14px; margin-bottom: 6px;">
+                  {{ o.coupon_description }}
+                </p>
+                <p style="color: red; font-family: 'sfregular'; font-size: 13px;">
+                  {{ getErrorMessage(o) }}
+                </p>
+              </ion-col>
+              <ion-col size="3" class="ion-text-right" *ngIf="selectedCouponid != o.id">
+                <ion-button fill="solid" size="small" color="success" style="color: white;font-family: 'sfregular';"
+                  (click)="toggleCoupon( 0 , o)">
+                  Apply
+                </ion-button>
+              </ion-col>
+              <ion-col size="3" class="ion-text-right" *ngIf="selectedCouponid == o.id">
+                <ion-button fill="solid" size="small" color="success" style="color: white;font-family: 'sfregular';"
+                  (click)="toggleCoupon(1  , o)">
+                  Remove
+                </ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-card-content>
+        </ion-card>
+      </div>
+
+      <div *ngIf="coupon_show" style="font-family: 'sfregular';margin-top: 50%;
+      text-align: center;font-size: 18px;letter-spacing: 0.5px;">
+        No Coupons Available
+      </div>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+<ion-modal [isOpen]="notemodal" (didDismiss)="closenotemodal()" [breakpoints]="[1, 0.6, 0]" [initialBreakpoint]="0.5">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title style="font-family: 'sfmedium';"> Add a note for the Merchant </ion-title>
+        <ion-buttons slot="end">
+          <ion-button style="font-family: 'sfregular';" (click)="closenotemodal()">
+            <ion-icon name="close"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
+      <ion-item lines="none">
+        <textarea [(ngModel)]="note" style="width: 98%;font-family: 'sfregular';padding: 2%;"
+          placeholder="e.g. Note for the entire order" rows="4" autoGrow="true">
+        </textarea>
+      </ion-item>
+      <div style="padding:2% ;font-family:'sfregular';">
+        The Merchant will try its best to follow your requests. However, refunds or cancellations in this regard won’t
+        be possible.
+      </div>
+      <ion-toolbar>
+        <div class="button-group">
+          <div class="buttoner" (click)="clearNote()">Clear</div>
+          <div class="buttonerw" [class.disabled]="!note?.trim()" (click)="note?.trim() && saveNote()">
+            Save
+          </div>
+        </div>
+      </ion-toolbar>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+<ion-modal [isOpen]="successmodal" (didDismiss)="closeModal()">
+  <ng-template>
+    <ion-content>
+      <ion-content class="ion-padding" color="light">
+        <div class="success-container">
+          <ion-icon name="checkmark-circle" class="success-icon"></ion-icon>
+
+          <p class="order-message">Order Placed for</p>
+          <p class="address-details">
+            {{locationaddress}}
+          </p>
+
+          <ion-button expand="block" fill="outline" color="success" class="save-button">
+            <ion-icon name="pricetag" slot="start"></ion-icon>
+            ₹{{total_saving_amount}} saved from this order
+          </ion-button>
+        </div>
+      </ion-content>
+
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+
+<ion-modal [isOpen]="deliverymodalopens" (didDismiss)="showdeliveryFeeclose()" [breakpoints]="[0, 0.5, 0.5]"
+  [initialBreakpoint]="0.5" class="delivery-modal">
+  <ng-template>
+    <ion-content class="ion-padding" color="light">
+      <div class="delivery-container" style="text-align: center;">
+
+        <!-- <p class="order-message" style="font-size: 18px; font-weight: bold; margin-bottom: 15px;">Delivery Charges Breakdown</p> -->
+
+        <!-- Using rows and columns -->
+        <div style="display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 15px;">
+          <div style="display: flex; justify-content: space-between; width: 100%; ">
+            <span style="font-weight: bold; font-size: 16px;">Base fee for {{shopdetails?.minimum_km}}km</span>
+            <span style="font-size: 16px; ">₹{{shopdetails?.minimum_del_charge}}</span>
+          </div>
+          <!-- <p style="font-size: 14px; color: #888;">₹11 per order plus ₹{{shopdetails?.minimum_del_charge}} per km</p> -->
+        </div>
+
+        <!-- You can add more charges here in a similar structure -->
+        <!-- {{shopdetails?.distance}} -->
+        <div style="display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 15px;"
+          *ngIf="shopdetails?.distance>shopdetails?.minimum_km">
+          <div style="display: flex; justify-content: space-between; width: 100%; "
+            *ngIf="shopdetails?.extradistance>0">
+            <span style="font-weight: bold; font-size: 16px;">Long Distance fee {{(shopdetails?.extradistance |
+              number:'1.2-2')}}km</span>
+            <span style="font-size: 16px; ">₹{{(shopdetails?.extradistance*shopdetails?.per_km_chargers) |
+              number:'1.0-0'}}</span>
+          </div>
+          <p style="font-size: 14px; color: #888;" *ngIf="shopdetails?.extradistance>0">Per km fee
+            {{shopdetails?.per_km_chargers}}</p>
+        </div>
+
+        <!-- if ((results[0].distance.value / 1000) < this.shopdetails.minimum_km) {  -->
+        <div style="display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 15px;">
+          <div style="display: flex; justify-content: space-between; width: 100%; ">
+            <span style="font-weight: bold; font-size: 16px;">Small Order fee </span>
+            <span style="font-size: 16px; " *ngIf="saved_delivery"><s>₹{{commonapis.delivery_fixed_charges}}</s>
+              ₹0</span>
+            <span style="font-size: 16px; " *ngIf="!saved_delivery">₹{{ delivery_fixed_charges }}</span>
+          </div>
+          <p style="font-size: 14px; color: #888;">Reduce for orders above ₹{{ valid_offer_amount }}</p>
+        </div>
+
+        <ion-button expand="block" fill="outline" color="success" (click)="showdeliveryFeeclose()"
+          style="margin-top: 20px;">
+          Close
+        </ion-button>
+      </div>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+
+<ion-modal [isOpen]="gstmarchantfeemodel" (didDismiss)="showgstmarchantFeeclose()" [breakpoints]="[0, 0.5, 0.5]"
+  [initialBreakpoint]="0.5" class="delivery-modal">
+  <ng-template>
+    <ion-content class="ion-padding" color="light">
+      <div class="delivery-container" style="text-align: center;">
+
+        <p class="order-message" style="font-size: 12px;    text-align: left; margin-bottom: 15px;">Zeengi has
+          no role to play in taxes livied by the govt. and changers decided by Merchants</p>
+
+        <!-- Using rows and columns -->
+        <div style="display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 15px;">
+          <div style="display: flex; justify-content: space-between; width: 100%; ">
+            <span style=" font-size: 12px;">GST on item total</span>
+            <span style="font-size: 12px; ">₹{{item_total_gst_fee}}</span>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 15px;">
+          <div style="display: flex; justify-content: space-between; width: 100%; ">
+            <span style=" font-size: 12px;">Merchant Packaging Charges</span>
+            <span style="font-size: 12px; ">₹{{shopdetails?.packing_charges}}</span>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 15px;">
+          <div style="display: flex; justify-content: space-between; width: 100%; ">
+            <span style=" font-size: 12px;">GST on Merchant packaging charges</span>
+            <span style="font-size: 12px; ">₹{{packing_gst_fee}}</span>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 15px;">
+          <div style="display: flex; justify-content: space-between; width: 100%; ">
+            <span style=" font-size: 12px;">GST on platform fee</span>
+            <span style="font-size: 12px; ">₹{{handling_charges_gst_fee}}</span>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 15px;">
+          <div style="display: flex; justify-content: space-between; width: 100%; ">
+            <span style=" font-size: 12px;">Total</span>
+            <span style="font-size: 12px; ">₹{{total_bill_value_gst_fee+packing_charges | number:'1.2-2'}}</span>
+          </div>
+        </div>
+
+
+
+        <ion-button expand="block" fill="outline" color="success" (click)="showgstmarchantFeeclose()"
+          style="margin-top: 20px;">
+          Close
+        </ion-button>
+      </div>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+<ion-modal #modal [isOpen]="slottimingmodal" class="menu-modal3" [breakpoints]="[0, 0.7, 1]" [initialBreakpoint]="1"
+  [backdropDismiss]="false">
+  <ng-template>
+
+    <ion-content class="delivery-time-picker">
+      <div class="header" style="color: #383838;padding: 0px 19px;">
+        <h2>Select your delivery time</h2>
+        <ion-icon name="close-outline" class="close-icon" (click)="closseslottimingmodal()"></ion-icon>
+      </div>
+
+      <!-- Date Picker -->
+      <div class="date-scroll-wrapper">
+        <div class="date-scroll">
+          <div class="date-item" *ngFor="let date of dateOptions" [class.selected]="date === selectedDate"
+            (click)="selectDate(date)">
+            <p class="date">{{ date.display }}</p>
+            <p class="label">{{ date.label }}</p>
+          </div>
+        </div>
+      </div>
+
+      <hr>
+
+      <!-- Time Picker -->
+      <div #timeScroll class="time-scroll-wrapper" (scroll)="onScrollTime()">
+        <div class="time-scroll">
+          <div class="time-scroll-spacer"></div> <!-- top spacer -->
+          <div class="time-item" *ngFor="let time of timeOptions" [class.selected]="time === selectedTime"
+            (click)="selectTime(time)">
+            {{ time }}
+          </div>
+          <div class="time-scroll-spacer"></div> <!-- bottom spacer -->
+        </div>
+      </div>
+      <!-- Confirm Button -->
+      <ion-button expand="block" class="confirm-button" (click)="selectslotanddate()">Confirm</ion-button>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+<ion-modal [isOpen]="instructionmodel" (didDismiss)="closeModal()" #modal class="menu-modal3"
+  [breakpoints]="[0, 0.7, 1]" [initialBreakpoint]="0.5" [backdropDismiss]="false">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title style="text-align: left;font-family: 'sfregular';"> Instruction for delivery partner </ion-title>
+        <ion-buttons slot="end">
+          <ion-button style="font-family: 'sfregular';" (click)="closeinstructionmodal()">
+            <ion-icon name="close"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
+      <div style=" padding-left: 21px;padding-right: 5px;">
+        <span style="font-size: 15px; color: #333;   ">{{ address_type ? address_type : 'Home' }} - </span>
+        <span style="font-size: 12px; color: #777;">{{ locationaddress }}</span>
+      </div>
+
+      <ion-list>
+        <ion-radio-group [(ngModel)]="selectedInstruction">
+          <ion-item *ngFor="let instruction of deliveryInstructions"
+            (click)="selectedInstruction = instruction.label;closeinstructionmodal();">
+            <ion-label>
+              <span class="emoji-icon">{{ instruction.icon }}</span>
+              {{ instruction.label }}
+            </ion-label>
+            <ion-radio slot="end" [value]="instruction.label"></ion-radio>
+          </ion-item>
+        </ion-radio-group>
+      </ion-list>
+    </ion-content>
+  </ng-template>
+</ion-modal>

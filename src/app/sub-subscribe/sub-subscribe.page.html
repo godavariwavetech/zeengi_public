@@ -1,0 +1,47 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="gotoback()">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title style="text-align: center;">Subscribe Details</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-list style="font-family: 'sfregular';">
+    <ion-item>
+      <ion-label>
+
+        <h2 style="font-family: 'sfregular';"> {{ maindetails.item_name }}</h2>
+        <h5 style=" font-family: 'sfregular';">maindetails ID : #{{ maindetails.maindetails_id }}</h5>
+        <p style="font-family: 'sfregular';">Price : ₹{{ maindetails.item_total_amount }}</p>
+        <p style="font-family: 'sfregular';">Category : {{ maindetails.category_name }}</p>
+        <p style="font-family: 'sfregular';" *ngIf="maindetails.subscription_type">Subscription : {{
+          maindetails.subscription_type
+          }}</p>
+        <p style="font-family: 'sfregular';" *ngIf="!maindetails.subscription_type">One-time Purchase</p>
+        <p style="font-family: 'sfregular';">Received Items : {{ maindetails.received_items_quantity }}</p>
+        <p style="font-family: 'sfregular';">Received Items Price : ₹{{ maindetails.received_items_prices}}</p>
+
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <ion-grid>
+    <ion-row class="header">
+      <ion-col>Date</ion-col>
+      <ion-col>Subscription Type</ion-col>
+      <ion-col>Quantity</ion-col>
+      <ion-col>Amount</ion-col>
+    </ion-row>
+
+    <ion-row *ngFor="let item of receviedorders">
+      <ion-col>{{ item.received_date_time | date:'MMM d, y' }}</ion-col>
+      <ion-col>{{ item.subscription_type }}</ion-col>
+      <ion-col>{{ item.received_quantity }}</ion-col>
+      <ion-col>{{ item.received_item_amount }}</ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

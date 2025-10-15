@@ -1,0 +1,133 @@
+.hrae {
+    text-align: center;
+    font-family: "sfregular";
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+}
+
+
+.profile-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+    font-family: 'sfmedium';
+}
+
+.profile-avatar {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 10px;
+}
+
+.profile-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+ion-label,
+p,
+h3 {
+    font-family: 'sfregular';
+}
+
+.dfg {
+    font-family: 'sfregular';
+}
+
+
+
+///----------------------------------------------------------------
+/// 
+.custom-form {
+    padding: 0px 16px;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 6px;
+    font-family: 'sfmedium';
+    font-size: 14px;
+    color: #333;
+}
+
+.custom-input {
+    width: 100%;
+    padding: 14px 16px;
+    font-family: 'sfregular';
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background: #f9f9f9;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.custom-input:focus {
+    border-color: #ff7f50;
+    background: #fff;
+}
+
+.custom-input::placeholder {
+    color: #999;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(180deg, #F57B00 0%, #B93800 100%);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-family: 'sfmedium';
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.submit-btn:hover {
+    background: #ff6333;
+}
+
+.avatar-container {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 20px auto;
+}
+
+.avatar-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid #F57B00;
+    background: #f4f4f4;
+}
+
+.edit-button {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: #F57B00;
+    color: #fff;
+    border-radius: 50%;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 2px solid #fff;
+    font-size: 16px;
+}
+
+.edit-button ion-icon {
+    font-size: 18px;
+}

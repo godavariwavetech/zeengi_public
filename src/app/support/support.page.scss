@@ -1,0 +1,87 @@
+/* Header Section */
+.header-section {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.header-section h1 {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #2c3e50;
+}
+
+.header-section p {
+  font-size: 16px;
+  color: #7f8c8d;
+  margin: 0;
+}
+
+/* Contact & Form Cards */
+.contact-card,
+.form-card {
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+}
+
+.contact-card ion-item,
+.form-card ion-item {
+  --background: transparent;
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  --min-height: 60px;
+}
+
+/* Icons */
+.icon {
+  font-size: 24px;
+  color: #F57B00;
+}
+
+/* Labels */
+ion-label h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+ion-label p {
+  margin: 4px 0 0;
+  color: #555;
+}
+
+/* Hyperlinks */
+.link {
+  color: #F57B00;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.link:hover {
+  text-decoration: underline;
+  color: #F57B00;
+}
+
+/* Textarea Padding */
+.form-card ion-textarea {
+  --padding-start: 10px;
+  --padding-end: 10px;
+}
+
+/* Emoji Icon (if used) */
+.emoji-icon {
+  margin-right: 8px;
+  font-size: 20px;
+}
+
+/* Green Button Styling */
+.green-button {
+  --background: #F57B00;
+  --background-activated: #F57B00;
+  --background-hover: #F57B00;
+  --color: #ffffff;
+  font-weight: 600;
+  border-radius: 8px;
+}

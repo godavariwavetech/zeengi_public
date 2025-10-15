@@ -1,0 +1,68 @@
+.location-access-page {
+  --background: #ffffff;
+
+  .location-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    padding: 0px;
+
+    .location-icon {
+      background-color: #deae7fc2;
+      padding: 30px;
+      border-radius: 50%;
+      margin-bottom: 20px;
+
+      ion-icon {
+        font-size: 40px;
+        color: #F57B00;
+      }
+    }
+
+    h2 {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #000;
+    }
+
+    p {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 30px;
+      padding: 0 10px;
+    }
+
+    .location-btn {
+      --background: #F57B00;
+      --border-radius: 5px;
+      font-weight: 500;
+      font-size: 16px;
+      height: 45px;
+      margin-bottom: 20px;
+      width: 100%;
+    }
+
+    .location-btn2 {
+      --background: #ffffff;
+      color: #F57B00;
+      --border-radius: 5px;
+      font-weight: 500;
+      font-size: 14px;
+      height: 45px;
+      margin-bottom: 20px;
+      width: 100%;
+      border: 1px solid #F57B00;
+    }
+
+    .manual-entry {
+      color: #000;
+      font-size: 15px;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  }
+}

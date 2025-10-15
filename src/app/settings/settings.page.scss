@@ -1,0 +1,17 @@
+.category-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 0px 0px 15px 15px;
+    background: linear-gradient(180deg, #F57B00 0%, #B93800 100%);
+    color: white;
+    position: relative;
+    margin-top: -1px;
+    height: 60px;
+}
+
+
+ion-header {
+    --ion-box-shadow: none;
+    box-shadow: none !important;
+}

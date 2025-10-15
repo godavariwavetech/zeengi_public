@@ -1,0 +1,183 @@
+<ion-header>
+  <ion-toolbar class="custom-toolbar">
+    <ion-buttons slot="start" style="font-family: 'sfregular';">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title style="font-family: 'sfregular';text-align: center;">Wallet</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <!-- <ion-icon style="font-family: 'sfregular';" slot="icon-only" name="cart-outline"></ion-icon> -->
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="half-green-background" style="text-align: center;">
+    <div class="content-wrapper">
+      <div style="background-color: #004625ac;border-radius: 10px;padding:10px 0px;">
+
+        <p class="balance-text" style="font-family: 'sfregular';">Main balance</p>
+        <h1 class="balance-amount" style="font-family: 'sfregular';">₹{{balance_amount}}</h1>
+        <div class="wallet-actions">
+          <div class="action-item" (click)="open(1)">
+            <ion-icon name="cloud-upload-outline"></ion-icon>
+            <p>Recharge History</p>
+          </div>
+          <div class="divider"></div>
+          <div class="action-item" (click)="open(2)">
+            <ion-icon name="cloud-download-outline"></ion-icon>
+            <p>Billing History</p>
+          </div>
+          <div class="divider"></div>
+          <div class="action-item" (click)="open(3)">
+            <ion-icon name="refresh-outline"></ion-icon>
+            <p>Recharge</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+
+  <ion-list *ngIf="show_id==1">
+    <ion-item *ngFor="let payment of history" lines="full">
+      <ion-label style="font-family: 'sfregular';">
+        <p><strong>Order ID &nbsp; :</strong> {{ payment.razorpay_order_id }}</p>
+        <p><strong>Amount &nbsp;&nbsp; :</strong> ₹{{ payment.payment_amount }}</p>
+        <p><strong>Date &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; : </strong> {{ payment.i_ts | date:'dd-MM-yyyy
+          HH:mm
+          a' }}
+        </p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <div *ngIf="show_id==2">
+    <ion-row class="total-row">
+      <ion-col><strong>Total Deduction Amount : {{ totalAmount }}</strong></ion-col>
+    </ion-row>
+
+    <ion-grid>
+      <ion-row class="header">
+        <ion-col>Date</ion-col>
+        <ion-col>Item Name</ion-col>
+        <ion-col>Quantity</ion-col>
+        <ion-col>Amount</ion-col>
+      </ion-row>
+
+      <ion-row *ngFor="let item of deduction">
+        <ion-col>{{ item.received_date_time | date:'MMM d, y' }}</ion-col>
+        <ion-col>{{ item.item_name }}</ion-col>
+        <ion-col>{{ item.received_quantity }}</ion-col>
+        <ion-col>{{ item.received_item_amount }}</ion-col>
+      </ion-row>
+
+    </ion-grid>
+  </div>
+
+  <div *ngIf="show_id==3">
+
+    <!-- <div style="text-align: center;padding: 0% 5%;">
+      <input type="tel" style="width: 100%; padding: 3%;border-radius: 5px;font-weight: 700;"
+        [(ngModel)]="rechargeAmount" min="100" (input)="validateAmount()">
+      <p *ngIf="amountError" style="color: red;">Amount must not be less than 100</p>
+    </div>
+
+    <div class="schedule-container">
+      <div class="tet" style="padding: 2% 5px;font-family: 'sfregular';"> Add Money </div>
+      <div class="schedule-options">
+        <ion-card [class.selected]="wallet_amount === i.wallet_amount" *ngFor="let i of wallets"
+          (click)="selectamount(i.wallet_amount)">
+          {{i.wallet_amount}}
+        </ion-card>
+      </div>
+    </div>
+    <br>
+    <div style="text-align: center;">
+      <ion-button (click)="rechargenow()" aria-disabled="amountError" style="font-family: 'sfregular';"> Recharge
+      </ion-button>
+    </div>
+  </div> -->
+
+    <p style="font-family: 'sfregular';"> &nbsp;&nbsp;Add Money</p>
+
+    <ion-card style="border-radius: 10px;">
+      <div style="padding: 20px;font-size: 16px;">
+        <div style="border-bottom:1px solid rgb(189, 188, 188);padding: 10px;color: black;font-family: 'sfregular';">
+          ₹&nbsp;<input type="number" style="border: none;color: black;" [(ngModel)]="rechargeAmount" min="100"
+            (input)="validateAmount()">
+        </div>
+        <div class="schedule-container">
+          <div class="schedule-options">
+            <ion-card [class.selected]="wallet_amount === i.wallet_amount" *ngFor="let i of wallets"
+              (click)="selectamount(i.wallet_amount)">
+              + ₹{{i.wallet_amount}}
+            </ion-card>
+          </div>
+        </div>
+      </div>
+      <div style="text-align: center;">
+        <ion-button color="success" style="font-family: 'sfregular';" (click)="rechargenow()"><span
+            style="color: white;">
+            + ADD MONEY
+          </span> </ion-button>
+      </div>
+      <br>
+    </ion-card>
+  </div>
+</ion-content>
+<ion-footer style="height: 72px;">
+  <ion-row class="footerback">
+    <ion-col size="2.4" class="footer-item active">
+      <img src="assets/icon/footer/11.svg"><br>
+      <span class="footac">Home</span>
+    </ion-col>
+    <ion-col size="2.4" class="footer-item" (click)="gotopage('more')">
+      <img src="assets/icon/footer/2.svg"><br>
+      <span class="footin">You</span>
+    </ion-col>
+    <ion-col size="2.4" class="footer-item" (click)="gotopage('menu')">
+      <img src="assets/icon/footer/6.svg"><br>
+      <span class="footin">Menu</span>
+    </ion-col>
+    <ion-col size="2.4" class="footer-item" (click)="gotopage('basket')">
+      <div class="icon-wrapper">
+        <img src="assets/icon/footer/4.svg">
+        <span class="badge" *ngIf="cartCount > 0">{{ cartCount }}</span>
+      </div>
+      <br>
+      <span class="footin">Cart</span>
+    </ion-col>
+    <ion-col size="2.4" class="footer-item" (click)="gotopage('orders')">
+      <img src="assets/icon/footer/5.svg"><br>
+      <span class="footin">Reorder</span>
+    </ion-col>
+
+  </ion-row>
+</ion-footer>
+<!-- <ion-footer style="height: 55px;">
+  <ion-row class="footerback">
+    <ion-col size="2.4" class="footer-item" [routerLink]="['/home']">
+      <img src="assets/icon/footer/1.svg"><br>
+      <span class="footac">Home</span>
+    </ion-col>
+    <ion-col size="2.4" class="footer-item active">
+      <img src="assets/icon/footer/33.svg"><br>
+      <span class="footin">Wallet</span>
+    </ion-col>
+    <ion-col size="2.4" class="footer-item" [routerLink]="['/more']">
+      <img src="assets/icon/footer/6.svg"><br>
+      <span class="footin">Menu</span>
+    </ion-col>
+    <ion-col size="2.4" class="footer-item" [routerLink]="['/basket']">
+      <img src="assets/icon/footer/4.svg"><br>
+      <span class="footin">Cart</span>
+    </ion-col>
+    <ion-col size="2.4" class="footer-item" [routerLink]="['/orders']">
+      <img src="assets/icon/footer/5.svg"><br>
+      <span class="footin">Reorder</span>
+    </ion-col>
+  </ion-row>
+
+</ion-footer> -->

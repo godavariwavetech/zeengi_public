@@ -1,0 +1,129 @@
+.menubox {
+  border-radius: 12px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+  font-family: 'sfregular';
+}
+
+.menubox:hover {
+  transform: scale(1.05);
+}
+
+.logout-card {
+  background-color: #ff3b30;
+  color: white;
+}
+
+.ref {
+  font-family: 'sfregular';
+}
+
+.custom-list-header {
+  border-left: 3px solid green;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+ion-header {
+  --ion-box-shadow: none;
+  box-shadow: none !important;
+}
+
+ion-button {
+  height: 35px;
+  font-weight: 500;
+  font-size: 14px;
+  border-radius: 12px;
+}
+
+.icon-button {
+  color: white;
+}
+
+.test {
+  width: 35px;
+  height: 35px;
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  text-transform: uppercase;
+}
+
+.profile-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* makes the image fill the container without distortion */
+  border-radius: 50%;
+}
+
+.getsd {
+  font-family: "sfregular";
+  text-transform: capitalize;
+}
+
+.category-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 0px 0px 15px 15px;
+  background: linear-gradient(180deg, #F57B00 0%, #B93800 100%);
+  background-size: -1px auto;
+  /* Adjust size as needed */
+  color: white;
+  position: relative;
+  margin-top: -1px;
+  height: 85px;
+  padding-right: 20px;
+  /* Optional: to add spacing between logo and content */
+}
+
+ion-badge {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 12px;
+}
+
+ion-footer {
+    text-align: center;
+    border-top: 1px solid #AA5000;
+}
+
+
+.icon-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.badge {
+  position: absolute;
+  top: -12px;
+  right: -14px;
+  background-color: #F57B00;
+  color: white;
+  font-size: 10px;
+  line-height: 2;
+  border-radius: 10px;
+  text-align: center;
+  height: 20px;
+  width: 20px;
+}
+
+.emoji-icon {
+  display: inline-block;
+  transform: scaleX(-1);
+  /* Flip emoji */
+  color: green;
+  /* Note: emoji color may not change on all devices */
+  font-size: 1.2em;
+  margin-right: 0px;
+}
+
+.icone {
+  color: #F07100;
+}

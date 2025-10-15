@@ -1,0 +1,24 @@
+
+<ion-content [fullscreen]="true">
+  <div class="container">
+    <!-- Button to get the user's location -->
+    <ion-button expand="full" (click)="getCurrentLocation()" color="primary">
+      📍 Get My Locationd
+    </ion-button>
+
+    <!-- Map container -->
+    <div id="map"></div>
+
+    <!-- Display selected location details -->
+    <ion-card *ngIf="latitude && longitude" class="location-card">
+      <ion-card-header>
+        <ion-card-title style="font-family: 'sfregular';">📌 Selected Location</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <!-- <p><strong>Latitude:</strong> {{ latitude }}</p>
+        <p><strong>Longitude:</strong> {{ longitude }}</p> -->
+        <p style="font-family: 'sfregular';"><strong>Address:</strong> {{ address || 'Fetching address...' }}</p>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

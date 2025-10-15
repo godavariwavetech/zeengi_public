@@ -1,0 +1,250 @@
+
+.icon-col {
+    text-align: center;
+}
+
+.active-icon {
+    font-size: 36px;
+    border: 1px solid #F57B00;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    background: #f0ab65;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    padding: 4px
+}
+
+.inactive-icon {
+    color: #e8e8e8;
+    font-size: 33px;
+    border: 1px solid #848484;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+}
+
+.separator-col {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.separator-line {
+    width: 100%;
+    height: 3px;
+    background-color: #F57B00;
+}
+
+.text-col p {
+    font-family: 'sfregular';
+    font-size: 11px;
+    text-align: center;
+}
+
+.rating-card {
+    padding: 4px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+}
+
+.rating-title {
+    font-family: 'sfregular';
+    color: #F57B00;
+    font-size: 15px;
+    font-weight: bold;
+    display: block;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.rating-form {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.rating-item {
+    background: #f8f8f8;
+    border-radius: 8px;
+}
+
+.star-rating {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    padding: 2px 0;
+}
+
+.star-rating ion-icon {
+    font-size: 30px;
+    color: #FFD700;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.star-rating ion-icon:hover {
+    transform: scale(1.2);
+}
+
+.rating-submit {
+    display: flex;
+    justify-content: center;
+    padding-top: 10px;
+}
+
+.order-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.item-thumbnail {
+    margin-right: 12px;
+    --size: 60px;
+}
+
+.item-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.item-details {
+    font-size: 12px;
+    color: #333;
+    font-family: 'sfregular';
+}
+
+ion-col {
+    font-family: 'sfregular' !important;
+}
+
+/*--------------------------------------------------------------------------------------------*/
+.order-list {
+    padding: 2%;
+    font-family: 'sfregular';
+}
+
+.order-header,
+.order-meta {
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.order-id {
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+.order-status {
+    text-align: right;
+    color: #53b175;
+    font-weight: 500;
+}
+
+.order-date {
+    color: #555;
+}
+
+.order-total {
+    text-align: right;
+    font-weight: bold;
+    color: #333;
+}
+
+.order-address {
+    font-size: 15px;
+    color: #444;
+    line-height: 1.6;
+}
+
+.address-icon {
+    color: #F57B00;
+    margin-right: 10px;
+}
+
+.review-card {
+    margin: 12px;
+    border-radius: 16px;
+    --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.rating-stars {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.rating-stars ion-icon {
+    color: #dcdcdc;
+    font-size: 20px;
+    margin-right: 4px;
+}
+/* Filled Rating Star */
+.rating-stars ion-icon.filled {
+    color: #ffc107;
+    /* Gold */
+}
+
+/* Rating Value */
+.rating-value {
+    margin-left: 8px;
+    font-weight: 500;
+    color: #444;
+}
+
+/* Review Comment */
+.review-comment {
+    font-family: 'sfregular';
+    margin-top: 5px;
+    font-size: 15px;
+    color: #333;
+    font-style: italic;
+    line-height: 1.5;
+}
+
+/* Category Header */
+.category-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 0px 0px 15px 15px;
+    background: linear-gradient(180deg, #F57B00 0%, #B93800 100%);
+    color: white;
+    position: relative;
+    margin-top: -1px;
+    height: 60px;
+}
+
+/* Ion Header */
+ion-header {
+    --ion-box-shadow: none;
+    box-shadow: none !important;
+}
+
+/* Icon Button */
+.icon-button {
+    color: white;
+}
+
+ion-card {
+    padding: 1px;
+    border-radius: 10px;
+}
+
+
+a {
+    background-color: transparent;
+    color: #595959;
+    text-decoration: none;
+}

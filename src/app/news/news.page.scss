@@ -1,0 +1,29 @@
+:host {
+    --header-height: 56px;
+}
+
+.dynamic-header {
+    position: fixed;
+    width: 100%;
+    transition: transform 0.3s ease-in-out;
+    z-index: 100;
+}
+
+.hide-header {
+    transform: translateY(-100%);
+}
+
+ion-content {
+    --background: white;
+}
+
+.parallax-image {
+    height: 200px;
+    background: url('../../assets/icon/comingsoon.jpg') center/cover no-repeat;
+    transition: transform 0.3s ease-out;
+}
+
+.content {
+    padding: 20px;
+    font-size: 18px;
+}

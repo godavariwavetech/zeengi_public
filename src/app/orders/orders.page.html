@@ -1,0 +1,309 @@
+<ion-header>
+  <div class="category-header" style="padding: 1px 8px;">
+    <ion-buttons slot="start">
+      <ion-button (click)="gotoback()">
+        <ion-icon style="color: white;" slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title style="font-family: 'sfregular';">Your Orders</ion-title>
+  </div>
+</ion-header>
+
+
+<ion-content padding>
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- *ngIf="orderindication==1" -->
+
+
+  <ion-segment [(ngModel)]="filterorder" color="warning">
+    <ion-segment-button value="InProcess" style="font-family: 'sfregular';    font-size: 12px;"
+      (click)="getfilteroderlist('InProcess')">
+      InProcess({{ongoindorderls.length}})
+    </ion-segment-button>
+    <ion-segment-button value="Past Orders" style="font-family: 'sfregular';    font-size: 12px;"
+      (click)="getfilteroderlist('Past Orders')">
+      Past Orders({{deliveredorders.length}})
+    </ion-segment-button>
+    <!-- <ion-segment-button value="Subscribe" style="font-family: 'sfregular';    font-size: 12px;"
+      (click)="getfilteroderlist('Subscribe')">
+      Subscribe ({{subscripitioinorders.length}})
+    </ion-segment-button> -->
+  </ion-segment>
+
+  <div *ngIf="filterorder=='InProcess' && ongoingorderlength!=0">
+
+    <ion-card *ngFor="let o of ongoindorderls" class="order-card">
+      <span (click)="gotoorderdetails(o)">
+        <ion-item lines="none" class="order-item">
+          <ion-avatar slot="start">
+            <img [src]="o.shop_image" alt="User Avatar">
+          </ion-avatar>
+          <ion-label>
+            <h2 class="order-id">#{{ o.order_id }}</h2>
+            <p class="order-status">
+              <span *ngIf="o.order_status==0" class="status placed">
+                <ion-icon name="checkmark-circle"></ion-icon>Placed
+              </span>
+              <span *ngIf="o.order_status==1 || o.order_status==8" class="status accepted">
+                <ion-icon name="thumbs-up"></ion-icon>Accepted
+              </span>
+              <span *ngIf="o.order_status==2" class="status pickup">
+                <ion-icon name="bicycle"></ion-icon>Pickup
+              </span>
+              <span *ngIf="o.order_status==3" class="status delivered">
+                <ion-icon name="checkmark-done-circle"></ion-icon>Delivered
+              </span>
+              <span *ngIf="o.order_status==4" class="status cancelled">
+                <ion-icon name="close-circle"></ion-icon>Cancelled
+              </span>
+              <span *ngIf="o.order_status==5" class="status rejected">
+                <ion-icon name="ban"></ion-icon>Rejected
+              </span>
+              <span *ngIf="o.order_status==6" class="status not-received">
+                <ion-icon name="alert-circle"></ion-icon>Not Received
+              </span>
+              <span *ngIf="o.order_status==7" class="status not-received">
+                <ion-icon name="alert-circle"></ion-icon>Waiting for Payment
+              </span>
+            </p>
+          </ion-label>
+        </ion-item>
+
+        <ion-row class="order-info ion-align-items-center">
+          <ion-col size="6" class="order-date">
+            <ion-icon name="calendar-outline" class="icon"></ion-icon>
+            <span>{{ o.order_date_time }}</span>
+          </ion-col>
+          <ion-col size="6" class="order-total ion-text-end">
+            <strong>Rs. {{ o.grand_total }}/-</strong>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="order-address">
+          <ion-col size="12" class="shop-name">
+            <ion-icon name="navigate-outline" class="icon"></ion-icon>
+            <span>{{ o.shop_name }}</span>
+          </ion-col>
+          <ion-col size="12" class="address">
+            <ion-icon name="location-outline" class="iconw"></ion-icon>
+            <span>{{ o.shop_address }}</span>
+          </ion-col>
+        </ion-row>
+
+      </span>
+
+      <!-- *ngIf="o.order_status == 0 && order_cancle_type == 0 && cancle_order_id == o.id && counter > 0" -->
+      <!-- <ion-row class="order-address">
+        <ion-col size="6">
+          <ion-button fill="outline" size="small" color="danger" shape="round" class="cancel-button"
+            (click)="cancelOrder(o)">
+            <ion-icon name="close-circle" slot="start"></ion-icon>
+            Cancel
+          </ion-button>
+        </ion-col>
+
+        <ion-col size="6" style="text-align: right;">
+          <div *ngIf="counter > 0" class="time-left">
+            ⏳ {{ counter }}s left
+          </div>
+        </ion-col>
+      </ion-row> -->
+
+      <ion-row class="order-actions" *ngIf="o.order_status == 0 && order_cancle_type == 0 && cancle_order_id == o.id && counter > 0">
+        <ion-col size="6">
+          <ion-button fill="outline" size="small" color="danger" class="btn-cancel"
+            (click)="cancelOrder(o)">
+            <ion-icon name="close-circle" slot="start"></ion-icon>
+            Cancel
+          </ion-button>
+        </ion-col>
+
+        <ion-col size="6" style="text-align: right;">
+          <div *ngIf="counter > 0" class="timer-badge">
+            ⏳ {{ counter }}s left
+          </div>
+        </ion-col>
+      </ion-row>
+
+    </ion-card>
+
+
+
+    <!-- <ion-card *ngFor="let o of ongoindorderls">
+      <div style="display: flex;align-items: center;justify-content: space-around;border-bottom: 1px solid grey;"
+        (click)="gotoorderdetails(o)">
+        <ion-label>
+          <h2 style="font-family: 'sfregular';">{{ o.shop_name }}</h2>
+          <p style="font-family: 'sfregular';">{{ o.shop_address }}</p>
+          <ion-label>
+            <h2 style="font-family: 'sfregular';">₹ {{ o.grand_total }}</h2>
+          </ion-label>
+        </ion-label>
+        <div style="text-align: right;">
+          <span *ngIf="o.order_status==0" style="display: flex; align-items: center; gap: 5px; color: #53B175;">
+            <ion-icon name="checkmark-circle"></ion-icon>Placed
+          </span>
+          <span *ngIf="o.order_status==1" style="display: flex; align-items: center; gap: 5px; color: #007AFF;">
+            <ion-icon name="thumbs-up"></ion-icon>Accepted
+          </span>
+          <span *ngIf="o.order_status==2" style="display: flex; align-items: center; gap: 5px; color: #FFA500;">
+            <ion-icon name="bicycle"></ion-icon>Pickup
+          </span>
+          <span *ngIf="o.order_status==3" style="display: flex; align-items: center; gap: 5px; color: #28A745;">
+            <ion-icon name="checkmark-done-circle"></ion-icon>Delivered
+          </span>
+          <span *ngIf="o.order_status==4" style="display: flex; align-items: center; gap: 5px; color: brown;">
+            <ion-icon name="close-circle"></ion-icon>Cancelled
+          </span>
+          <span *ngIf="o.order_status==5" style="display: flex; align-items: center; gap: 5px; color: #FF3B30;">
+            <ion-icon name="ban"></ion-icon>Rejected
+          </span>
+          <span *ngIf="o.order_status==6" style="display: flex; align-items: center; gap: 5px; color: #FF9500;">
+            <ion-icon name="alert-circle"></ion-icon>Not Received
+          </span>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-family: 'sfregular';display: flex;    padding: 2%;">
+          <ion-icon name="funnel-outline"></ion-icon>Order ID : {{ o.order_id }}
+        </div>
+        <div style="font-family: 'sfregular';display: flex;    padding: 2%;">
+          <ion-icon name="calendar"></ion-icon>
+          {{ o.order_date }} {{ o.order_time }}
+        </div>
+      </div>
+      <ion-row>
+        <ion-col size="6">
+          <ion-button style="font-family: 'sfregular';" expand="block" fill="outline" size="small" color="medium"
+            (click)="reorder(o)">
+            Reorder
+          </ion-button>
+        </ion-col>
+        <ion-col size="6">
+          <ion-button style="font-family: 'sfregular';" expand="block" fill="solid" size="small" color="danger"
+            (click)="cancelOrder(o)">
+            Cancel Order
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-card> -->
+  </div>
+
+  <div *ngIf="filterorder=='Past Orders' && deliveredorderlength!=0">
+    <ion-card *ngFor="let o of deliveredorders" (click)="gotoorderdetails(o)" class="order-card">
+      <ion-item lines="none" class="order-item">
+        <ion-avatar slot="start">
+          <img [src]="o.shop_image" alt="User Avatar">
+        </ion-avatar>
+        <ion-label>
+          <h2 class="order-id">#{{ o.order_id }} </h2>
+          <p class="order-status">
+            <span *ngIf="o.order_status==0" class="status placed">
+              <ion-icon name="checkmark-circle"></ion-icon>Placed
+            </span>
+            <span *ngIf="o.order_status==1 || o.order_status==8" class="status accepted">
+              <ion-icon name="thumbs-up"></ion-icon>Accepted
+            </span>
+            <span *ngIf="o.order_status==2" class="status pickup">
+              <ion-icon name="bicycle"></ion-icon>Pickup
+            </span>
+            <span *ngIf="o.order_status==3" class="status delivered">
+              <ion-icon name="checkmark-done-circle"></ion-icon>Delivered
+            </span>
+            <span *ngIf="o.order_status==4" class="status cancelled">
+              <ion-icon name="close-circle"></ion-icon>Cancelled
+            </span>
+            <span *ngIf="o.order_status==5" class="status rejected">
+              <ion-icon name="ban"></ion-icon>Rejected
+            </span>
+            <span *ngIf="o.order_status==6" class="status not-received">
+              <ion-icon name="alert-circle"></ion-icon>Not Received
+            </span>
+            <span *ngIf="o.order_status==7" class="status not-received">
+              <ion-icon name="alert-circle"></ion-icon>Waiting for Payment
+            </span>
+          </p>
+        </ion-label>
+      </ion-item>
+
+      <ion-row class="order-info ion-align-items-center">
+        <ion-col size="6" class="order-date">
+          <ion-icon name="calendar-outline" class="icon"></ion-icon>
+          <span>{{ o.order_date_time }}</span>
+        </ion-col>
+        <ion-col size="6" class="order-total ion-text-end">
+          <strong>Rs. {{ o.grand_total }}/-</strong>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="order-address">
+        <ion-col size="12" class="shop-name">
+          <ion-icon name="navigate-outline" class="icon"></ion-icon>
+          <span>{{ o.shop_name }}</span>
+        </ion-col>
+        <ion-col size="12" class="address">
+          <ion-icon name="location-outline" class="iconw"></ion-icon>
+          <span>{{ o.shop_address }}</span>
+        </ion-col>
+      </ion-row>
+
+    </ion-card>
+  </div>
+
+
+
+  <div *ngIf="filterorder=='Subscribe' && subscripitioinorders.length!=0">
+    <ion-list style="font-family: 'sfregular';">
+      <ion-item *ngFor="let order of subscripitioinorders" (click)="gotoSubscribe(order)">
+        <ion-label>
+
+          <h2 style="font-family: 'sfregular';"> {{ order.item_name }}</h2>
+          <h5 style=" font-family: 'sfregular';">Order ID : #{{ order.order_id }}</h5>
+          <p style="font-family: 'sfregular';">Price : ₹{{ order.item_total_amount }}</p>
+          <p style="font-family: 'sfregular';">Category : {{ order.category_name }}</p>
+          <p style="font-family: 'sfregular';" *ngIf="order.subscription_type">Subscription : {{ order.subscription_type
+            }}</p>
+          <p style="font-family: 'sfregular';" *ngIf="!order.subscription_type">One-time Purchase</p>
+          <p style="font-family: 'sfregular';">Saving : ₹{{ order.saving_price }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </div>
+
+</ion-content>
+
+<ion-footer style="height: 58px;">
+  <ion-row class="footerback">
+    <ion-col size="2.4" class="footer-item" [routerLink]="['/home']">
+      <img src="assets/icon/footer/1.svg"><br>
+      <span class="footin">Home</span>
+    </ion-col>
+    <ion-col size="2.4" class="footer-item" [routerLink]="['/more']">
+      <img src="assets/icon/footer/2.svg"><br>
+      <span class="footin">You</span>
+    </ion-col>
+    <ion-col size="2.4" class="footer-item" [routerLink]="['/menu']">
+      <img src="assets/icon/footer/6.svg"><br>
+      <span class="footin">Menu</span>
+    </ion-col>
+    <ion-col size="2.4" class="footer-item" [routerLink]="['/basket']">
+      <!-- <img src="assets/icon/footer/4.svg"><br> -->
+      <div class="icon-wrapper">
+        <img src="assets/icon/footer/4.svg">
+        <span class="badge" *ngIf="cartCount > 0">{{ cartCount }}</span>
+      </div>
+      <br>
+      <span class="footin">Cart</span>
+
+    </ion-col>
+    <ion-col size="2.4" class="footer-item active">
+      <img src="assets/icon/footer/55.svg"><br>
+      <span class="footin">Reorder</span>
+    </ion-col>
+
+  </ion-row>
+</ion-footer>

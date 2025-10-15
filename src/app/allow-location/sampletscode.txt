@@ -1,0 +1,202 @@
+import { Component, OnInit } from '@angular/core';
+import { Geolocation } from '@capacitor/geolocation';
+import { ApiService } from '../service/api.service';
+import { AlertController, NavController, Platform } from '@ionic/angular';
+import { registerPlugin } from '@capacitor/core';
+
+declare var cordova: any;
+
+interface AppSettingsPlugin {
+  open(): Promise<void>;
+}
+
+const AppSettings = registerPlugin<AppSettingsPlugin>('AppSettings');
+
+@Component({
+  selector: 'app-allow-location',
+  templateUrl: './allow-location.page.html',
+  styleUrls: ['./allow-location.page.scss'],
+})
+export class AllowLocationPage implements OnInit {
+  constructor(
+    public api: ApiService,
+    public navCtrl: NavController,
+    private alertController: AlertController,
+    public platform: Platform
+  ) {}
+
+  ngOnInit() {}
+
+  /**
+   * ✅ Main function called on "Allow Location"
+   */
+  async allowLocation() {
+    await this.platform.ready();
+    this.checkLocationStatus();
+  }
+
+  /**
+   * ✅ Check if location (GPS) is enabled
+   * If not, ask user to enable it
+   */
+  async checkLocationStatus() {
+    cordova.plugins.diagnostic.isLocationEnabled(
+      async (enabled: boolean) => {
+        console.log('Location enabled: ', enabled);
+
+        if (!enabled) {
+          await this.askToEnableGPS();
+        } else {
+          this.enableHighAccuracyLocation();
+        }
+      },
+      (error: any) => {
+        console.error('Error checking location status', error);
+      }
+    );
+  }
+
+  /**
+   * ✅ Ask user to enable GPS in settings
+   */
+  async askToEnableGPS() {
+    const alert = await this.alertController.create({
+      header: 'Location Required',
+      message: 'Please enable your device location (GPS) to continue.',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+        },
+        {
+          text: 'Open Settings',
+          handler: () => {
+            cordova.plugins.diagnostic.switchToLocationSettings();
+          },
+        },
+      ],
+    });
+
+    await alert.present();
+  }
+
+  /**
+   * ✅ Request High Accuracy location mode
+   */
+  async enableHighAccuracyLocation() {
+    try {
+      const permission = await Geolocation.requestPermissions();
+
+      if (permission.location !== 'granted') {
+        await this.presentLocationPermissionAlert();
+        return;
+      }
+
+      cordova.plugins.locationAccuracy.request(
+        () => {
+          console.log('High-accuracy location enabled');
+          this.getLocationAndProcess();
+        },
+        (error: any) => {
+          console.error('Failed to enable high accuracy', error);
+        },
+        cordova.plugins.locationAccuracy.REQUEST_PRIORITY_HIGH_ACCURACY
+      );
+    } catch (error) {
+      console.error('Permission error', error);
+    }
+  }
+
+  /**
+   * ✅ Get current location and process it (send to server, reverse geocode)
+   */
+  async getLocationAndProcess() {
+    try {
+      const resp = await Geolocation.getCurrentPosition();
+      const { latitude, longitude } = resp.coords;
+
+      // Store coordinates
+      localStorage.setItem('latitude', latitude.toString());
+      localStorage.setItem('longitude', longitude.toString());
+      localStorage.setItem('current_latitude', latitude.toString());
+      localStorage.setItem('current_longitude', longitude.toString());
+
+      // API call to backend
+      this.getlocation(latitude, longitude);
+
+      // Reverse geocode using Google Maps API
+      const latlng = new google.maps.LatLng(latitude, longitude);
+      const geocoder = new google.maps.Geocoder();
+
+      geocoder.geocode({ location: latlng }, (results, status) => {
+        if (status === google.maps.GeocoderStatus.OK && results && results[1]) {
+          const address = results[1].formatted_address;
+          localStorage.setItem('setlocation', address);
+          localStorage.setItem('current_address', address);
+        }
+      });
+    } catch (error) {
+      console.error('Geolocation error:', error);
+      await this.presentLocationPermissionAlert();
+    }
+  }
+
+  /**
+   * ✅ Manual entry fallback
+   */
+  enterManually() {
+    this.navCtrl.navigateRoot('default-address');
+  }
+
+  /**
+   * ✅ API call to check service location
+   */
+  async getlocation(latitude: number, longitude: number) {
+    const data = {
+      location_latitude: latitude,
+      location_longitude: longitude,
+    };
+
+    this.api.getuserlocation(data).subscribe({
+      next: async (res: any) => {
+        if (res.status === 200) {
+          localStorage.setItem('location_id', res.data[0].id);
+          localStorage.setItem('location_name', res.data[0].location_name);
+          localStorage.setItem('service_location_status', '1');
+          localStorage.removeItem('delivery_elements');
+          localStorage.setItem('set_delivery_distance_status', '0');
+          this.navCtrl.navigateRoot('home');
+        } else {
+          localStorage.setItem('service_location_status', '0');
+          this.navCtrl.navigateRoot('servicelocation');
+        }
+      },
+      error: (error) => {
+        console.error('API error:', error);
+        localStorage.setItem('service_location_status', '0');
+        this.navCtrl.navigateRoot('servicelocation');
+      },
+    });
+  }
+
+  /**
+   * ✅ Alert to guide user to app settings
+   */
+  async presentLocationPermissionAlert() {
+    const alert = await this.alertController.create({
+      header: 'Permission Required',
+      message:
+        'It looks like you have turned off the permissions required for this feature. Please go to Phone Settings > Apps > Zeengi > Permissions and enable location access.',
+      buttons: [
+        {
+          text: 'GO TO SETTINGS',
+          handler: () => {
+            cordova.plugins.diagnostic.switchToSettings();
+          },
+        },
+      ],
+    });
+
+    await alert.present();
+  }
+}

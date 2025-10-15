@@ -1,0 +1,28 @@
+<ion-content class="no-internet-content">
+  <div class="no-internet-container">
+    <!-- You can keep one or remove any of these icons -->
+    <ion-icon name="wifi-off-outline" class="no-internet-icon"></ion-icon>
+    
+    <!-- Optional SVG fallback -->
+    <svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      width="100" height="100" 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="#14803b" 
+      stroke-width="2" 
+      stroke-linecap="round" 
+      stroke-linejoin="round"
+    >
+      <line x1="1" y1="1" x2="23" y2="23"></line>
+      <path d="M16.72 11.06a6 6 0 0 0-9.19 0"></path>
+      <path d="M5.1 8.46a10 10 0 0 1 13.8 0"></path>
+      <path d="M8.53 14.11a2 2 0 0 1 2.94 0"></path>
+      <line x1="12" y1="20" x2="12" y2="20"></line>
+    </svg>
+
+    <h2>No Internet Connection</h2>
+    <p>Could not connect to the internet. Please check your network.</p>
+    <div class="try-again-label" (click)="retry()">Try Again</div>
+  </div>
+</ion-content>

@@ -1,0 +1,68 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button (click)="goBack()"></ion-back-button>
+    </ion-buttons>
+    <ion-title style="font-family: 'sfregular';">
+      <div style="display: flex;align-items: center;">
+        <div class="map-center-overlay2">
+          <input type="text" id="place-input" placeholder="Search for areae, street name..."
+            [(ngModel)]="searchQuery" />
+          <ion-icon class="search-icon" name="search"></ion-icon>
+          <ion-icon class="clear-icon" name="close-circle" *ngIf="searchQuery" (click)="clearSearch()"></ion-icon>
+        </div>
+      </div>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="map-center-overlay1">
+    <div (click)="usecurrentlocation2()" class="pests">
+      <ion-icon name="locate" style="color: #F57B00;"></ion-icon>&nbsp;&nbsp;
+      Use current location
+    </div>
+  </div>
+  <div #mapElement style="height: 100%;" id="map"></div>
+</ion-content>
+<ion-footer>
+  <ion-toolbar class="footer-toolbar">
+    <div class="footer-content">
+
+      <!-- Delivery Title -->
+      <p class="footer-title">Delivery Details</p>
+
+      <!-- City Info: Icon + Address -->
+      <div class="address-container">
+        <ion-icon name="location" class="location-icon"></ion-icon>
+        <p class="city-text"><b>{{ city_name }}</b> {{ short_address }}</p>
+      </div>
+
+      <!-- Custom Address Type Field (only if "Other" is selected) -->
+      <ion-item class="input-item" lines="none" *ngIf="selectedTag == 'Other'">
+        <ion-input placeholder="Add Address Type *" [(ngModel)]="address.address_type" required class="custom-input">
+        </ion-input>
+      </ion-item>
+      <!-- Complete Address Field -->
+      <ion-item class="input-item" lines="none">
+        <ion-input placeholder="Additional address details *" [(ngModel)]="address.completeAddress" required
+          class="custom-input">
+        </ion-input>
+      </ion-item>
+
+      <!-- Tag Filter Buttons -->
+      <div class="filter-container">
+        <ion-button *ngFor="let tag of tags" (click)="selectTag(tag)" [class.selected-tag]="selectedTag === tag"
+          [class.unselected-tag]="selectedTag !== tag">
+          {{ tag }}
+        </ion-button>
+      </div>
+
+      <ion-button expand="full" [disabled]="!address.completeAddress" (click)="postaddress()"
+        class="custom-green-button">
+        Save Address
+      </ion-button>
+
+    </div>
+  </ion-toolbar>
+</ion-footer>

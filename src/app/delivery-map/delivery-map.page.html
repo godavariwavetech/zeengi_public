@@ -1,0 +1,65 @@
+<ion-header >
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title style="text-align: center;" class="tet"> Order from <br> <span class="tet2">Oven Cakes &
+        Deserts</span></ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="icon-only" name="ellipsis-vertical-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- Google Map -->
+  <!-- <div id="map"></div> -->
+
+  <!-- Order Status -->
+  <ion-card class="order-card">
+    <ion-card-content>
+      <ion-row>
+        <ion-col size="8">
+          <p class="tet2">Order Received!</p>
+          <div class="order-info">
+            <div class="order-item">
+              <span class="dot"></span>
+              <span class="label">From</span><br>
+              <span class="value">Oven Cakes & Desserts</span>
+            </div>
+            <div class="order-item">
+              <span class="dot"></span>
+              <span class="label">To </span><br>
+              <span class="value">
+                Drno 72-32-8 Near Sai Baba Temple,<br> Near Cyclone Colony Food Gowdence...
+              </span>
+            </div>
+          </div>
+        </ion-col>
+        <ion-col size="4">
+          <div class="arrival-time tet">
+            <p>Arriving In</p>
+            <div class="time-box">20<br> Mins</div>
+          </div>
+        </ion-col>
+      </ion-row>
+
+
+
+
+      <div class="progress-bar">
+        <div class="progress"></div>
+      </div>
+
+      <div class="order-actions">
+        <ion-button fill="outline"  color="danger">✖ Cancel</ion-button>
+        <p class="countdown">Confirming Order in 00:57</p>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>

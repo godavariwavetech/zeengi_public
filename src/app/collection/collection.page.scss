@@ -1,0 +1,117 @@
+.category-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 0px 0px 15px 15px;
+    background: linear-gradient(180deg, #F57B00 0%, #B93800 100%);
+    background-size: -1px auto;
+    /* Adjust size as needed */
+    color: white;
+    position: relative;
+    margin-top: -1px;
+    height: 85px;
+    padding-right: 20px;
+    /* Optional: to add spacing between logo and content */
+}
+
+
+
+.tet {
+    font-family: 'sfregular';
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 23.87px;
+    letter-spacing: 0.1px;
+}
+
+ion-header {
+    --ion-box-shadow: none;
+    box-shadow: none !important;
+}
+
+
+.icon-button {
+    color: white;
+}
+
+.card-image {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+}
+
+.wishlist-content {
+    padding: 12px;
+
+    .wishlist-card-row {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        margin-bottom: 16px;
+
+
+
+        .card-details {
+            flex: 1;
+            padding: 12px;
+
+            .title-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+
+                h2 {
+                    font-size: 16px;
+                    font-weight: 600;
+                    color: #222;
+                    margin: 0;
+                    flex: 1;
+                }
+
+                ion-chip {
+                    font-size: 12px;
+                    height: 20px;
+                    margin-left: 8px;
+                }
+            }
+
+            .item-desc {
+                font-size: 13px;
+                color: #555;
+                margin: 6px 0;
+            }
+
+            .price-section {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin: 8px 0;
+
+                .selling-price {
+                    font-size: 16px;
+                    font-weight: 600;
+                    color: #28a745;
+                }
+
+                .actual-price {
+                    font-size: 13px;
+                    text-decoration: line-through;
+                    color: #999;
+                }
+
+                ion-badge {
+                    font-size: 11px;
+                }
+            }
+
+            ion-button {
+                margin-top: 6px;
+                --border-radius: 11px;
+            }
+        }
+    }
+}

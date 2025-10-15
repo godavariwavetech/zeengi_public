@@ -1,0 +1,22 @@
+<ion-content class="ion-padding location-access-page">
+  <div class="location-container">
+    <div class="location-icon">
+      <ion-icon name="location-sharp"></ion-icon>
+    </div>
+    <h2>Your Location?</h2>
+    <p>It looks like you have turned off the permissions required for this feature.</p>
+
+
+    <ion-button expand="block" class="location-btn" (click)="allowLocation()">
+      Enable Device Location
+    </ion-button>
+
+    <ion-button expand="block"  class="location-btn2" (click)="enterManually()">
+      <!-- <ion-icon name="create-outline" slot="start"></ion-icon> -->
+      Enter Your Location Manually
+    </ion-button>
+    <!-- <div class="manual-entry" (click)="enterManually()">
+      Enter Your Location Manually
+    </div> -->
+  </div>
+</ion-content>

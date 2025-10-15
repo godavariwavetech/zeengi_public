@@ -1,0 +1,842 @@
+.category-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 0px 0px 15px 15px;
+  background: linear-gradient(180deg, #F57B00 0%, #B93800 100%);
+  color: white;
+  position: relative;
+  margin-top: -1px;
+}
+
+ion-header {
+  --ion-box-shadow: none;
+  box-shadow: none !important;
+}
+
+.tet {
+  font-family: 'sfregular';
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 23.87px;
+  letter-spacing: 0.1px;
+}
+
+.icon-button {
+  color: white;
+}
+
+.cart-summary {
+  font-family: 'sfregular';
+  display: flex;
+  justify-content: space-between;
+  padding: 0px 15px;
+  font-size: 16px;
+  font-weight: bold;
+  align-items: center;
+  letter-spacing: 0.3px;
+}
+
+.cart-item {
+  display: flex;
+  /* align-items: center; */
+  background: #fff;
+  padding: 10px;
+  border-radius: 12px;
+  // margin: 10px;
+  position: relative;
+}
+
+.product-details {
+  flex-grow: 1;
+  padding-left: 10px;
+}
+
+.nme {
+  font-family: 'sfregular';
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: 0px;
+  color: black;
+}
+
+.price {
+  font-family: 'sfmedium';
+  font-size: 12px;
+  line-height: 30px;
+  letter-spacing: 0px;
+  color: #F57B00;
+}
+
+.delivery {
+  font-family: 'sfmedium';
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 14px;
+  letter-spacing: 0px;
+  color: grey;
+}
+
+.quantity-control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #F57B00;
+  border-radius: 8px;
+  background-color: rgb(255 198 140 / 30%);
+  width: 74px;
+  height: 27px;
+  padding: 0 2px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.counter-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  color: #F57B00;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.counter-box:hover {
+  // background-color: #218838;
+}
+
+.quantity-control ion-text h4 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+  width: 20px;
+  color: #F57B00;
+}
+
+
+.coupon-card {
+  box-shadow: 1px 0px 8px 2px rgba(0, 0, 0, 0.1);
+
+  h2 {
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  ion-label {
+    margin: 0;
+  }
+
+  ion-icon {
+    font-size: 20px;
+  }
+}
+
+ion-card {
+  border-radius: 10px;
+}
+
+.delivery-card {
+  ion-card-content {
+    padding: 12px;
+  }
+
+  .delivery-time {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    margin-bottom: 6px;
+
+    ion-icon {
+      font-size: 18px;
+      margin-right: 8px;
+    }
+
+    strong {
+      margin-left: 4px;
+    }
+  }
+
+  .schedule-text {
+    font-size: 13px;
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  .bill-summary {
+    --background: transparent;
+    --ion-item-background: transparent;
+    --padding-start: 0;
+    --inner-padding-end: 0;
+    --min-height: 0;
+
+    ion-icon {
+      font-size: 18px;
+      margin-right: 8px;
+    }
+
+    ion-label {
+      font-size: 14px;
+
+      s {
+        color: #999;
+        margin-right: 5px;
+      }
+
+      // .save-badge {
+      //     margin-left: 5px;
+      //     font-size: 14px;
+      //     vertical-align: middle;
+      //     font-family: 'sfregular';
+      //     letter-spacing: 0.2px;
+      //     background-color: #b4f1c8;
+      //     color: #545454;
+      // }
+
+      // .tax-info {
+      //     font-size: 12px;
+      //     color: #777;
+      //     margin-top: 4px;
+      //     font-family: 'sfregular';
+      // }
+    }
+  }
+}
+
+.order-footer {
+  bottom: 0;
+  width: 100%;
+  background: white;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+}
+
+
+.order-summary {
+  border-radius: 10px;
+  box-shadow: none;
+  padding: 5px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 16px;
+}
+
+.view-more {
+  color: #666;
+  font-family: 'sfregular';
+  font-weight: 500;
+  font-size: 10px;
+  line-height: 11.93px;
+  letter-spacing: 0px;
+  text-decoration: underline;
+  text-decoration-style: solid;
+  text-decoration-thickness: Auto;
+
+}
+
+ion-item {
+  --inner-padding-end: 0;
+  font-size: 16px;
+}
+
+.place-order {
+  background-color: #F57B00;
+  color: white;
+  // font-weight: bold;
+  gap: 10px;
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+  font-family: 'sfregular';
+  letter-spacing: 0.5px;
+}
+
+.te {
+  font-family: 'sfregular';
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 16.71px;
+  letter-spacing: 0.3px;
+  color: black;
+}
+
+.ley {
+  font-family: 'sfregular';
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 14.32px;
+  letter-spacing: 0px;
+}
+
+.get {
+  font-family: 'sfregular';
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 16.71px;
+  letter-spacing: 0px;
+  color: black;
+}
+
+.summary-item2 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  font-family: "sfregular";
+  font-weight: 400;
+  letter-spacing: 0.4px;
+}
+
+.savings-banner {
+  font-family: 'sfregular';
+  background-color: #e0f7fa;
+  padding: 12px;
+  text-align: center;
+  color: #00796b;
+  font-weight: 500;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  font-family: "sfregular";
+  background-color: #e0f7fa;
+  padding: 12px;
+  text-align: center;
+  color: #00796b;
+  font-weight: 500;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  width: 109%;
+  margin-left: -14px;
+  margin-bottom: -3px;
+}
+
+.doma {
+  width: 30px;
+  text-align: center;
+  border: 1px solid #F57B00;
+  border-radius: 5px;
+}
+
+.discount-amount {
+  color: #F57B00;
+  font-family: 'sfregular';
+}
+
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 8px;
+  font-family: 'sfmedium';
+}
+
+.buttoner {
+  padding: 8px 16px;
+  border: 1px solid black;
+  background: transparent;
+  color: black;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'sfmedium';
+  letter-spacing: 0.5px;
+}
+
+.buttonerw {
+  padding: 8px 16px;
+  background: #F57B00;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'sfmedium';
+  letter-spacing: 0.5px;
+}
+
+.buttonerw.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.gratitude-card {
+  border-radius: 16px;
+  // padding: 12px;
+}
+
+.tip-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tip-section h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.tip-section p {
+  margin: 4px 0 0 0;
+  font-size: 13px;
+  color: #555;
+}
+
+.tip-image {
+  width: 50px;
+  height: 50px;
+}
+
+.tip-options {
+  display: flex;
+  gap: 20px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.tip-option {
+  padding: 8px 19px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+  background: #fff;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  font-family: "sfmedium";
+}
+
+.tip-option.selected {
+  border-color: #F57B00;
+  background: #0cb14b4d;
+  color: black;
+}
+
+.custom-input {
+  border: none;
+  background: transparent;
+  width: 50px;
+  font-size: 14px;
+  outline: none;
+  color: #ff4d4f;
+}
+
+.dropdown-container {
+  position: relative;
+  display: inline-block;
+  width: 40%;
+}
+
+.dropdown-header {
+  text-align: center;
+  padding: 2%;
+  font-family: 'sfregular';
+  color: black;
+}
+
+.dropdown-menu {
+  font-family: 'sfregular';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  width: 100%;
+  background: white;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  z-index: 1000;
+  transform: translateX(-50%) translateY(-10px);
+}
+
+
+.save-badge {
+  background-color: #f57b005e;
+  color: #F57B00;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  width: fit-content;
+}
+
+.tax-info {
+  font-size: 12px;
+  color: #777;
+}
+
+
+ion-item {
+  --inner-padding-end: 0;
+  font-size: 14px;
+}
+
+.success-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+}
+
+.success-icon {
+  font-size: 80px;
+  color: #F57B00;
+  margin-bottom: 20px;
+}
+
+.order-message {
+  font-size: 12px;
+  color: #676767;
+  font-family: 'sfmedium';
+  text-align: left;
+}
+
+.address-title {
+  font-weight: bold;
+  font-size: 22px;
+  margin: 8px 0;
+}
+
+.address-details {
+  font-size: 14px;
+  color: #666;
+  padding: 0 20px;
+  margin-bottom: 30px;
+  font-family: 'sfregular';
+}
+
+.save-button {
+  --border-radius: 10px;
+  --border-color: #F57B00;
+  --color: #F57B00;
+  font-family: 'sfmedium';
+}
+
+
+.platform-fee {
+  border-bottom: 2px dotted #808080;
+  /* Dotted line */
+  display: inline;
+  /* Ensures it doesn't stretch the entire width */
+  padding-bottom: 2px;
+  /* Optional: Adds some space between text and the line */
+}
+
+.sc-ion-alert-md-h {
+  --background: var(--ion-overlay-background-color, var(--ion-background-color, #fff));
+  --max-width: 339px;
+  --backdrop-opacity: var(--ion-backdrop-opacity, 0.32);
+  font-size: 0.875rem;
+}
+
+.alert-wrapper.sc-ion-alert-md {
+  border-radius: 17px !important;
+}
+
+
+.ion-color-success {
+  background: #e9fff2;
+}
+
+
+
+
+
+
+.alternate-coupon-card {
+  ion-card-header {
+    background: #f4f4f4;
+    padding: 12px 16px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  ion-card-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  ion-card-content {
+    padding: 16px;
+  }
+
+
+
+
+  input[type="radio"] {
+    appearance: none;
+    /* Remove default styling */
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+  }
+
+  input[type="radio"]:checked {
+    border-color: #F57B00;
+    /* Green border */
+    background-color: #F57B00;
+  }
+
+  input[type="radio"]:checked::after {
+    content: "";
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+  }
+
+  .radio-label span {
+    transition: color 0.3s;
+  }
+
+  input[type="radio"]:checked+span {
+    color: #28a745;
+    /* Green text for selected */
+    font-weight: 400;
+  }
+
+
+
+  .delivery-option {
+    display: flex;
+    gap: 24px;
+    /* space between radio buttons */
+    flex-wrap: wrap;
+    /* allows wrapping on smaller screens if needed */
+    margin-bottom: 12px;
+  }
+
+  .radio-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+}
+
+
+
+
+
+
+.delivery-time-picker {
+  --background: #f6fff8;
+  padding: 1rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.header h2 {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.close-icon {
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+
+
+.date-scroll {
+  display: inline-flex;
+  gap: 1rem;
+  padding: 0.5rem 0;
+}
+
+.date-item {
+  color: #999;
+  text-align: center;
+  min-width: 80px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.date-item.selected {
+  color: #F57B00;
+  border-bottom: 2px solid #F57B00;
+}
+
+.date-item .date {
+  font-weight: bold;
+}
+
+.time-scroll-wrapper {
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 0.5rem 0;
+}
+
+.time-scroll {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.time-item {
+  padding: 0.75rem 1.5rem;
+  margin: 0.25rem 0;
+  background: #fff;
+  border-radius: 12px;
+  font-weight: bold;
+  color: #000;
+  width: 80%;
+  text-align: center;
+  transition: 0.3s ease;
+}
+
+.time-item.selected {
+  background-color: #d7fbe5;
+  color: #000;
+  font-size: 1.1rem;
+}
+
+.confirm-button {
+  --background: #F57B00;
+  color: white;
+  font-weight: bold;
+  border-radius: 12px;
+  margin-top: 1rem;
+}
+
+.time-scroll-spacer {
+  height: 45px;
+  /* Match approx height of time-item */
+  flex-shrink: 0;
+}
+
+
+.date-scroll-wrapper {
+  overflow-x: auto;
+  white-space: nowrap;
+  margin-bottom: 0rem;
+}
+
+
+/* Overall modal styling */
+.menu-modal3 {
+  --border-radius: 16px;
+  --background: #ffffff;
+  --box-shadow: 0px -4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.list-md {
+  padding-right: 18px;
+}
+
+/* Style the radio button's inner circle when selected */
+ion-radio .radio-inner {
+  background: #F57B00 !important;
+  /* Green when selected */
+}
+
+/* Style the radio button's outer border */
+ion-radio .radio-icon {
+  border-color: #F57B00 !important;
+  /* Green border */
+}
+
+/* Change border color when the radio is selected (checked) */
+ion-radio[checked] .radio-icon {
+  border-color: #F57B00 !important;
+  /* Green border on checked */
+}
+
+/* Change the color of the inner circle when selected */
+ion-radio[checked] .radio-inner {
+  background: #F57B00 !important;
+  /* Green inner circle on checked */
+}
+
+
+ion-radio .radio-inner {
+  background: #F57B00 !important;
+}
+
+ion-radio .radio-icon {
+  border-color: #F57B00 !important;
+}
+
+ion-radio[checked] .radio-icon {
+  border-color: #F57B00 !important;
+}
+
+ion-radio[checked] .radio-inner {
+  background: #F57B00 !important;
+}
+
+.custom-toast {
+  --background: #ceffe0;
+  /* Tomato color or any hex code */
+  --color: #383838;
+  /* Text color */
+}
+
+
+
+.custom-line {
+  height: 1px;
+  background-color: #dcdcdc;
+  /* Change this to your desired color */
+  margin: 10px 0;
+  /* Adjust spacing */
+  width: 100%;
+  /* Full width */
+}
+
+
+.image-container {
+  position: relative;
+}
+
+.image-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f0f0f0;
+  z-index: 1;
+}
+
+
+ion-skeleton-text {
+  border-radius: 4px;
+}
+
+.red {
+  background-color: #ff0000bf;
+  padding: 3px;
+  color: white;
+  border-radius: 3px;
+}
+
+.green {
+  background-color: #28a745;
+  padding: 3px;
+  color: white;
+  border-radius: 3px;
+}

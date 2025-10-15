@@ -1,0 +1,82 @@
+<ion-header class="custom-header">
+  <ion-icon name="arrow-back-outline" class="back-icon" (click)="gotohome()"></ion-icon><br>
+  <div class="header-content">
+    <div class="text-section">
+      <h1 class="title" style="font-family: 'sfregular';">{{categorydata?.sub_category_name}}</h1>
+      <p class="subtitle">{{categorydata?.subcategory_tag_line}}</p>
+    </div>
+    <img src="{{categorydata?.sub_category_image}}" class="biryani-img" alt="Biryani" />
+  </div>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+  <span *ngIf="menuItems.length>0">
+    <swiper-container #swiper (afterinit)="swiperReady()" (slidechange)="swiperSlideChanged($event)"
+      autoplay='{"delay": 2500, "disableOnInteraction": false}' loop="true" pagination='{"clickable": true}'>
+      <swiper-slide *ngFor="let item of menuItems">
+        <ng-container style="width: 100%;">
+          <ion-row>
+            <ion-col size="12" style="text-align: center;">
+              <div class="image-container">
+                <img style="width: 100%;height:135px;border-radius:8px;" [src]="item.categorybanner_image" />
+              </div>
+            </ion-col>
+          </ion-row>
+        </ng-container>
+      </swiper-slide>
+    </swiper-container>
+  </span>
+
+
+  <div class="filter-container">
+    <div class="filter-chip" (click)="filterItems('All')">
+      <span class="filters">All &nbsp;&nbsp;</span>
+    </div>
+
+    <div class="filter-chip" *ngFor="let i of filters" (click)="filterItems(i)">
+      <img *ngIf="i.filter_name=='Veg'" src="assets/icon/category/veg.svg">
+      <img *ngIf="i.filter_name=='Non Veg'" src="assets/icon/category/non-veg.svg">
+      <span class="filters">{{i.filter_name}} &nbsp;&nbsp;</span>
+    </div>
+  </div>
+
+  <div class="search-container">
+    <ion-searchbar [(ngModel)]="searchQuery" (ionInput)="filterShops()" placeholder="Search here..."
+      show-clear-button="always">
+    </ion-searchbar>
+    <!-- <ion-icon name="search-outline" class="search-icon"></ion-icon> -->
+  </div>
+
+  <div class="category-header2" *ngIf="recommenderforyoudata.length!=0">
+    <span class="category-title2">{{shops.length}} {{sub_category_name}}</span>
+    <div class="category-line"></div>
+  </div>
+  <div *ngFor="let a of shops; let i = index" class="a-card" (click)="gotorestaurant(a)">
+    <ion-row [ngClass]="{'inactive': a.shop_active_status == 1}">
+      <ion-col size="4">
+        <div class="food-container">
+          <img [src]="a.shop_image" alt="Food Item" class="food-image" />
+        </div>
+      </ion-col>
+      <ion-col size="8">
+        <ion-label class="content">
+          <h2 class="restaurant-name">{{ a.shop_name }}</h2>
+          <div class="details">
+            <img src="assets/icon/star.svg">
+            <span class="rating2">{{ a.shop_rating }}</span>
+            <span class="rating2">&nbsp;&nbsp; • {{ a.delivery_time }}</span>
+          </div>
+          <p class="location">{{ a.short_address | slice:0:70 }}{{ a.short_address.length > 70 ? '...' : '' }} • {{
+            a.delivery_distance | number:'1.1-2' }} km</p>
+          <p class="discount">{{ a.special_offer_name }}</p>
+        </ion-label>
+      </ion-col>
+    </ion-row>
+  </div>
+
+  <div style="text-align: center;margin-top:20%;font-family: 'sfregular';" *ngIf="avail">
+    No Shops Available
+  </div>
+
+</ion-content>
