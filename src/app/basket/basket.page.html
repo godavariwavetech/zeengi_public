@@ -511,6 +511,7 @@
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
+    
     <ion-content>
       <ion-searchbar style="font-family: 'sfregular';" (ionInput)="searchCoupons()" [(ngModel)]="searchQuery"
         placeholder="Search Coupons" show-clear-button="always">
@@ -548,6 +549,7 @@
           </ion-card-content>
         </ion-card>
       </div>
+
       <div *ngIf="coupons.length>0">
         <ion-card *ngFor="let o of coupons" style="border-radius: 12px; box-shadow: 0px 4px 10px rgba(0,0,0,0.1);">
           <ion-card-content *ngIf="o.coupon_status==1">
@@ -571,7 +573,7 @@
               </ion-col>
               <ion-col size="3" class="ion-text-right" *ngIf="selectedCouponid == o.id">
                 <ion-button fill="solid" size="small" color="success" style="color: white;font-family: 'sfregular';"
-                  (click)="toggleCoupon(1  , o)">
+                  (click)="toggleCoupon( 1 , o)">
                   Remove
                 </ion-button>
               </ion-col>

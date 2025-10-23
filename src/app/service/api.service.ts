@@ -13,9 +13,11 @@ export class ApiService {
 
   private baseUrl = 'https://api.zeengi.com/public_app/';
 
+  // private baseUrl = 'https://testapi.zeengi.com/public_app/';
+
   private cartCount = new BehaviorSubject<number>(0);
 
-  private apiKey = 'eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjhhNDMxZWQyNjEyZDRmMmI5YjU5NDZlYzg3YWJkZTYzIiwiaCI6Im11cm11cjY0In0='; // Replace with your real API key
+  private apiKey = 'eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6ImY5MGFmNjA5NTkzZDQyZGZiNWQxNzZhZmViNjQ4MDdjIiwiaCI6Im11cm11cjY0In0='; // Replace with your real API key
 
   private apiUrl = 'https://api.openrouteservice.org/v2/directions/driving-car';
 
@@ -377,8 +379,8 @@ export class ApiService {
   getfranshichedetails(data: any) {
     return this.http.post(`${this.baseUrl}getfranshichedetails`, data)
   }
-  
-    getfranchsiedetails(data: any) {
+
+  getfranchsiedetails(data: any) {
     return this.http.post(`${this.baseUrl}getpublicfranshichedetails`, data)
   }
 
@@ -389,41 +391,105 @@ export class ApiService {
 
 
 
+  // // distance caliculation
+  // async getRouteDistanceORS(fromLat: number, fromLng: number, toLat: number, toLng: number) {
+  //   const body = {
+  //     coordinates: [[fromLng, fromLat], [toLng, toLat]]
+  //   };
+
+  //   const headers = new HttpHeaders({
+  //     'Authorization': this.apiKey,
+  //     'Content-Type': 'application/json'
+  //   });
+
+  //   try {
+  //     const response: any = await lastValueFrom(
+  //       this.http.post(this.apiUrl, body, { headers })
+  //     );
+
+  //     const summary = response.routes[0].summary;
+  //     const distanceKm = (summary.distance / 1000).toFixed(2);
+  //     // const durationSec = summary.duration;
+
+  //     // const hours = Math.floor(durationSec / 3600);
+  //     // const minutes = Math.round((durationSec % 3600) / 60);
+
+  //     // console.log(`🚗 Distance: ${distanceKm} km`);
+  //     // console.log(`🕒 Estimated time: ${hours}h ${minutes}m`);
+
+  //     return {
+  //       distanceKm: parseFloat(distanceKm),
+  //     };
+
+  //   } catch (error: any) {
+  //     console.error('❌ Error fetching route:', error?.error || error.message);
+  //     return null;
+  //   }
+  // }
   // distance caliculation
-  async getRouteDistanceORS(fromLat: number, fromLng: number, toLat: number, toLng: number) {
-    const body = {
-      coordinates: [[fromLng, fromLat], [toLng, toLat]]
-    };
 
-    const headers = new HttpHeaders({
-      'Authorization': this.apiKey,
-      'Content-Type': 'application/json'
-    });
+  // distance caliculation
 
-    try {
-      const response: any = await lastValueFrom(
-        this.http.post(this.apiUrl, body, { headers })
+
+ async getRouteDistanceORS(lat1: any, lon1: any, lat2: any, lon2: any): Promise<number> {
+    return new Promise((resolve) => {
+      // If Google API not available, fallback to haversine
+      if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
+        console.warn("Google Maps API not available, using haversine.");
+        resolve(this.haversineDistance(lat1, lon1, lat2, lon2));
+        return;
+      }
+
+      const service = new google.maps.DistanceMatrixService();
+      const origin = new google.maps.LatLng(lat1, lon1);
+      const destination = new google.maps.LatLng(lat2, lon2);
+
+      const timeout = setTimeout(() => {
+        console.warn("Google DistanceMatrix timeout, using haversine.");
+        resolve(this.haversineDistance(lat1, lon1, lat2, lon2));
+      }, 3000); // Timeout after 3 seconds
+
+      service.getDistanceMatrix(
+        {
+          origins: [origin],
+          destinations: [destination],
+          travelMode: google.maps.TravelMode.DRIVING,
+        },
+        (response: any, status: any) => {
+          clearTimeout(timeout);
+          if (status !== google.maps.DistanceMatrixStatus.OK) {
+            console.warn("Google Maps error:", status, "- using haversine.");
+            resolve(this.haversineDistance(lat1, lon1, lat2, lon2));
+            return;
+          }
+          const element = response.rows?.[0]?.elements?.[0];
+          if (!element || element.status !== 'OK') {
+            console.warn("Invalid Google Maps response - using haversine.");
+            resolve(this.haversineDistance(lat1, lon1, lat2, lon2));
+            return;
+          }
+          const distanceInKm = element.distance.value / 1000;
+          resolve(distanceInKm);
+        }
       );
+    });
+  }
 
-      const summary = response.routes[0].summary;
-      const distanceKm = (summary.distance / 1000).toFixed(2);
-      // const durationSec = summary.duration;
+  haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+    const R = 6371; // Radius of Earth in km
+    const toRad = (value: number) => value * Math.PI / 180;
 
-      // const hours = Math.floor(durationSec / 3600);
-      // const minutes = Math.round((durationSec % 3600) / 60);
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
 
-      // console.log(`🚗 Distance: ${distanceKm} km`);
-      // console.log(`🕒 Estimated time: ${hours}h ${minutes}m`);
+    const a = Math.sin(dLat / 2) ** 2 +
+      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+      Math.sin(dLon / 2) ** 2;
 
-      return {
-        distanceKm: parseFloat(distanceKm),
-      };
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c;
 
-    } catch (error: any) {
-      console.error('❌ Error fetching route:', error?.error || error.message);
-      return null;
-    }
+    return distance * 1.45; // Add 2km buffer
   }
   // distance caliculation
-
 }

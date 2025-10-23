@@ -301,24 +301,28 @@
                 Add +
               </span>
 
-              <span  *ngIf="item.itemscount==0 && item.active_status != 1 && (restaurantdata.common_item_ind==0 && item.quantity_type==0)"  (click)="restaurantdata.shop_active_status == 0 ? additem(item.id,1) : null" class="add-button">
+              <span
+                *ngIf="item.itemscount==0 && item.active_status != 1 && (restaurantdata.common_item_ind==0 && item.quantity_type==0)"
+                (click)="restaurantdata.shop_active_status == 0 ? additem(item.id,1) : null" class="add-button">
                 Add +
               </span>
 
-              <span  *ngIf="item.itemscount==0 && item.active_status != 1 && (restaurantdata.common_item_ind==1 && item.quantity_type==1)"
+              <span
+                *ngIf="item.itemscount==0 && item.active_status != 1 && (restaurantdata.common_item_ind==1 && item.quantity_type==1)"
                 (click)="restaurantdata.shop_active_status == 0 ? addmoreitem(item,category.items) : null"
                 class="add-button">
                 Add +
               </span>
 
-              <span *ngIf="item.itemscount==0 && item.active_status != 1 && (restaurantdata.common_item_ind==0 && item.quantity_type==1)"
+              <span
+                *ngIf="item.itemscount==0 && item.active_status != 1 && (restaurantdata.common_item_ind==0 && item.quantity_type==1)"
                 (click)="restaurantdata.shop_active_status == 0 ? addmoreitem(item,category.items) : null"
                 class="add-button">
                 Add +
               </span>
 
-              <span *ngIf="item.itemscount==0 && item.active_status != 1 && (restaurantdata.common_item_ind==1 && item.quantity_type==0)"
-                (click)="restaurantdata.shop_active_status == 0 ? addmoreitem(item,category.items) : null"
+              <span
+                *ngIf="item.itemscount==0 && item.active_status != 1 && (restaurantdata.common_item_ind==1 && item.quantity_type==0)" (click)="restaurantdata.shop_active_status == 0 ? addmoreitem(item,category.items) : null"
                 class="add-button">
                 Add +
               </span>
@@ -448,31 +452,19 @@
   (didDismiss)="closeitemmodal()">
   <ng-template>
     <div class="ion-padding" style="text-align: center;">
-      <p style="font-family: 'sfregular';text-align: left;">Item Details </p>
-      <p class="close-btn" style="position:fixed;    top: 6px;" (click)="closeitemmodal()">✖ </p>
+      <p style="font-family:'sfregular';text-align: left;">Item Details </p>
+      <p class="close-btn" style="position:fixed;top: 6px;" (click)="closeitemmodal()"> ✖ </p>
       <img style="border-radius: 20px 20px 20px 20px;" [src]="itemdetails.item_image" alt="Dish Image" />
-      <!-- height: 200px;width: 100%; -->
-      <!-- <ion-badge color="warning" style="letter-spacing: 0.5px;font-family: 'sfregular';">Bestseller</ion-badge> -->
       <h2 style="font-family: 'sfmedium';text-align: left;">{{ itemdetails.item_name }}</h2>
-      <p *ngIf="itemdetails.item_description" style="font-family: 'sfregular';text-align: left;">{{
-        itemdetails.item_description }}
+      <p *ngIf="itemdetails.item_description" style="font-family: 'sfregular';text-align: left;">
+        {{ itemdetails.item_description }}
       </p>
-      <p *ngIf="itemdetails.full_description" style="font-family: 'sfregular';text-align: left;">{{
-        itemdetails.full_description }}
+      <p *ngIf="itemdetails.full_description" style="font-family: 'sfregular';text-align: left;">
+        {{ itemdetails.full_description }}
       </p>
       <p class="rating-score" style="text-align: left;">
         <img src="assets/icon/star.svg">&nbsp;{{itemdetails.random_rating}}
       </p>
-      <!-- <div class="quantity-price">
-        <ion-button size="small">-</ion-button>
-        <span>{{ quantity }}</span>
-        <ion-button size="small">+</ion-button>
-      </div> -->
-
-      <!-- <ion-button expand="block" color="danger" *ngIf="restaurantdata.shop_active_status == 0"
-        (click)="additem(itemdetails.id,1)" style="letter-spacing: 0.5px;font-family: 'sfregular';">
-        Add item ₹{{ itemdetails.selling_price }}
-      </ion-button> -->
 
       <span *ngIf="ofermodalind==0">
         <ion-button expand="block" color="danger" *ngIf="itemdetails.itemscount==0 && itemdetails.active_status == 1"
@@ -480,20 +472,19 @@
           Add item ₹{{ itemdetails.selling_price }}
         </ion-button>
 
-
         <ion-button expand="block" color="danger"
           *ngIf="itemdetails.itemscount==0 && itemdetails.active_status != 1 &&  (restaurantdata.common_item_ind==0 && itemdetails.quantity_type==0)"
           (click)="restaurantdata.shop_active_status == 0 ? additem(itemdetails.id,1) : null"
           style="letter-spacing: 0.5px;font-family: 'sfregular';">
           Add item ₹{{ itemdetails.selling_price }}
         </ion-button>
+
         <ion-button expand="block" color="danger"
           *ngIf="itemdetails.itemscount==0 && itemdetails.active_status != 1 && (restaurantdata.common_item_ind==0 && itemdetails.quantity_type==1) "
           (click)="restaurantdata.shop_active_status == 0 ? addmoreitem(itemdetails,'') : null"
           style="letter-spacing: 0.5px;font-family: 'sfregular';">
           Add item ₹{{ itemdetails.selling_price }}
         </ion-button>
-
 
         <ion-button expand="block" color="danger"
           *ngIf="itemdetails.itemscount==0 && itemdetails.active_status != 1 && (restaurantdata.common_item_ind==1 && itemdetails.quantity_type==1) "
@@ -517,7 +508,6 @@
           Add item ₹{{ itemdetails.selling_price }}
         </ion-button>
       </span>
-
 
       <span *ngIf="ofermodalind==1">
         <ion-button expand="block" color="danger"
@@ -817,7 +807,6 @@
           [(ngModel)]="extra_more_items_commants"></ion-textarea>
         <!-- <div class="char-count">543</div> -->
       </div>
-
     </ion-content>
 
     <!-- Footer -->
@@ -836,4 +825,3 @@
 
   </ng-template>
 </ion-modal>
-

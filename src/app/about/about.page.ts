@@ -18,7 +18,6 @@ export class AboutPage implements OnInit {
 
   async getAppVersion() {
     const info = await App.getInfo();
-    
     this.appVersion = info.version; // Retrieve the version number
   }
 

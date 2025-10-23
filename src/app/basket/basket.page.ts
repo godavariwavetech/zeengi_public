@@ -103,6 +103,7 @@ export class BasketPage implements OnInit {
         const addressStore = localStorage.getItem('address_store');
         const userId = localStorage.getItem('usr_id');
 
+
         if (!addressStore) {
           this.show = false;
         } else {
@@ -182,8 +183,8 @@ export class BasketPage implements OnInit {
         this.distanceLoading = true;
         try {
           const distanceInfo = await this.api.getRouteDistanceORS(this.shopdetails.shop_latitude, this.shopdetails.shop_longitude, this.userLatitude, this.userLongitude);
-          if (distanceInfo && (this.shopdetails.maximum_del_km >= distanceInfo.distanceKm)) {
-            this.shopdetails.distance = distanceInfo.distanceKm;
+          if (distanceInfo && (this.shopdetails.maximum_del_km >= distanceInfo)) {
+            this.shopdetails.distance = distanceInfo
             if (this.shopdetails.distance < this.shopdetails.minimum_km) {   // Below 3 kilometers
               localStorage.setItem("delivery_charges", String(this.shopdetails.minimum_del_charge));
               this.shopdetails.delivery_charges = this.shopdetails.minimum_del_charge;
@@ -208,7 +209,7 @@ export class BasketPage implements OnInit {
             localStorage.setItem('address_store', '0');
             localStorage.removeItem('cart_created_at');
             this.nodata = true;
-            this.serviceNotAvailableFunction();
+            this.serviceNotAvailableFunction('.');
           }
         } catch (error) {
           console.error('Error fetching distance:', error);
@@ -223,14 +224,13 @@ export class BasketPage implements OnInit {
           localStorage.setItem('address_store', '0');
           localStorage.removeItem('cart_created_at');
           this.nodata = true;
-          this.serviceNotAvailableFunction();
+          this.serviceNotAvailableFunction('..');
         }
         this.distanceLoading = false;
       } else {
         this.maindatafunction2();
       }
     } catch (error) {
-      console.error('Error parsing shop details:', error);
     }
   }
 
@@ -257,7 +257,6 @@ export class BasketPage implements OnInit {
           obj.single_extra_item_price = single_extra_item_price;
         });
       } catch (error) {
-        console.error('Error parsing cart data:', error);
       }
       // Fetch category details and offer
       const category_data = { id: this.shopdetails.category_id };
@@ -266,7 +265,6 @@ export class BasketPage implements OnInit {
         const offerAmount = res.data[0].order_offer_amount;
         this.order_offer_amount = offerAmount;
         this.valid_offer_amount = offerAmount ? Number(offerAmount) : 0;
-        console.log(12312, this.order_offer_amount, this.valid_offer_amount)
         this.updateGrandTotal();
       }, error => {
         this.updateGrandTotal();
@@ -424,12 +422,17 @@ export class BasketPage implements OnInit {
   order_offer_amount: number = 0;
   valid_offer_amount: any = 0;
   itemsstrikeamount: any = 0;
+
+
   async updateGrandTotal() {
+
     this.total_packing_charges = 0;
     if (this.cartdata.length != 0) {
+      const loading = this.presentLoadings();
       if (this.cartdata.length === 0) {
         this.grand_total = 0;
         this.totalItems = 0;
+        await (await loading).dismiss();
       }
       this.totalItems = this.cartdata.reduce((count: number, item: any) => count + Number(item.itemscount), 0);
 
@@ -445,42 +448,36 @@ export class BasketPage implements OnInit {
         this.shop_gst_fee = 0;
         this.packing_gst_fee = 0;
         this.item_total_gst_fee = 0;
+
       } else {
         this.packing_gst_fee = (this.shopdetails.packing_charges * this.gst_percentage) / 100;
         this.item_total_gst_fee = item_gst_amount;
         this.shop_gst_fee = (this.packing_gst_fee + this.item_total_gst_fee);
       }
-
       this.packing_charges = this.shopdetails.packing_charges;
       this.total_packing_charges = this.packing_charges + this.packing_gst_fee;
-
       this.handling_charges_gst_fee = (this.gst_percentage * this.handling_charges) / 100;
       this.total_bill_value_gst_fee = (this.handling_charges_gst_fee + this.shop_gst_fee);
-
       var saved_delivery_charges = 0;
       if (this.itemstotalamount > this.valid_offer_amount) {
         this.saved_delivery = true;
         this.delivery_fixed_charges = 0;
         saved_delivery_charges = this.commonapis.delivery_fixed_charges;
-
       } else {
         this.saved_delivery = false;
         this.delivery_fixed_charges = this.commonapis.delivery_fixed_charges;
         saved_delivery_charges = 0;
       }
       this.final_del_charges = Number(this.shopdetails.delivery_charges) + Number(this.delivery_fixed_charges ?? 0);
-
       const extra_total_charges = Number(this.packing_charges) + Number(this.total_bill_value_gst_fee) + Number(this.handling_charges) + Number(this.surcharges) +
         Number(this.maindonation_charges) + Number(this.final_del_charges) + Number(this.donation_charges);
-
       this.itemsstrikeamount = extra_total_charges + Number(this.total_actual_amount) + Number(saved_delivery_charges);
-
       this.total_saving_amount = Number(this.coupon_discount_amount) + Number(this.savings) + Number(saved_delivery_charges);
       this.sub_grand_total = (extra_total_charges + Number(this.itemstotalamount))
-
       let final_total = (extra_total_charges + Number(this.itemstotalamount)) - Number(this.coupon_discount_amount);
-
       this.grand_total = parseFloat(final_total.toFixed(2));
+
+      await (await loading).dismiss();
 
       this.order_payments = {
         item_total_gst_fee: this.item_total_gst_fee,
@@ -499,10 +496,8 @@ export class BasketPage implements OnInit {
         delivery_partner_tip: this.maindonation_charges,
         grand_total: this.grand_total
       }
-
       this.filteredOrderTypes();
       localStorage.removeItem('cartData');
-
       setTimeout(() => {
         localStorage.setItem('cartData', JSON.stringify(this.cartdata));
       }, 100);
@@ -518,30 +513,15 @@ export class BasketPage implements OnInit {
   orderTypes: any = []
 
   filteredOrderTypes() {
-
-    ///Online Order  present  remove
-    // const offerAmount = this.order_offer_amount || this.order_offer_amount === 0 ? this.order_offer_amount : 10000000;
-
     const offerAmount = 10000000
-
-    console.log(324, offerAmount);
-
     if (this.grand_total <= (offerAmount || 10000000)) {
       this.orderTypes = this.orderTypeswe;
-      console.log("sdkjh11")
     } else {
       this.orderTypes = this.orderTypeswe.filter((type: any) => type.label === 'Pay Online');
       this.selectedPaymentType = this.orderTypes[0].label;
       this.payment_type = 'Pay Online';
-      console.log("sdkjhadfa222")
     }
-    // if (this.grand_total <= (this.order_offer_amount||299)) {
-    //   this.orderTypes = this.orderTypeswe;
-    // } else {
-    //   this.orderTypes = this.orderTypeswe.filter((type: any) => type.label === 'Pay Online');
-    // }
   }
-
 
   gotomap() {
     this.navCtrl.navigateForward('delivery-map');
@@ -597,7 +577,6 @@ export class BasketPage implements OnInit {
   }
 
   async removecoupon(id: any) {
-
     if (this.selectedCoupon) {
       if (id === 0) return this.toggleCoupon(0, this.selectedCoupon);
       const alert = await this.alertController.create({
@@ -614,19 +593,16 @@ export class BasketPage implements OnInit {
 
   }
 
-  async toggleCoupon(id: any, coupon: any) { //id : 0 = apply , 1 = remove
+  async toggleCoupon(id: any, coupon: any) {
     if (id == 1) {
       this.selectedCouponid = '';
       if (typeof coupon === 'object' && coupon !== null) {
         coupon.applied = false;
       } else {
-        // Optional: Initialize it safely
         coupon = { applied: false };
       }
-      // coupon.applied = false;
       this.selectedCoupon = '';
       this.coupon_discount_amount = 0;
-      // this.grand_total = this.itemstotalamount - this.coupon_discount_amount;
       this.closeModal();
       this.updateGrandTotal();
     } else {
@@ -666,7 +642,6 @@ export class BasketPage implements OnInit {
 
   searchCoupons() {
     if (!this.searchQuery) {
-      // this.filteredCoupons = this.coupons;
       return;
     }
     console.log(this.searchQuery, this.coupons)
@@ -674,9 +649,6 @@ export class BasketPage implements OnInit {
     this.filteredCoupons = this.coupons.filter((coupon: any) =>
       coupon.coupon_name.toLowerCase() == query   // 🔹 exact match only
     );
-
-    console.log(this.filteredCoupons);
-
   }
 
 
@@ -820,13 +792,10 @@ export class BasketPage implements OnInit {
   }
 
   get() {
-
-    console.log(this.paymentstuus, this.payment_type)
     if (this.paymentstuus == 0) {
       alert('Select the Payment Type');
     } else {
       if (this.payment_type == 'Pay Online') {
-        console.log('Pradep out ')
         this.status = 7;
         var data = {
           razorpay_payment_id: '',
@@ -834,7 +803,6 @@ export class BasketPage implements OnInit {
         }
         this.orderplaced(data);
       } else {
-        console.log('Pradep IN ')
         this.status = 0;
         var data = {
           razorpay_payment_id: '',
@@ -869,10 +837,7 @@ export class BasketPage implements OnInit {
   }
 
   async payorder(response: any) {
-
     if (this.payment_type == 'Pay Online') {
-
-
       const loading = await this.loadingCtrl.create({
         spinner: 'bubbles',
         cssClass: 'custom-loading'
@@ -985,24 +950,17 @@ export class BasketPage implements OnInit {
       if (res.status == 200) {
         this.insert_id = res.id;
         if (this.payment_type == 'Pay Online') {
-          // this.payWithRazorpay(razorpay_order_id,payment_key_id);
           this.openrazorpay(razorpay_order_id, payment_key_id);
-
         } else {
           this.successmodal = true;
           setTimeout(() => {
             this.successmodal = false;
             localStorage.removeItem('cartData');
-            // localStorage.removeItem('cart_merchant');
-            // localStorage.removeItem('main_shopdetails');
-            // localStorage.removeItem('shopdetails');
             localStorage.setItem("set_delivery_distance_status", "0");
             localStorage.removeItem('order_distance');
             localStorage.removeItem('order_delivery_charges');
             localStorage.removeItem('order_extradistance');
             localStorage.removeItem('cart_created_at');
-
-
             localStorage.setItem('address_store', '0')
             setTimeout(() => {
               this.navCtrl.navigateForward('orders', {
@@ -1038,14 +996,13 @@ export class BasketPage implements OnInit {
         }
       ]
     });
-
     await alert.present();
   }
 
-  async serviceNotAvailableFunction() {
+  async serviceNotAvailableFunction(yt: any) {
     const alert = await this.alertController.create({
       header: 'Notice',
-      message: 'Unable to service this location. Would you like to continue with another shop?',
+      message: 'Unable to service this location' + yt + 'Would you like to continue with another shop ? ',
       buttons: [
         {
           text: 'Okay',
@@ -1060,11 +1017,7 @@ export class BasketPage implements OnInit {
     await alert.present();
   }
 
-
-
-
   async openrazorpay(order_id: any, payment_key_id: any) {
-
     const options = {
       description: `Payment for Order #${order_id}`,
       image: "",
@@ -1085,22 +1038,11 @@ export class BasketPage implements OnInit {
         ondismiss: () => {
           // alert('dismissed');
         },
-
         onsuccess: () => {
           // alert('successCallback');
         },
         fullscreen: true, // ✅ Fullscreen modal enabled
       },
-      // options: {
-      //   checkout: {
-      //     method: {
-      //       netbanking: "1",
-      //       card: "1",
-      //       upi: "0",
-      //       wallet: "0"
-      //     }
-      //   }
-      // }
     };
 
     try {
@@ -1111,20 +1053,6 @@ export class BasketPage implements OnInit {
     } catch (error) {
       console.log('Razorpay Checkout Error:', error);
     }
-
-
-    // try {
-    //   let data = await Checkout.open(options);
-    //   console.log(data);
-    //   this.updatepayment(data.response);
-
-    //   console.log(JSON.stringify(data));
-    // } catch (error) {
-    //   console.log(error);
-    //   // You can parse error if needed
-    //   // let errorObj = JSON.parse(error);
-    //   // alert(errorObj.description);
-    // }
   }
 
   updatepayment(data: any) {
@@ -1194,6 +1122,8 @@ export class BasketPage implements OnInit {
     this.maindonation_charges = amount;
     this.updateGrandTotal()
   }
+
+
   cleardonation() {
     this.maindonation_charges = 0;
     this.updateGrandTotal();
@@ -1204,13 +1134,16 @@ export class BasketPage implements OnInit {
 
   menuOpen = false;
 
+
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
   }
 
+
   selectPayment(method: string) {
     this.menuOpen = false; // Close menu after selection
   }
+
 
   async openlogin() {
     const modal = await this.modalController.create({
@@ -1222,18 +1155,17 @@ export class BasketPage implements OnInit {
     await modal.present();
     const { data, role } = await modal.onWillDismiss();
   }
-
-
-
   notemodal = false;
 
   opennotemodal() {
     this.notemodal = true;
   }
 
+
   closenotemodal() {
     this.notemodal = false;
   }
+
 
   note: any = ''
 
@@ -1241,30 +1173,37 @@ export class BasketPage implements OnInit {
     this.note = '';
   }
 
+
   saveNote() {
     this.modalController.dismiss(this.note);
   }
+
 
   tipAmounts = [5, 10, 20];
   selectedTip: number | null = null;
   customTip = 22;
   isCustomTip = false;
 
+
   selectTip(amount: number) {
     this.selectedTip = amount;
     this.isCustomTip = false;
   }
+
 
   enterCustomTip() {
     this.isCustomTip = true;
     this.selectedTip = this.customTip;
   }
 
+
   successmodal = false;
+
 
   opensucdessmodal() {
     this.successmodal = true;
   }
+
 
   closesuccessmodal() {
     this.successmodal = false;
@@ -1277,9 +1216,9 @@ export class BasketPage implements OnInit {
       message: 'This small fee helps us pay the bills so that we can keep Zeengi running.',
       buttons: ['Okay'], // Button to close the alert
     });
-
     await alert.present();
   }
+
 
   async minimumorderamountalert(billvalues: any) {
     const alert = await this.alertController.create({
@@ -1287,9 +1226,9 @@ export class BasketPage implements OnInit {
       message: `Please note: Your order must be above ₹${billvalues} to proceed.`,
       buttons: ['Okay'],
     });
-
     await alert.present();
   }
+
 
   async showSurchargeAlert2() {
     const alert = await this.alertController.create({
@@ -1301,10 +1240,11 @@ export class BasketPage implements OnInit {
     await alert.present();
   }
 
-  async showdeliveryFeeAlert() {
 
+  async showdeliveryFeeAlert() {
     this.deliverymodalopens = true;
   }
+
 
   showdeliveryFeeclose() {
     this.deliverymodalopens = false;
@@ -1320,9 +1260,9 @@ export class BasketPage implements OnInit {
     this.gstmarchantfeemodel = false;
   }
 
+
   selectDate(date: any) {
     this.selectedDate = date;
-
     this.api.getslot_booking(date).subscribe(async (res: any) => {
       if (res.status == 200) {
         this.totaltimeslots = res.data;
@@ -1330,8 +1270,8 @@ export class BasketPage implements OnInit {
         // this.selectedTime=this.timeOptions[0];
       }
     }, error => { })
-
   }
+
 
   onScrollTime() {
     if (!this.timeScroll) return;
@@ -1354,9 +1294,11 @@ export class BasketPage implements OnInit {
     this.selectedTime = closestItem;
   }
 
+
   closseslottimingmodal() {
     this.slottimingmodal = false;
   }
+
 
   selectslotanddate() {
     const end_time = (this.totaltimeslots as { slot_timings: string; end_time: string }[])
@@ -1389,13 +1331,14 @@ export class BasketPage implements OnInit {
     this.slottimingmodal = false;
   }
 
+
   selectTime(time: string) {
     this.selectedTime = time; // Set the selected time
   }
 
+
   callbackpage() {
     const callbackstoragedata = JSON.parse(localStorage.getItem("callbackdata") || '{}');
-
     if (this.callbackdata && this.callbackdata.pageback) {
       this.navCtrl.navigateForward(this.callbackdata.pageback, {
         queryParams: {
@@ -1413,20 +1356,24 @@ export class BasketPage implements OnInit {
     }
   }
 
+
   getdelivery_instructions() {
     this.api.delivery_instructions().subscribe(async (res: any) => {
       this.deliveryInstructions = res.data;
 
     })
   }
+
+
   openinstructionmodal() {
     this.instructionmodel = true;
   }
 
+
   closeinstructionmodal() {
     this.instructionmodel = false;
-
   }
+
 
   async presentToast(msg: any) {
     const toast = await this.toastController.create({
@@ -1439,37 +1386,26 @@ export class BasketPage implements OnInit {
   }
 
 
-
-
-
   extractStartTimeTo24Hour(timeRange: any): string {
     const startTime12h = timeRange.split('-')[0].trim(); // "06:30PM"
     const [time, modifier] = startTime12h.toUpperCase().split(/(AM|PM)/);
     let [hours, minutes] = time.trim().split(':').map(Number);
-
     if (modifier === 'PM' && hours !== 12) {
       hours += 12;
     }
     if (modifier === 'AM' && hours === 12) {
       hours = 0;
     }
-
     const hh = hours.toString().padStart(2, '0');
     const mm = minutes.toString().padStart(2, '0');
-
     return `${hh}:${mm}:00`;
   }
-
-
 
   handleDismiss(event: any) {
     const role = event.detail.role;
     console.log('Modal dismissed with role:', role); // e.g., "backdrop", "cancel", "done";
     this.closebill()
   }
-
-
-
 
   async distance_caliculation(distance_latlng: any): Promise<any> {
     const loadingWrapper = await this.presentLoading();
@@ -1483,7 +1419,6 @@ export class BasketPage implements OnInit {
       } else {
         return 0;
       }
-
     } catch (error) {
       console.error("API error:", error);
       await dismissLoader();
@@ -1496,11 +1431,8 @@ export class BasketPage implements OnInit {
       spinner: 'bubbles',
       cssClass: 'custom-loading',
     });
-
     let isDismissed = false;
-
     await loading.present();
-
     const dismiss = async () => {
       if (!isDismissed) {
         isDismissed = true;
@@ -1511,10 +1443,8 @@ export class BasketPage implements OnInit {
         }
       }
     };
-
     // Auto-dismiss after timeout
     setTimeout(() => dismiss(), timeout);
-
     return { loading, dismiss };
   }
 
@@ -1527,6 +1457,20 @@ export class BasketPage implements OnInit {
     this.donation_charges = 0;
     this.updateGrandTotal();
   }
+
+  async presentLoadings(message: string = 'Please wait...') {
+    const loading = await this.loadingCtrl.create({
+      message,
+      spinner: 'crescent',
+      translucent: true,
+      backdropDismiss: false,
+      cssClass: 'modern-loading'
+    });
+    await loading.present();
+    return loading;
+  }
+
+
 
 }
 // -----------------------------------------Coupons -------------------------------------

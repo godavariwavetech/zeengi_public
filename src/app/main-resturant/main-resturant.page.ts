@@ -54,7 +54,6 @@ export class MainResturantPage implements OnInit {
 
   isNaN = isNaN;
 
-
   timeOptions = [];
 
   selectedDate = this.dateOptions[0];
@@ -133,7 +132,6 @@ export class MainResturantPage implements OnInit {
 
     this.total_cart_value = this.cartData.reduce((total: number, item: any) => {
       const amount = Number(item.itemsamount) || 0;
-      // const extras = Number(item.total_extra_item_price) || 0;
       return total + amount;
     }, 0);
 
@@ -186,33 +184,24 @@ export class MainResturantPage implements OnInit {
     });
     await loading.present();
     this.api.getitemslist(data).subscribe(async (res: any) => {
-
-
       this.inactiveItems = res.data.filter((item: any) => item.active_status == "1");
       res.data = res.data.filter((item: any) => item.active_status == "0");
-
-
       if (res.status == 200) {
         const shopitemstatus = this.cartData.some((obj: any) => obj.shop_id == shop_id);
         if (this.restaurantdata.banner_item_ids) {
           await this.banneritemsfunction(res.data, shopitemstatus, this.restaurantdata);
         } else {
           const bannerres: any = await firstValueFrom(this.api.getbanneritemslist(this.restaurantdata));
-
           if (bannerres.data[0]?.item_id) {
             this.exclusive_array = bannerres.data[0];
             this.restaurantdata.banner_item_ids = bannerres.data[0].item_id;
             this.restaurantdata.banner_offer_title = bannerres.data[0].banner_offer_title;
-
             await this.banneritemsfunction(res.data, shopitemstatus, this.restaurantdata);
           }
         }
-
         res.data = res.data.filter((item1: any) =>
           !this.banneritmeslist.some((item2: any) => item2.id == item1.id)
         );
-
-
         res.data = res.data.map((item: any) => {
           const wishlistArray = Array.isArray(this.wishlistdata) ? this.wishlistdata : [];
           const matchedWishlist = wishlistArray.find(
@@ -492,6 +481,7 @@ export class MainResturantPage implements OnInit {
           localStorage.setItem("sub_category_name", item.sub_category_name);
           item.itemscount = item.itemscount + item_count;
           item.total_extra_item_price = item.total_extra_item_price * item.itemscount;
+
           item.itemsamount = item.itemscount * ((parseFloat(item.selling_price) + parseFloat(item.single_extra_item_price)));
 
           item.item_gst_amount = (item.item_gst * item.itemsamount) / 100;
@@ -500,8 +490,8 @@ export class MainResturantPage implements OnInit {
 
           this.grandTotal += parseFloat(item.selling_price);
 
-
           let cartItem = this.cartData.find((cartItem: any) => cartItem.id == itemId);
+
           if (cartItem) {
             cartItem.itemscount = item.itemscount;
             cartItem.itemsamount = item.itemsamount;
@@ -617,19 +607,16 @@ export class MainResturantPage implements OnInit {
     for (let category of this.items) {
       for (let item of category.items) {
         if (item.id == itemId) {
-
           if (item.itemscount > 0) {
             item.itemscount -= 1;
             item.total_extra_item_price = item.total_extra_item_price * item.itemscount;
             item.itemsamount = item.itemscount * ((parseFloat(item.selling_price) + parseFloat(item.single_extra_item_price)));
-
             item.item_gst_amount = (item.item_gst * item.itemsamount) / 100;
             this.grandTotal -= parseFloat(item.selling_price);
             let cartItemIndex = this.cartData.findIndex((cartItem: any) => cartItem.id == itemId);
             if (cartItemIndex !== -1) {
               if (item.itemscount == 0) {
                 this.cartData.splice(cartItemIndex, 1);
-                console.log("remove delivery status 2");
                 localStorage.removeItem('cartData');
                 localStorage.removeItem('cart_merchant');
               } else {
@@ -643,8 +630,6 @@ export class MainResturantPage implements OnInit {
           } else {
             item.itemscount = 0;
           }
-          console.log(this.cartData);
-
           if (this.cartData.length == 0) {
             localStorage.setItem("set_delivery_distance_status", "0");
           }
@@ -667,7 +652,16 @@ export class MainResturantPage implements OnInit {
     item.shop_items_tb_nm = this.restaurantdata.shop_items_tb_nm;
     this.moreitemsmodal = true;
     this.api.getrelateditemslist(item).subscribe(async (res: any) => {
-      res.data.sort((a: any, b: any) => a.price - b.price);
+      // res.data.sort((a: any, b: any) => a.price - b.price);
+      res.data.sort((a: any, b: any) => {
+        // Make "Quantity" items appear first
+        if (a.title === 'Quantity' && b.title !== 'Quantity') return -1;
+        if (a.title !== 'Quantity' && b.title === 'Quantity') return 1;
+
+        // Otherwise, sort by price
+        return a.price - b.price;
+      });
+
       if (res.data.length > 0) {
         if (item.quantity_type == 0) {
 
@@ -693,9 +687,8 @@ export class MainResturantPage implements OnInit {
         } else {
           let mcnt = 0;
           const quantityproducts = res.data.filter((obj: any) => obj.title == "Quantity");
-          console.log(quantityproducts);
           if (quantityproducts.length > 0) {
-            this.selectedItemId = quantityproducts[0].id
+            this.selectedItemId = quantityproducts[0].id;
             item.selling_price = quantityproducts[0].price;
           }
 
@@ -741,6 +734,9 @@ export class MainResturantPage implements OnInit {
       return sum + parseFloat(item.price);
     }, 0);
     this.extra_finalAmount = this.total_extra_item_price * this.extra_cart_count;
+    console.log('ewrqerf', this.extra_finalAmount)
+
+    console.log(this.extra_items_array)
   }
 
 
@@ -847,13 +843,17 @@ export class MainResturantPage implements OnInit {
         to_latitude: this.userLatitude,
         to_longitude: this.userLongitude,
       };
+
+      console.log(distance_latlng)
       try {
+
         // Uncomment when integrating real API call
         const distanceInfo = await this.api.getRouteDistanceORS(this.restaurantdata.shop_latitude, this.restaurantdata.shop_longitude, this.userLatitude, this.userLongitude);
-        console.log(this.restaurantdata.maximum_del_km)
-        if (distanceInfo?.distanceKm && (this.restaurantdata.maximum_del_km >= distanceInfo?.distanceKm)) {
-          this.restaurantdata.distance = distanceInfo?.distanceKm;
-          localStorage.setItem("order_distance", String(distanceInfo?.distanceKm))
+
+
+        if (distanceInfo && (this.restaurantdata.maximum_del_km >= distanceInfo)) {
+          this.restaurantdata.distance = distanceInfo;
+          localStorage.setItem("order_distance", String(distanceInfo))
           if (this.restaurantdata.distance < this.restaurantdata.minimum_km) {   // Below 3 kilometers
             localStorage.setItem("delivery_charges", String(this.restaurantdata.minimum_del_charge));
             this.restaurantdata.delivery_charges = this.restaurantdata.minimum_del_charge;
@@ -880,6 +880,7 @@ export class MainResturantPage implements OnInit {
           localStorage.setItem('address_store', '0');
           await dismissLoader();
           this.serviceNotAvailableFunction();
+          console.log("111")
         }
       } catch (error) {
         console.error('Error fetching distance:', error);
@@ -891,8 +892,8 @@ export class MainResturantPage implements OnInit {
         localStorage.setItem('address_store', '0');
         await dismissLoader();
         this.serviceNotAvailableFunction();
+        console.log("222")
       }
-
     } else {
       this.restaurantdata.distance = localStorage.getItem("order_distance");
       this.restaurantdata.delivery_charges = localStorage.getItem("order_delivery_charges");
@@ -1518,7 +1519,6 @@ Share this with your friends and let them enjoy the goodness too! ❤️`;
 
   addtocart2(moreitemsdata: any) {
 
-
     const itemNames = this.extra_items_array
       .map((item: any) => item.extra_item_name.trim())
       .filter((name: string) => name.length > 0) // Optional: filters out empty names
@@ -1527,22 +1527,9 @@ Share this with your friends and let them enjoy the goodness too! ❤️`;
     const comments = this.extra_more_items_commants?.trim(); // trims and handles null/undefined
 
     // Final combined comment
-    const final_more_items = itemNames && comments
-      ? `${itemNames}, ${comments}`
-      : itemNames || comments || '';
-
-
-    // this.moreitemsdata.org_selling_price = this.moreitemsdata.selling_price;
-    // this.moreitemsdata.org_actual_price = this.moreitemsdata.actual_price;
-
+    const final_more_items = itemNames && comments ? `${itemNames}, ${comments}` : itemNames || comments || '';
 
     this.moreitemsdata.extra_finalAmount = this.extra_finalAmount;
-    // this.moreitemsdata.selling_price = this.total_extra_item_price;
-    // this.moreitemsdata.discount_percentage = 0;
-    // this.moreitemsdata.discount_amount = 0;
-    // this.moreitemsdata.savingitemprice = 0;
-    // this.moreitemsdata.savingsamount = 0;
-    // this.moreitemsdata.actual_price = this.total_extra_item_price;
 
     this.moreitemsdata.total_extra_item_price = ((this.total_extra_item_price * this.extra_cart_count) - (this.moreitemsdata.selling_price * this.extra_cart_count));
     this.moreitemsdata.extra_finalAmount = this.extra_finalAmount;
@@ -1553,36 +1540,19 @@ Share this with your friends and let them enjoy the goodness too! ❤️`;
     this.moreitemsdata.single_extra_item_price = this.single_extra_item_price;
     this.single_extra_item_price = 0;
 
-
-
-    const bajjiCategory = this.items.find(
-      (c: any) => c.sub_category_id == this.moreitemsdata.sub_category_id
-    );
+    const bajjiCategory = this.items.find((c: any) => c.sub_category_id == this.moreitemsdata.sub_category_id);
 
     if (bajjiCategory?.items && Array.isArray(bajjiCategory.items)) {
-      const index = bajjiCategory.items.findIndex(
-        (item: any) => item.id == this.moreitemsdata.id
-      );
-
-
-
+      const index = bajjiCategory.items.findIndex((item: any) => item.id == this.moreitemsdata.id);
       if (index !== -1) {
-
         bajjiCategory.items.splice(index, 1, this.moreitemsdata);
       } else {
-
         bajjiCategory.items.push(this.moreitemsdata);
       }
-
-
-
     }
 
-
     this.additem(this.moreitemsdata.id, this.extra_cart_count)
-
     this.moreitemsmodal = false;
-
   }
 
   getDeliveryTime(distanceKm: number) {
@@ -1610,8 +1580,6 @@ Share this with your friends and let them enjoy the goodness too! ❤️`;
       clearInterval(this.intervalId);
     }
     this.moreitemsmodal = false;
-
-
   }
 
 
@@ -1619,29 +1587,20 @@ Share this with your friends and let them enjoy the goodness too! ❤️`;
     const startTime12h = timeRange.split('-')[0].trim(); // "06:30PM"
     const [time, modifier] = startTime12h.toUpperCase().split(/(AM|PM)/);
     let [hours, minutes] = time.trim().split(':').map(Number);
-
     if (modifier == 'PM' && hours !== 12) {
       hours += 12;
     }
     if (modifier == 'AM' && hours == 12) {
       hours = 0;
     }
-
     const hh = hours.toString().padStart(2, '0');
     const mm = minutes.toString().padStart(2, '0');
-
     return `${hh}:${mm}:00`;
   }
-
-  // getTotalSavings(): number {
-  //   return this.cartData.reduce((total:any, item:any) => total + item.savingsamount, 0);
-  // }
-
 
   ionViewWillEnter() {
     localStorage.removeItem("previusepage");
     const setLatLongs = localStorage.getItem('setlatlongs');
-
     if (setLatLongs) {
       const stayLatLong = setLatLongs.split(',');
       if (stayLatLong.length >= 2) {
@@ -1649,54 +1608,39 @@ Share this with your friends and let them enjoy the goodness too! ❤️`;
         this.userLongitude = Number(stayLatLong[1]);
       }
     }
-
-
     if (localStorage.getItem("path_name") == "basket") {
       localStorage.removeItem("path_name")
     }
-
     this.cartData = JSON.parse(localStorage.getItem("cartData") ?? '[]');
     this.totalItems = this.cartData.reduce((sum: any, item: any) => sum + item.itemscount, 0);
   }
 
-
   async delivery_functionality(results: any) {
-
     const { min, max, formatted } = this.getDeliveryTime(results[0].distance.value / 1000);
     this.restaurantdata.delivery_time = formatted,
       this.restaurantdata.duration_org = { min, max }
     this.restaurantdata.distance = (results[0].distance.value / 1000);
     if (this.restaurantdata.maximum_del_km > (results[0].distance.value / 1000)) {
       localStorage.setItem("del_distance", String(results[0].distance.value / 1000));
-
-      if ((results[0].distance.value / 1000) < this.restaurantdata.minimum_km) {   // Below 3 kilometers
+      if ((results[0].distance.value / 1000) < this.restaurantdata.minimum_km) {
         localStorage.setItem("delivery_charges", String(this.restaurantdata.minimum_del_charge));
         this.restaurantdata.delivery_charges = this.restaurantdata.minimum_del_charge;
         this.restaurantdata.extradistance = 0;
         localStorage.setItem('cart_merchant', JSON.stringify(this.restaurantdata));
       } else {
-        //  Above 3  kilometers
         var extradistance = (results[0].distance.value / 1000) - this.restaurantdata.minimum_km;
-
         this.restaurantdata.extradistance = extradistance;
         var del_charges = Math.round((extradistance * this.restaurantdata.per_km_chargers) + Number(this.restaurantdata.minimum_del_charge));
-
-
         localStorage.setItem("delivery_charges", String(del_charges));
         this.restaurantdata.delivery_charges = del_charges;
         localStorage.setItem('cart_merchant', JSON.stringify(this.restaurantdata));
-
       }
-
     } else {
       this.gotoservicelist();
     }
   }
 
-
-
   async gotoservicelist() {
-
     localStorage.removeItem('main_shopdetails');
     localStorage.removeItem('category_id');
     localStorage.removeItem('category_name');
@@ -1721,20 +1665,15 @@ Share this with your friends and let them enjoy the goodness too! ❤️`;
       ]
     });
     await alert.present();
-
   }
-
 
   async presentLoading(timeout: number = 5000) {
     const loading = await this.loadingCtrl.create({
       spinner: 'bubbles',
       cssClass: 'custom-loading',
     });
-
     let isDismissed = false;
-
     await loading.present();
-
     const dismiss = async () => {
       if (!isDismissed) {
         isDismissed = true;
@@ -1745,30 +1684,10 @@ Share this with your friends and let them enjoy the goodness too! ❤️`;
         }
       }
     };
-
     // Auto-dismiss after timeout
     setTimeout(() => dismiss(), timeout);
-
     return { loading, dismiss };
   }
-
-  // async distance_caliculation(distance_latlng: any): Promise<any> {
-  //   try {
-  //     const res: any = await firstValueFrom(this.api.getorder_distance(distance_latlng));
-  //     console.log(res.data[0]);
-
-  //     if (res.status === 200) {
-  //       return res.data[0];
-  //     } else {
-  //       return 0;
-  //     }
-  //   } catch (error) {
-  //     console.error("API error:", error);
-  //     return 0;
-  //   }
-  // }
-
-
 
   async serviceNotAvailableFunction() {
     const alert = await this.alertController.create({
@@ -1784,10 +1703,8 @@ Share this with your friends and let them enjoy the goodness too! ❤️`;
         }
       ]
     });
-
     await alert.present();
   }
-
 
   unavailableitems: boolean = true
 
