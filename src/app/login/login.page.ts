@@ -149,7 +149,9 @@ export class LoginPage implements OnInit {
       if (otpCode == this.confrimotp) {
         var data = {
           customer_mobile_number: this.myForm.value.number,
-          customer_otp: otpCode
+          customer_otp: otpCode,
+          location_id: localStorage.getItem('location_id'),
+          player_id: localStorage.getItem('player_id')
         }
         this.api.customerlogin(data).subscribe(async (res: any) => {
           if (res.status == 200) {

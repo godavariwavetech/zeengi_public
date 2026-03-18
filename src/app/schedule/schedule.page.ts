@@ -12,7 +12,7 @@ export class SchedulePage implements OnInit {
   @Input() restaurantdata: any;
   deliveryType=0;
   slottimingmodal:boolean=false;
-  timeOptions = [];totaltimeslots=[];
+  timeOptions:any = []; totaltimeslots=[];
 
   dateOptions = [
     { display: '', label: 'Today',slot_date:'' },
@@ -54,11 +54,14 @@ selectslotanddate() {
 
 
 scheudleforlatter() {
+
   var slotdates={
-    location_id:localStorage.getItem("location_id")
+    location_id:localStorage.getItem("location_id"),
+    // current_date: 'Wednesday'
   }
   this.api.getslotdates(slotdates).subscribe(async (res: any) => {
     if (res.status == 200) {     
+      console.log(res.data);
       
       this.dateOptions=[];
       this.dateOptions = res.data;
@@ -74,17 +77,23 @@ scheudleforlatter() {
 
 selectDate(date: any) {
   this.selectedDate = date;
+console.log(this.selectedDate);
+
+ const sdata: any = this.dateOptions.find((res: any) => res.slot_date == date.slot_date)
+ this.timeOptions = []
+ this.timeOptions = JSON.parse(sdata.slots);
+  console.log(this.timeOptions);
   
-  this.api.getslot_booking(date).subscribe(async (res: any) => {
-    if (res.status == 200) {
-      this.totaltimeslots = res.data;
+  // this.api.getslot_booking(date).subscribe(async (res: any) => {
+  //   if (res.status == 200) {
+  //     this.totaltimeslots = res.data;
       
-      this.timeOptions = res.data.map((slot:any) => slot.slot_timings);
-      // this.selectedTime=this.timeOptions[0];
+  //     this.timeOptions = res.data.map((slot:any) => slot.slot_timings);
+  //     // this.selectedTime=this.timeOptions[0];
       
 
-    }
-  }, error => { })
+  //   }
+  // }, error => { })
 
 }
 
@@ -110,8 +119,8 @@ onScrollTime() {
   this.selectedTime = closestItem;
 }
 
-selectTime(time: string) {
-  this.selectedTime = time; // Set the selected time
+selectTime(time: any) {
+  this.selectedTime = time.slot_timings; // Set the selected time
 }
 
 closseslottimingmodal() {

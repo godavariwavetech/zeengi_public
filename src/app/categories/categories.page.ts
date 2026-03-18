@@ -43,7 +43,7 @@ export class CategoriesPage implements OnInit {
 
 
 
-  selectedFilter = '';
+  selectedFilter = 'All';
   searchQuery: string = '';
 
   toggleFavorite(index: number) {
@@ -206,6 +206,10 @@ export class CategoriesPage implements OnInit {
         const mydata =  data.sort((a: any, b: any) => a.shop_active_status - b.shop_active_status);
         this.mainshopsdata = mydata;
         this.shops = mydata;
+        // Set default filter to 'All' if not already set
+        if (!this.selectedFilter) {
+          this.selectedFilter = 'All';
+        }
         if (this.shops.length == 0) {
           this.avail = true;
         }
@@ -237,11 +241,15 @@ export class CategoriesPage implements OnInit {
 
   filterItems(filterType: any) {
     if (filterType == 'All') {
-      this.shops = this.mainshopsdata
+      this.shops = this.mainshopsdata;
+      this.selectedFilter = 'All';
     } else {
       const shopIdArray = filterType.shop_ids.split(',').map((id: any) => parseInt(id.trim(), 10));
       this.shops = this.mainshopsdata.filter((shop: any) => shopIdArray.includes(shop.shop_id));
+      this.selectedFilter = filterType.filter_name;
     }
+    // Update availability status based on filtered shops
+    this.avail = this.shops.length === 0;
   }
 
   onFilterChange(event: any) {
@@ -253,12 +261,35 @@ export class CategoriesPage implements OnInit {
 
   filterShops() {
     if (this.searchQuery.trim() === '') {
-      this.shops = [...this.mainshopsdata]; // Show all shops when empty
+      // If search is empty, restore based on selected filter
+      if (this.selectedFilter === 'All' || !this.selectedFilter) {
+        this.shops = [...this.mainshopsdata];
+      } else {
+        // Reapply the selected filter
+        const selectedFilterObj = this.filters.find((f: any) => f.filter_name === this.selectedFilter);
+        if (selectedFilterObj) {
+          const shopIdArray = selectedFilterObj.shop_ids.split(',').map((id: any) => parseInt(id.trim(), 10));
+          this.shops = this.mainshopsdata.filter((shop: any) => shopIdArray.includes(shop.shop_id));
+        }
+      }
     } else {
-      this.shops = this.mainshopsdata.filter((shop: any) =>
+      // Apply search filter
+      let filteredShops = this.mainshopsdata.filter((shop: any) =>
         shop.shop_name.toLowerCase().includes(this.searchQuery.toLowerCase())
       );
+      
+      // If a filter is selected, apply it to search results
+      if (this.selectedFilter && this.selectedFilter !== 'All') {
+        const selectedFilterObj = this.filters.find((f: any) => f.filter_name === this.selectedFilter);
+        if (selectedFilterObj) {
+          const shopIdArray = selectedFilterObj.shop_ids.split(',').map((id: any) => parseInt(id.trim(), 10));
+          filteredShops = filteredShops.filter((shop: any) => shopIdArray.includes(shop.shop_id));
+        }
+      }
+      this.shops = filteredShops;
     }
+    // Update availability status based on filtered shops
+    this.avail = this.shops.length === 0;
   }
 
   getDeliveryTime(distanceKm: number) {

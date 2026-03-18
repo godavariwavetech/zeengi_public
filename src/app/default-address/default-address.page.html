@@ -11,19 +11,19 @@
 
 <ion-content>
   <div style="padding: 2%;">
-    <br>
-    <div style="display: flex;align-items: center;">
+    <!-- <br> -->
+    <!-- <div style="display: flex;align-items: center;">
       <div class="map-center-overlay2">
         <input type="text" id="place-input1" placeholder="Search for areaee, street name..." [(ngModel)]="searchQuery" />
         <ion-icon class="search-icon" name="search"></ion-icon>
         <ion-icon class="clear-icon" name="close-circle" *ngIf="searchQuery" (click)="clearSearch()"></ion-icon>
       </div>
     </div>
-    <br>
+    <br> -->
 
     <!-- Add Address -->
     <ion-card class="card-section">
-      <ion-item button (click)="usecurrentlocation2()">
+      <!-- <ion-item button (click)="usecurrentlocation2()">
         <ion-icon slot="start" name="locate" style="    margin-inline-end: 22px;"></ion-icon>
         <ion-label>
           Use Current Location
@@ -32,7 +32,7 @@
           </p>
         </ion-label>
         <ion-icon slot="end" name="chevron-forward-outline" color="medium"></ion-icon>
-      </ion-item>
+      </ion-item> -->
 
       <ion-item button (click)="gotodeliverylocation()">
         <ion-icon slot="start" name="add-circle-outline"></ion-icon>
@@ -59,11 +59,7 @@
                 </ng-container>
                 <span>{{ i.address_type }}</span>
               </div>
-
-              <!-- Tap this icon to slide open -->
-              <!-- <ion-icon name="ellipsis-vertical" class="menu-icon" ></ion-icon> -->
             </div>
-
             <p class="full-address">{{ i.full_address }}</p>
           </ion-label>
         </ion-item>
@@ -77,8 +73,5 @@
         </ion-item-options>
       </ion-item-sliding>
     </ion-list>
-
-
-
   </div>
 </ion-content>

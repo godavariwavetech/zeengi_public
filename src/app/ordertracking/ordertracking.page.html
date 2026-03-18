@@ -242,6 +242,29 @@
 
 
 
+  <!-- Delivery Boy Details Card for Status 2 -->
+  <ion-card class="delivery-boy-card" *ngIf="mainorderdata.order_status == 2 && deliveryboyarr && deliveryboyarr.length > 0">
+    <ion-card-header>
+      <ion-card-title style="text-align: center;font-size: 1.1rem; font-family: 'sfregular';">Delivery Partner</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div *ngFor="let d of deliveryboyarr">
+        <ion-row class="delivery-boy-row">
+          <ion-col size="6" class="delivery-boy-name-col">
+            <div class="delivery-boy-name">{{ d.delivery_boy_name }}</div>
+          </ion-col>
+          <ion-col size="6" class="delivery-boy-contact-col">
+            <a href="tel:{{ d.delivery_boy_mobile_number }}" class="contact-link">
+              <ion-icon name="call-outline" class="call-icon"></ion-icon>
+              <span>{{ d.delivery_boy_mobile_number }}</span>
+            </a>
+          </ion-col>
+        </ion-row>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Delivery Boy Details Card for Status 8 (existing) -->
   <ion-card style="border-radius: 12px;padding: 3px;" *ngIf="mainorderdata.order_status==8">
     <ion-card-header>
       <ion-card-title style="text-align: center;font-size: 1.1rem;">Delivery boy Details</ion-card-title>

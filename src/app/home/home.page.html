@@ -68,15 +68,15 @@
       </div>
     </div>
 
-    <div class="category-tabs">
+    <!-- <div class="category-tabs">
       <div class="tab-item" *ngFor="let cat of categories" [ngClass]="{ 'active': selectategory === cat.category_name }"
         (click)="change(cat.category_name);selectCategory(cat)">
         &nbsp;<img [src]="cat.category_image" style="border-radius: 4px;" />&nbsp;
         <span> {{ cat.category_name }}</span>
       </div>
-    </div>
+    </div> -->
 
-    <div class="category-content" *ngFor="let cat of categories" [hidden]="selectategory !== cat.category_name">
+    <!-- <div class="category-content" *ngFor="let cat of categories" [hidden]="selectategory !== cat.category_name">
       <ion-row>
         <ion-col size="8">
           <p style="margin-bottom:3%">{{ cat.category_name }}</p>
@@ -89,7 +89,23 @@
           <img class="banner-image" [src]="cat.category_image" />
         </ion-col>
       </ion-row>
+    </div> -->
+    <!-- vandana code  -->
+    <!-- <div class="category-tabs" #tabsContainer>
+      <div class="tab-item" *ngFor="let cat of displayCategories" [ngClass]="{ 'active': selectategory === cat.category_name }"
+        (click)="change(cat.category_name); selectCategory(cat)">
+        <img [src]="cat.category_image" />
+        <span>{{ cat.category_name }}</span>
+      </div>
+    </div> -->
+    <div class="category-wrapper" #tabsContainer>
+      <div class="category-card" *ngFor="let cat of displayCategories"
+        [ngClass]="{ 'active': selectategory === cat.category_name }" (click)="change(cat.category_name); selectCategory(cat)">
+        <img [src]="cat.category_image" />
+        <span>{{ cat.category_name }}</span>
+      </div>
     </div>
+
   </div>
 
   <ion-grid class="sticky-element" *ngIf="isScrolled" [class.scrolled]="isScrolled">

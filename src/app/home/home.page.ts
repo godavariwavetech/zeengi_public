@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { ApiService } from '../service/api.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Geolocation } from '@capacitor/geolocation';
@@ -36,7 +36,6 @@ export class HomePage implements OnInit {
       handler: () => this.setVegMode(true),
     }
   ];
-
 
 
   setVegMode(pureVeg: boolean) {
@@ -280,9 +279,13 @@ export class HomePage implements OnInit {
     }, error => { });
   }
 
+  displayCategories: any[] = [];
   async ngOnInit() {
 
     // this.checkLocationStatus();
+
+    this.displayCategories = [...this.categories, ...this.categories]; // duplicate
+    console.log(this.displayCategories);
 
     this.getcategory();
   }
@@ -299,27 +302,27 @@ export class HomePage implements OnInit {
     this.getAddressFromCoordinates(this.latitude, this.longitude)
   }
 
-getAddressFromCoordinates(lat: any, lng: any) {
-  // Ensure numeric values
-  const latitude = Number(lat);
-  const longitude = Number(lng);
+  getAddressFromCoordinates(lat: any, lng: any) {
+    // Ensure numeric values
+    const latitude = Number(lat);
+    const longitude = Number(lng);
 
-  console.log('Coordinates:', latitude, longitude);
+    console.log('Coordinates:', latitude, longitude);
 
-  const geocoder = new google.maps.Geocoder();
+    // const geocoder = new google.maps.Geocoder();
 
-  geocoder.geocode({ location: { lat: latitude, lng: longitude } }, (results:any, status:any) => {
-    console.log('Geocode status:', status, results);
+    // geocoder.geocode({ location: { lat: latitude, lng: longitude } }, (results:any, status:any) => {
+    //   console.log('Geocode status:', status, results);
 
-    if (status === 'OK' && results[0]) {
-      this.address = results[0].formatted_address;
-      localStorage.setItem('setlatlongs', `${latitude},${longitude}`);
-      localStorage.setItem('setlocation', this.address);
-    } else {
-      console.warn('Geocoding failed:', status);
-    }
-  });
-}
+    //   if (status === 'OK' && results[0]) {
+    //     this.address = results[0].formatted_address;
+    //     localStorage.setItem('setlatlongs', `${latitude},${longitude}`);
+    //     localStorage.setItem('setlocation', this.address);
+    //   } else {
+    //     console.warn('Geocoding failed:', status);
+    //   }
+    // });
+  }
 
 
   getbanner(category_id: any) {
@@ -348,6 +351,7 @@ getAddressFromCoordinates(lat: any, lng: any) {
     this.api.getlocationctgrylist(data).subscribe(async (res: any) => {
       if (res.status == 200) {
         this.categories = res.data;
+        this.displayCategories = [...this.categories, ...this.categories];
         const categorylist = res.data.map((item: any) => `Search ${item.category_name}`)
         clearInterval(this.placeholderInterval);
         this.changePlaceholder(categorylist);
@@ -391,7 +395,7 @@ getAddressFromCoordinates(lat: any, lng: any) {
     this.getbanner(data.id);
     this.getofferbanners(data.id);
     // localStorage.setItem("category_details",JSON.stringify(data))
-    // localStorage.setItem('category_id', data.id);
+    localStorage.setItem('category_id', data.id);
     // localStorage.setItem('category_name', data.category_name);
     // localStorage.setItem('order_offer_amount', data.order_offer_amount);
     this.selectedCategory = data.category_name;
@@ -951,5 +955,28 @@ getAddressFromCoordinates(lat: any, lng: any) {
   ];
 
 
+  @ViewChild('tabsContainer') tabsContainer!: ElementRef;
+
+  scrollInterval: any;
+
+  ngAfterViewInit() {
+    this.startAutoScroll();
+  }
+
+  startAutoScroll() {
+    const container = this.tabsContainer.nativeElement;
+
+    this.scrollInterval = setInterval(() => {
+      container.scrollLeft += 0.5; // smooth speed
+
+      const halfWidth = container.scrollWidth / 2;
+
+      // 🔥 seamless loop (no jump)
+      if (container.scrollLeft >= halfWidth) {
+        container.scrollLeft -= halfWidth;
+      }
+
+    }, 20);
+  }
 }
 

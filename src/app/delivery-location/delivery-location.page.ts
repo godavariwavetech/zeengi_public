@@ -4,6 +4,7 @@ import { AlertController, LoadingController, NavController, ToastController } fr
 import { ApiService } from '../service/api.service';
 import { Router } from '@angular/router';
 import { Geolocation } from '@capacitor/geolocation';
+import { Capacitor } from '@capacitor/core';
 
 declare var cordova: any;
 declare var google: any; // Ensure google is recognized as a global object
@@ -90,13 +91,10 @@ export class DeliveryLocationPage implements AfterViewInit {
         const short2 = components[3]?.short_name || '';
         this.short_address = short1 + ',' + short2;
 
-        // Start cleaning the address
         let cleanedAddress = fullAddress;
 
-        // Remove Plus Code at start of string (e.g. GM7F+9WQ,)
         cleanedAddress = cleanedAddress.replace(/^[A-Z0-9]{4}\+[A-Z0-9]{3},?\s*/i, '');
 
-        // Remove city name and short address parts
         if (this.city_name) {
           cleanedAddress = cleanedAddress.replace(this.city_name, '');
         }
@@ -107,46 +105,35 @@ export class DeliveryLocationPage implements AfterViewInit {
           cleanedAddress = cleanedAddress.replace(short2, '');
         }
 
-        // Replace multiple commas or commas with spaces between with a single comma
         cleanedAddress = cleanedAddress.replace(/,\s*,+/g, ',').replace(/\s{2,}/g, ' ').trim();
 
-        // Remove comma at start or end if present
         cleanedAddress = cleanedAddress.replace(/^,|,$/g, '').trim();
 
         this.cleaned_full_address = cleanedAddress;
-
-
       } else {
         console.error('Geocode was not successful for the following reason: ' + status);
       }
     });
-
-
-
     setInterval(() => {
       this.full_address;
       this.city_name;
       this.short_address;
     }, 1000);
-    // Initialize the Google Map
     this.map = new google.maps.Map(this.mapElement.nativeElement, {
       center: { lat: latitude, lng: longitude },
       zoom: this.initialZoom,
       disableDefaultUI: true
     });
-    // Add a fixed marker that will always stay at the center
     this.marker = new google.maps.Marker({
       position: { lat: latitude, lng: longitude },
       map: this.map,
-      draggable: false  // Marker is fixed, not draggable
+      draggable: false 
     });
     this.map.addListener('center_changed', () => {
-      const center = this.map.getCenter(); // Get the new center of the map
-      this.latitude = center.lat(); // Update latitude to new center
-      this.longitude = center.lng(); // Update longitude to new center
-      // te the marker's position to the new center of the map
+      const center = this.map.getCenter(); 
+      this.latitude = center.lat();
+      this.longitude = center.lng(); 
       this.smoothMarkerTransition(center);
-      // Optionally update address from coordinates
       setTimeout(() => {
         if (this.latitude !== this.samelatlong) {
           this.samelatlong = this.latitude;
@@ -196,7 +183,7 @@ export class DeliveryLocationPage implements AfterViewInit {
   loadGooglePlaces() {
     const input = document.getElementById('place-input') as HTMLInputElement;
     const options = {
-      types: ['establishment'], // Optional filter
+      types: ['establishment'],
     };
     const autocomplete = new google.maps.places.Autocomplete(input, options);
     autocomplete.addListener('place_changed', () => {
@@ -224,8 +211,6 @@ export class DeliveryLocationPage implements AfterViewInit {
     await loading.present();
     this.api.getuserlocation(data).subscribe(async (res: any) => {
       if (res.status == 200) {
-        // localStorage.setItem('location_id', res.data[0].id);
-        // localStorage.setItem('location_name', res.data[0].location_name);
         loading.dismiss();
         this.latitude = latitude
         this.longitude = longitude
@@ -247,104 +232,136 @@ export class DeliveryLocationPage implements AfterViewInit {
   }
 
   timeoutRef: any;
-
-  // async usecurrentlocation2() {
-  //   const loading = await this.presentLoading(); // Show spinner
-  //   if ('geolocation' in navigator) {
-  //     navigator.geolocation.getCurrentPosition(
-  //       (position) => {
-  //         this.latitude = position.coords.latitude;
-  //         this.longitude = position.coords.longitude;
-
-  //         localStorage.setItem("current_latitude", this.latitude.toString());
-  //         localStorage.setItem("current_longitude", this.longitude.toString());
-
-  //         this.setCurrentPosition2(this.latitude, this.longitude);
-  //         loading.dismiss(); // Stop spinner
-  //       },
-  //       (error) => {
-  //         console.warn('Geolocation failed. Using stored values.', error);
-  //         this.setCurrentPosition2(localStorage.getItem("current_latitude"), localStorage.getItem("current_longitude")); // fallback
-  //         loading.dismiss(); // Stop spinner
-  //       },
-  //       {
-  //         enableHighAccuracy: false,
-  //         timeout: 10000,
-  //         maximumAge: 30000
-  //       }
-  //     );
-  //   } else {
-  //     console.warn('Geolocation not available');
-  //     this.setCurrentPosition2(localStorage.getItem("current_latitude"), localStorage.getItem("current_longitude"));
-  //     await this.requestGeolocationPermission(loading);
-  //     loading.dismiss();
-  //   }
-  // }
-
   async usecurrentlocation2() {
     const loading = await this.presentLoading(); // Show spinner
 
-    cordova.plugins.diagnostic.isLocationEnabled(
-      async (enabled: boolean) => {
-        if (!enabled) {
+    // Check if we're on a mobile device (Capacitor)
+    const isMobile = Capacitor.isNativePlatform();
+
+    const handleFailure = async (message: string) => {
+      clearTimeout(this.timeoutRef);
+      await loading.dismiss();
+      this.showToast(message);
+    };
+
+    // Use Capacitor Geolocation for mobile devices (more reliable)
+    const fetchLocationWithCapacitor = async () => {
+      try {
+        const permission = await Geolocation.requestPermissions();
+        if (permission.location === 'granted') {
+          const resp = await Geolocation.getCurrentPosition({
+            enableHighAccuracy: true,
+            timeout: 15000,
+          });
+          const { latitude, longitude } = resp.coords;
+          localStorage.setItem('latitude', latitude.toString());
+          localStorage.setItem('longitude', longitude.toString());
+          localStorage.setItem('current_latitude', latitude.toString());
+          localStorage.setItem('current_longitude', longitude.toString());
+          
+          // Update the map immediately
+          this.setCurrentPosition2(latitude, longitude);
+          
+          // Also validate location with API
+          await this.getlocation(latitude, longitude);
+          
+          // Get address
+          const geocoder = new google.maps.Geocoder();
+          const latlng = new google.maps.LatLng(latitude, longitude);
+          geocoder.geocode({ location: latlng }, (results: any, status: any) => {
+            if (status === google.maps.GeocoderStatus.OK && results?.[1]) {
+              const address = results[1].formatted_address;
+              localStorage.setItem('setlocation', address);
+              localStorage.setItem('current_address', address);
+            }
+          });
+          
           clearTimeout(this.timeoutRef);
           await loading.dismiss();
-          await this.askToEnableGPSwer();
         } else {
-          try {
-            // Optional: Check for permission before proceeding
-            await this.requestGeolocationPermission(loading);
+          await loading.dismiss();
+          this.showAlert('Permission Denied', 'Location permission is required. Please enable it in your device settings.');
+        }
+      } catch (error) {
+        console.error('Capacitor Geolocation error:', error);
+        await loading.dismiss();
+        this.showToast('Unable to get your location. Please try again or use manual location.');
+      }
+    };
 
-            if ('geolocation' in navigator) {
-              navigator.geolocation.getCurrentPosition(
-                async (position) => {
-                  const lat = position.coords.latitude;
-                  const lng = position.coords.longitude;
-
-                  localStorage.setItem("current_latitude", lat.toString());
-                  localStorage.setItem("current_longitude", lng.toString());
-
-                  this.latitude = lat;
-                  this.longitude = lng;
-
-                  this.setCurrentPosition2(lat, lng);
-                  await loading.dismiss();
-                },
-                async (error) => {
-                  console.warn('Geolocation failed. Using stored values.', error);
-                  const storedLat = localStorage.getItem("current_latitude");
-                  const storedLng = localStorage.getItem("current_longitude");
-
-                  this.setCurrentPosition2(storedLat, storedLng);
-                  await loading.dismiss();
-                },
-                {
-                  enableHighAccuracy: false,
-                  timeout: 10000,
-                  maximumAge: 30000
-                }
-              );
-            } else {
-              console.warn('Geolocation not available');
+    // Fallback to navigator.geolocation for web/desktop
+    const fetchLocationWithNavigator = async () => {
+      try {
+        if ('geolocation' in navigator) {
+          navigator.geolocation.getCurrentPosition(
+            async (position) => {
+              const lat = position.coords.latitude;
+              const lng = position.coords.longitude;
+              localStorage.setItem("current_latitude", lat.toString());
+              localStorage.setItem("current_longitude", lng.toString());
+              localStorage.setItem("latitude", lat.toString());
+              localStorage.setItem("longitude", lng.toString());
+              this.setCurrentPosition2(lat, lng);
+              await loading.dismiss();
+            },
+            async (error) => {
+              console.warn('Geolocation failed. Using stored values.', error);
               const storedLat = localStorage.getItem("current_latitude");
               const storedLng = localStorage.getItem("current_longitude");
-
-              this.setCurrentPosition2(storedLat, storedLng);
+              if (storedLat && storedLng) {
+                this.setCurrentPosition2(storedLat, storedLng);
+              } else {
+                this.showToast('Unable to get your location. Please try again or use manual location.');
+              }
               await loading.dismiss();
+            },
+            {
+              enableHighAccuracy: true,
+              timeout: 15000,
+              maximumAge: 0
             }
-          } catch (err) {
-            console.error('Permission or geolocation error:', err);
+          );
+        } else {
+          await loading.dismiss();
+          this.showToast('Geolocation is not supported on this device.');
+        }
+      } catch (err) {
+        await loading.dismiss();
+        this.showToast("We couldn't access your location. Try entering it manually.");
+      }
+    };
+
+    // Check for Cordova diagnostic (mobile devices)
+    const hasDiagnostic = typeof cordova !== 'undefined' && cordova?.plugins?.diagnostic;
+
+    if (hasDiagnostic) {
+      cordova.plugins.diagnostic.isLocationEnabled(
+        async (enabled: boolean) => {
+          if (!enabled) {
             await loading.dismiss();
-            this.showToast('We couldn’t access your location. Try entering it manually.');
+            await this.askToEnableGPSwer();
+          } else {
+            // Use Capacitor Geolocation on mobile
+            await fetchLocationWithCapacitor();
+          }
+        },
+        async () => {
+          // If diagnostic check fails, still try to get location
+          if (isMobile) {
+            await fetchLocationWithCapacitor();
+          } else {
+            await fetchLocationWithNavigator();
           }
         }
-      },
-      async (error: any) => {
-        clearTimeout(this.timeoutRef);
-        await loading.dismiss();
-        this.showToast('We couldn’t access your location. Try entering it manually.');
+      );
+    } else {
+      // No Cordova, use appropriate method based on platform
+      if (isMobile) {
+        await fetchLocationWithCapacitor();
+      } else {
+        await fetchLocationWithNavigator();
       }
-    );
+    }
   }
 
 
@@ -372,19 +389,14 @@ export class DeliveryLocationPage implements AfterViewInit {
       clearTimeout(this.timeoutRef);
       await loading.dismiss();
       this.showToast('We couldn’t access your location. Try entering it manually.');
-      // this.enterManually();
     }
   }
   async enableHighAccuracyLocation() {
     try {
       const permission = await Geolocation.requestPermissions();
       cordova.plugins.locationAccuracy.request(
-        (success: any) => {
-          console.log("High-accuracy location enabled", success);
-        },
-        (error: any) => {
-          console.error("Failed to enable high accuracy", error);
-        },
+        (success: any) => { },
+        (error: any) => {},
         cordova.plugins.locationAccuracy.REQUEST_PRIORITY_HIGH_ACCURACY
       );
     } catch (error) {
@@ -399,17 +411,13 @@ export class DeliveryLocationPage implements AfterViewInit {
         timeout: 10000,
       });
       const { latitude, longitude } = resp.coords;
-
       localStorage.setItem('latitude', latitude.toString());
       localStorage.setItem('longitude', longitude.toString());
       localStorage.setItem('current_latitude', latitude.toString());
       localStorage.setItem('current_longitude', longitude.toString());
-
       await this.getlocation(latitude, longitude);
-
       const geocoder = new google.maps.Geocoder();
       const latlng = new google.maps.LatLng(latitude, longitude);
-
       geocoder.geocode({ location: latlng }, (results: any, status: any) => {
         if (status === google.maps.GeocoderStatus.OK && results?.[1]) {
           const address = results[1].formatted_address;
@@ -417,7 +425,6 @@ export class DeliveryLocationPage implements AfterViewInit {
           localStorage.setItem('current_address', address);
         }
       });
-
       clearTimeout(this.timeoutRef);
       await loading.dismiss();
     } catch (error) {
@@ -467,9 +474,16 @@ export class DeliveryLocationPage implements AfterViewInit {
   }
 
   setCurrentPosition2(latitude: any, longitude: any) {
-    this.latitude = latitude;
-    this.longitude = longitude;
-    this.initializeMap(latitude, longitude);
+    const lat = parseFloat(latitude);
+    const lng = parseFloat(longitude);
+    if (isNaN(lat) || isNaN(lng)) {
+      this.showToast('Location unavailable. Please try again or use search.');
+      return;
+    }
+
+    this.latitude = lat;
+    this.longitude = lng;
+    this.initializeMap(lat, lng);
     // if ([null, 0, "0", "", "null", "undefined"].includes(localStorage.getItem("current_latitude"))) {
     //   if ('geolocation' in navigator) {
     //     navigator.geolocation.getCurrentPosition((position: any) => {
@@ -689,10 +703,16 @@ export class DeliveryLocationPage implements AfterViewInit {
 
 
     this.api.post_customer_delivery_address(data).subscribe(async (res: any) => {
-
+      console.log(res);
+      
       if (res.status == 200) {
         localStorage.setItem("set_delivery_distance_status", "0");
         this.isModalOpen = false;
+
+        if(res.data[1].length==0){
+          alert('Service is not available at this location');
+          return;
+        }
         setTimeout(() => {
 
           localStorage.setItem("location_id", res.data[1][0].location_id);
@@ -721,8 +741,8 @@ export class DeliveryLocationPage implements AfterViewInit {
                 });
               }
             } else {
-              // this.navctrl.navigateRoot([pathName]);
-              this.navctrl.back()
+              this.navctrl.navigateRoot([pathName]);
+              // this.navctrl.back()
             }
           } else {
             if ([null, 0, "0", "", "null", "undefined"].includes(localStorage.getItem("location_id"))) {
@@ -734,7 +754,6 @@ export class DeliveryLocationPage implements AfterViewInit {
             }
           }
           localStorage.setItem('address_store', '1');
-
         }, 300);
       } else {
         this.get();
@@ -823,5 +842,10 @@ export class DeliveryLocationPage implements AfterViewInit {
     });
     await toast.present();
   }
+
+  gotoback() {
+    const pathName = localStorage.getItem('path_name');
+  }
+
 
 }

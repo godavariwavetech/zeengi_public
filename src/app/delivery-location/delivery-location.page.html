@@ -1,13 +1,16 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button (click)="goBack()"></ion-back-button>
+       <ion-button (click)="goBack()">
+        <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+      </ion-button>
+      <!-- <ion-back-button defaultHref="/home"></ion-back-button> -->
     </ion-buttons>
+
     <ion-title style="font-family: 'sfregular';">
-      <div style="display: flex;align-items: center;">
+      <div style="display: flex; align-items: center;">
         <div class="map-center-overlay2">
-          <input type="text" id="place-input" placeholder="Search for areae, street name..."
-            [(ngModel)]="searchQuery" />
+          <input type="text" id="place-input" placeholder="Search for area, street name..." [(ngModel)]="searchQuery" />
           <ion-icon class="search-icon" name="search"></ion-icon>
           <ion-icon class="clear-icon" name="close-circle" *ngIf="searchQuery" (click)="clearSearch()"></ion-icon>
         </div>
@@ -16,11 +19,12 @@
   </ion-toolbar>
 </ion-header>
 
+
 <ion-content>
   <div class="map-center-overlay1">
     <div (click)="usecurrentlocation2()" class="pests">
       <ion-icon name="locate" style="color: #F57B00;"></ion-icon>&nbsp;&nbsp;
-      Use current location
+      Use current location 
     </div>
   </div>
   <div #mapElement style="height: 100%;" id="map"></div>

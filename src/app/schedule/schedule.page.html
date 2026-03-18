@@ -1,4 +1,4 @@
-<ion-header [translucent]="true">
+<!-- <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title style="font-family: 'sfregular';">Select your delivery time</ion-title>
     <ion-buttons slot="end">
@@ -11,7 +11,6 @@
 
 <ion-content class="delivery-time-picker">
 
-  <!-- Date Picker -->
   <div class="date-scroll-wrapper">
     <div class="date-scroll">
       <div class="date-item" *ngFor="let date of dateOptions" [class.selected]="date === selectedDate"
@@ -23,18 +22,55 @@
   </div>
 
   <hr>
-
-  <!-- Time Picker -->
   <div #timeScroll class="time-scroll-wrapper" (scroll)="onScrollTime()">
     <div class="time-scroll">
-      <div class="time-scroll-spacer"></div> <!-- top spacer -->
+      <div class="time-scroll-spacer"></div> 
       <div class="time-item" *ngFor="let time of timeOptions" [class.selected]="time === selectedTime"
         (click)="selectTime(time)">
         {{ time }}
       </div>
-      <div class="time-scroll-spacer"></div> <!-- bottom spacer -->
+      <div class="time-scroll-spacer"></div> 
     </div>
   </div>
-  <!-- Confirm Button -->
   <ion-button expand="block" class="confirm-button" (click)="selectslotanddate()">Confirm</ion-button>
+</ion-content> -->
+
+<ion-header translucent="true">
+  <ion-toolbar>
+    <ion-title class="title">Select Delivery Time</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="closseslottimingmodal()">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="delivery-container">
+
+  <!-- DATE SELECT -->
+  <div class="date-container">
+    <div class="date-card" *ngFor="let date of dateOptions" [class.active]="date === selectedDate"
+      (click)="selectDate(date)">
+
+      <div class="day">{{ date.label }}</div>
+      <div class="date">{{ date.display }}</div>
+    </div>
+  </div>
+
+  <!-- TIME SELECT -->
+  <div class="time-container" *ngIf="timeOptions?.length !=0">
+    <div class="time-grid">
+      <div class="time-card" *ngFor="let time of timeOptions" [class.active]="time.slot_timings === selectedTime"
+        (click)="selectTime(time)">
+        {{ time.slot_timings }}
+      </div>
+    </div>
+  </div>
+
+  <!-- BUTTON -->
+  <ion-button expand="block" class="confirm-btn" (click)="selectslotanddate()">
+    Confirm Slot
+  </ion-button>
+
 </ion-content>

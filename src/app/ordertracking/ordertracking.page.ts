@@ -54,6 +54,16 @@ export class OrdertrackingPage implements OnInit {
           this.orderitemdata = this.mainorderdata;
           this.orderdetailslength = this.mainorderdata.length;
           this.mainorderdata = res.data[0];
+          try {
+            if (this.mainorderdata.delivery_boy_array) {
+              this.deliveryboyarr = JSON.parse(this.mainorderdata.delivery_boy_array);
+            } else {
+              this.deliveryboyarr = [];
+            }
+          } catch (error) {
+            console.error("Failed to parse delivery boy array:", error);
+            this.deliveryboyarr = [];
+          }
           this.diffamount = (res.data[0].grand_total * 1) -
             ((res.data[0].actual_total_amount * 1) - (res.data[0].total_saving_amount * 1) + (res.data[0].delivery_charges * 1) +
               (res.data[0].coupon_amount * 1));
@@ -96,7 +106,11 @@ export class OrdertrackingPage implements OnInit {
         this.orderdetailslength = this.mainorderdata.length;
         this.mainorderdata = res.data[0];
         try {
-          this.deliveryboyarr = JSON.parse(this.mainorderdata.delivery_boy_array);
+          if (this.mainorderdata.delivery_boy_array) {
+            this.deliveryboyarr = JSON.parse(this.mainorderdata.delivery_boy_array);
+          } else {
+            this.deliveryboyarr = [];
+          }
         } catch (error) {
           console.error("Failed to parse delivery boy array:", error);
           this.deliveryboyarr = [];

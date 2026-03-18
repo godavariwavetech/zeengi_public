@@ -82,22 +82,22 @@
 
 </ion-header>
 
-<ion-content *ngIf="notdatastatus === 1" class="no-items-content">
+<ion-content *ngIf="notdatastatus === 1 && banneritmeslist.length==0" class="no-items-content">
   <div class="no-items-container">
     <p>No items are available.</p>
   </div>
 </ion-content>
 
 
-<ion-content *ngIf="items.length > 0">
-  <div class="filter-container">
+<ion-content >
+  <div class="filter-container" *ngIf="items.length > 0">
     <div class="filter-chip" (click)="openfiltermodal()">
       <span class="filters"> Filter ▼</span>
     </div>
-    <div class="filter-chip" (click)="filterItems('All')">
+    <div class="filter-chip" [class.selected]="selectedFilter === 'All'" (click)="filterItems('All')">
       <span class="filters">All &nbsp;&nbsp;</span>
     </div>
-    <div class="filter-chip" *ngFor="let i of filterskey" (click)="filterItems(i)">
+    <div class="filter-chip" *ngFor="let i of filterskey" [class.selected]="selectedFilter === i" (click)="filterItems(i)">
       <img *ngIf="i=='Veg'" src="assets/icon/category/veg.svg">
       <img *ngIf="i=='Non Veg'" src="assets/icon/category/non-veg.svg">
       <span class="filters">{{i}} &nbsp;&nbsp;</span>
@@ -131,9 +131,8 @@
               <div class="price-container">
                 <h4 style="font-size: 15px;">
                   ₹{{ item.selling_price }}
-                  &nbsp;
                   <span class="original-price" style="font-size: 14px;">
-                    <s *ngIf="item.actual_price > item.selling_price">
+                    <s *ngIf="(item.actual_price * 1) > (item.selling_price * 1)">
                       ₹{{ item.actual_price }}
                     </s>
                   </span>
@@ -196,7 +195,6 @@
               </div>
             </div>
           </ion-thumbnail>
-
 
           <!-- <ion-thumbnail slot="end">
             <div style="text-align: center;">
@@ -265,9 +263,8 @@
             <div class="price-container">
               <h4 style="font-size: 15px;">
                 ₹{{ item.selling_price }}
-                &nbsp;
                 <span class="original-price" style="font-size: 14px;">
-                  <s *ngIf="item.actual_price > item.selling_price">
+                  <s *ngIf="(item.actual_price * 1) > (item.selling_price * 1)">
                     ₹{{ item.actual_price }}
                   </s>
                 </span>
@@ -364,9 +361,8 @@
             <div class="price-container">
               <h4 *ngIf="item.selling_price > 0" style="font-size: 15px;">
                 ₹{{ item.selling_price }}
-                &nbsp;
                 <span class="original-price" style="font-size: 14px;">
-                  <s *ngIf="item.actual_price > item.selling_price">
+                  <s *ngIf="(item.actual_price * 1) > (item.selling_price * 1)">
                     ₹{{ item.actual_price }}
                   </s>
                 </span>
@@ -395,6 +391,12 @@
       </ion-item>
     </div>
 
+  </div>
+
+  <!-- Disclaimer note -->
+  <div style="padding: 14px 0px; margin: 16px; background-color: #FFF3CD; border: 1.5px solid #FFC107; border-radius: 8px; font-size: 13px; color: #856404; text-align: center; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+    <ion-icon name="information-circle" style="color: #FFC107; font-size: 18px; vertical-align: middle; margin-right: 6px;"></ion-icon>
+    <strong>Note:</strong> Item images are for reference; actual product may vary.
   </div>
 </ion-content>
 
@@ -802,14 +804,11 @@
           <strong>Add a request (optional)</strong>
           <ion-icon name="information-circle-outline"></ion-icon>
         </div>
-
         <ion-textarea placeholder="Write something here that you're referring to." maxlength="100"
           [(ngModel)]="extra_more_items_commants"></ion-textarea>
-        <!-- <div class="char-count">543</div> -->
       </div>
     </ion-content>
 
-    <!-- Footer -->
     <ion-footer>
       <div class="footer-bar">
         <div class="counter-box">
@@ -822,6 +821,5 @@
         </ion-button>
       </div>
     </ion-footer>
-
   </ng-template>
 </ion-modal>

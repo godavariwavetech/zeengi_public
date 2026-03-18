@@ -84,6 +84,20 @@
     height: 35px;
     color: #333;
     background: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &.selected {
+        background-color: #F57B00;
+        border-color: #F57B00;
+        color: white;
+        font-weight: 600;
+        box-shadow: 0 2px 4px rgba(245, 123, 0, 0.3);
+    }
+
+    &:hover {
+        border-color: #F57B00;
+    }
 }
 
 .filters {

@@ -28,6 +28,7 @@ export class BasketPage implements OnInit {
   timeOptions = [];
   selectedDate = this.dateOptions[0];
   selectedTime: string | null = null;
+  locationdetails: any;
 
   async canDismiss(data?: undefined, role?: string) {
     return role !== 'gesture';
@@ -160,6 +161,8 @@ export class BasketPage implements OnInit {
   saved_delivery: boolean = false;
 
   async maindata() {
+
+    const loadings = this.presentLoadings()
     const setLatLongs = localStorage.getItem('setlatlongs');
     if (setLatLongs) {
       const stayLatLong = setLatLongs.split(',');
@@ -172,7 +175,6 @@ export class BasketPage implements OnInit {
     if (!this.dataw) return;
     try {
       this.shopdetails = JSON.parse(this.dataw);
-      console.log(localStorage.getItem("set_delivery_distance_status"));
       if (localStorage.getItem("set_delivery_distance_status") == "0") {
         const distance_latlng = {
           from_latitude: this.shopdetails.shop_latitude,
@@ -197,6 +199,7 @@ export class BasketPage implements OnInit {
             }
             localStorage.setItem("set_delivery_distance_status", "1");
             this.maindatafunction2();
+            (await loadings).dismiss()
           } else {
             localStorage.removeItem('cartData');
             localStorage.removeItem('cart_merchant');
@@ -229,12 +232,14 @@ export class BasketPage implements OnInit {
         this.distanceLoading = false;
       } else {
         this.maindatafunction2();
+        (await loadings).dismiss()
       }
     } catch (error) {
     }
   }
 
   async maindatafunction2() {
+    const loadings = this.presentLoadings()
     this.shopdetails.slot_order = this.shopdetails?.slot_order || 0;
     this.getcoupons(this.shopdetails);
     if (this.shopdetails.deliveryType == 1) {
@@ -266,8 +271,10 @@ export class BasketPage implements OnInit {
         this.order_offer_amount = offerAmount;
         this.valid_offer_amount = offerAmount ? Number(offerAmount) : 0;
         this.updateGrandTotal();
-      }, error => {
+        (await loadings).dismiss()
+      }, async error => {
         this.updateGrandTotal();
+        (await loadings).dismiss()
       });
     }
     // Check if cart is empty
@@ -321,6 +328,7 @@ export class BasketPage implements OnInit {
   }
 
   coupons: any = [];
+  orderTypeswe: any = [];
   slots: any;
   commonapis: any
   coupon_show: boolean = false;
@@ -334,11 +342,45 @@ export class BasketPage implements OnInit {
     this.api.coupon_list(data).subscribe(async (res: any) => {
       if (res.status == 200) {
         this.coupons = res.data
+        console.log(this.coupons);
+
         if (this.coupons.length == 0) {
           this.coupon_show = true
         }
       }
     }, error => { })
+
+
+    this.api.getpaymentslist(localStorage.getItem('location_id')).subscribe((res: any) => {
+      if (res.status == 200) {
+        this.locationdetails = res.data[0];
+
+        const payment_type = Number(this.locationdetails.payment_type);
+
+        // Reset array
+        this.orderTypeswe = [];
+
+        if (payment_type === 0) {
+          this.orderTypeswe = [
+            { label: 'Cash on Delivery', selected: false }
+          ];
+        }
+        else if (payment_type === 1) {
+          this.orderTypeswe = [
+            { label: 'Pay Online', selected: false }
+          ];
+        }
+        else if (payment_type === 2) {
+          this.orderTypeswe = [
+            { label: 'Cash on Delivery', selected: false },
+            { label: 'Pay Online', selected: false }
+          ];
+        }
+
+        console.log(this.orderTypeswe, "order types");
+      }
+    }, error => { });
+
     this.api.getslotdates(data).subscribe(async (res: any) => {
       if (res.status == 200) {
         this.dateOptions = [];
@@ -444,16 +486,17 @@ export class BasketPage implements OnInit {
 
       this.savings = this.total_actual_amount - this.itemstotalamount;
 
-      if (this.shopdetails.shop_gst_number == "Not Applicable") {
-        this.shop_gst_fee = 0;
-        this.packing_gst_fee = 0;
-        this.item_total_gst_fee = 0;
+      // if (this.shopdetails.shop_gst_number == "Not Applicable") {
+      //   this.shop_gst_fee = 0;
+      //   this.packing_gst_fee = 0;
+      //   this.item_total_gst_fee = 0;
+      // } else {
+      this.packing_gst_fee = (this.shopdetails.packing_charges * this.gst_percentage) / 100;
+      this.item_total_gst_fee = item_gst_amount;
+      this.shop_gst_fee = (this.packing_gst_fee + this.item_total_gst_fee);
+      // }
 
-      } else {
-        this.packing_gst_fee = (this.shopdetails.packing_charges * this.gst_percentage) / 100;
-        this.item_total_gst_fee = item_gst_amount;
-        this.shop_gst_fee = (this.packing_gst_fee + this.item_total_gst_fee);
-      }
+
       this.packing_charges = this.shopdetails.packing_charges;
       this.total_packing_charges = this.packing_charges + this.packing_gst_fee;
       this.handling_charges_gst_fee = (this.gst_percentage * this.handling_charges) / 100;
@@ -505,10 +548,10 @@ export class BasketPage implements OnInit {
     }
   }
 
-  orderTypeswe = [
-    // { label: 'Pay Online', selected: false },
-    { label: 'Cash on Delivery', selected: false }
-  ];
+  // orderTypeswe = [
+  //   // { label: 'Pay Online', selected: false },
+  //   { label: 'Cash on Delivery', selected: false }
+  // ];
 
   orderTypes: any = []
 
@@ -610,13 +653,15 @@ export class BasketPage implements OnInit {
       coupon.applied = true;
       this.selectedCoupon = coupon;
       this.closeModal();
+      console.log(this.selectedCoupon);
       if (this.itemstotalamount >= this.selectedCoupon.coupon_max_price_limit) {
         var discount = Math.round((this.itemstotalamount * this.selectedCoupon.coupon_percentage) / 100);
-        if (discount <= this.selectedCoupon.coupon_upto_price) {
+
+        if (discount <= this.selectedCoupon.coupon_max_price_limit) {
           this.coupon_discount_amount = discount;
           this.updateGrandTotal();
         } else {
-          this.coupon_discount_amount = this.selectedCoupon.coupon_upto_price;
+          this.coupon_discount_amount = this.selectedCoupon.coupon_max_price_limit;
           this.updateGrandTotal();
         }
         this.selectedCouponid = coupon.id;
@@ -816,24 +861,21 @@ export class BasketPage implements OnInit {
   insert_id: any;
 
   async orderplaced(response: any) {
-    if (this.prescriptionstatus == true) {
-      alert("⚠️ Please upload a valid prescription to proceed with your order.");
+
+    if (!this.customer_name) {
+      this.namemodal = true;
     } else {
-      if (!this.customer_name) {
-        this.namemodal = true;
-        console.log('Pradep IN ')
+      //---------------------Dont Remove ------------------------------
+      if (this.itemstotalamount <= this.shopdetails?.minimum_order) {
+        this.minimumorderamountalert(this.shopdetails?.minimum_order);
       } else {
-        //---------------------Dont Remove ------------------------------
-        // if (this.grand_total <= this.shopdetails?.minimum_order) {
-        //   this.minimumorderamountalert(this.shopdetails?.minimum_order);
-        // } else {
-        // this.payorder(response);
-        // }
-        //---------------------Dont Remove ------------------------------
         this.payorder(response);
-        console.log('Pradep IN ')
       }
+      //---------------------Dont Remove ------------------------------
+      // this.payorder(response);
+      // console.log('Pradep IN ')
     }
+    // }
   }
 
   async payorder(response: any) {
@@ -1360,7 +1402,6 @@ export class BasketPage implements OnInit {
   getdelivery_instructions() {
     this.api.delivery_instructions().subscribe(async (res: any) => {
       this.deliveryInstructions = res.data;
-
     })
   }
 

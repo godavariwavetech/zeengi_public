@@ -24,11 +24,9 @@ export class DefaultAddressPage implements OnInit {
   private debounceTimer: any = null;
   currentaddress: any;
 
-  constructor(public navctrl: NavController, public api: ApiService, public toastController: ToastController, public loadingCtrl: LoadingController, public alertController: AlertController,public router: Router) {
+  constructor(public navctrl: NavController, public api: ApiService, public toastController: ToastController, public loadingCtrl: LoadingController, public alertController: AlertController, public router: Router) {
     /// <reference types="google.maps" />
-
     this.getAddressFromCoordinates(this.latitude, this.longitude);
-
     if ([null, 0, "0", "", "null", "undefined"].includes(this.latitude)) {
       if ('geolocation' in navigator) {
         navigator.geolocation.getCurrentPosition((position) => {
@@ -185,8 +183,8 @@ export class DefaultAddressPage implements OnInit {
         const latitude = place.geometry.location.lat();
         const longitude = place.geometry.location.lng();
 
-        this.latitude =latitude;
-        this.longitude =longitude;
+        this.latitude = latitude;
+        this.longitude = longitude;
 
         localStorage.setItem('latitude', latitude.toString() ?? "16.521816");
         localStorage.setItem('longitude', longitude.toString() ?? "80.620072");
@@ -231,7 +229,7 @@ export class DefaultAddressPage implements OnInit {
     } else {
       this.navctrl.navigateRoot('/map-location');
     }
-    
+
   }
 
   address: any = [];
@@ -265,7 +263,7 @@ export class DefaultAddressPage implements OnInit {
   location_name: any = '';
 
   setaddress(data: any) {
-    
+
     this.latitude = data.customer_latitude;
     this.longitude = data.customer_longitude;
     this.getlocationwer(data.customer_latitude, data.customer_longitude);
@@ -286,7 +284,7 @@ export class DefaultAddressPage implements OnInit {
     await loading.present();
     this.api.getuserlocation(data).subscribe(async (res: any) => {
       console.log(res);
-      
+
       if (res.status == 200) {
         this.location_id = res.data[0].id;
         this.location_name = res.data[0].location_name;
@@ -310,14 +308,14 @@ export class DefaultAddressPage implements OnInit {
 
     this.data = localStorage.getItem('cartData');
     console.log(this.data);
-    
+
     this.cartdata = [];
     if (this.data) {
       try {
         this.cartdata = JSON.parse(this.data);
       } catch (error) {
-        
-       };
+
+      };
     }
     if (this.cartdata.length) {
       if (this.location_id != localStorage.getItem('current_location_id')) {
@@ -355,7 +353,7 @@ export class DefaultAddressPage implements OnInit {
                     });
                   } else {
                     this.router.navigate([pathName]);
-                  
+
                   }
 
                 } else {
@@ -383,19 +381,19 @@ export class DefaultAddressPage implements OnInit {
         // if (Object.keys(restaurantdata).length > 0) {
         //   this.distanceCalculation(restaurantdata, pathName, latitude, longitude);
         // } else {
-          if (pathName) {
-            if (pathName == 'home') {
-              this.navctrl.navigateRoot(['/home'], {
-                queryParams: { refreshStatus: 1 }
-              });
-            } else {
-              this.router.navigate([pathName]);
-            }
-          } else {
+        if (pathName) {
+          if (pathName == 'home') {
             this.navctrl.navigateRoot(['/home'], {
               queryParams: { refreshStatus: 1 }
             });
+          } else {
+            this.router.navigate([pathName]);
           }
+        } else {
+          this.navctrl.navigateRoot(['/home'], {
+            queryParams: { refreshStatus: 1 }
+          });
+        }
         // }
       }
     } else {
@@ -427,7 +425,7 @@ export class DefaultAddressPage implements OnInit {
   }
 
 
- 
+
 
   async clearcart() {
     const alert = await this.alertController.create({
@@ -539,6 +537,7 @@ export class DefaultAddressPage implements OnInit {
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
+          console.log('1111')
           this.latitude = position.coords.latitude;
           this.longitude = position.coords.longitude;
 
@@ -549,6 +548,7 @@ export class DefaultAddressPage implements OnInit {
           loading.dismiss(); // Stop spinner
         },
         (error) => {
+           console.log('22')
           this.usecurrentlocation(localStorage.getItem("current_latitude"), localStorage.getItem("current_longitude")); // fallback
           loading.dismiss(); // Stop spinner
         },
@@ -559,20 +559,20 @@ export class DefaultAddressPage implements OnInit {
         }
       );
     } else {
-      // this.usecurrentlocation(localStorage.getItem("current_latitude"), localStorage.getItem("current_longitude"));
-       loading.dismiss();
-          this.navctrl.navigateRoot('/allow-location');
-      
-     
+      console.log("333")
+      loading.dismiss();
+      this.navctrl.navigateRoot('/allow-location');
     }
   }
+
+
 
   async getlocation(lat: any, long: any, address: any) {
     var data = {
       location_latitude: lat,
       location_longitude: long
     }
-
+    console.log(data)
     const loading = await this.loadingCtrl.create({
       spinner: 'bubbles',
       cssClass: 'custom-loading'
@@ -666,20 +666,20 @@ export class DefaultAddressPage implements OnInit {
         // if (Object.keys(restaurantdata).length > 0) {
         //   this.distanceCalculation(restaurantdata, pathName, lat, long);
         // } else {
-          if (pathName) {
-            if (pathName == 'home') {
-                this.navctrl.navigateRoot(['/home'], {
-                  queryParams: { refreshStatus: 1 }
-                });
-              } else {
-                this.router.navigate([pathName]);
-              }
-          } else {
+        if (pathName) {
+          if (pathName == 'home') {
             this.navctrl.navigateRoot(['/home'], {
               queryParams: { refreshStatus: 1 }
             });
+          } else {
+            this.router.navigate([pathName]);
           }
-          localStorage.setItem('address_store', '1');
+        } else {
+          this.navctrl.navigateRoot(['/home'], {
+            queryParams: { refreshStatus: 1 }
+          });
+        }
+        localStorage.setItem('address_store', '1');
         // }
 
       }
@@ -697,33 +697,33 @@ export class DefaultAddressPage implements OnInit {
       // localStorage.setItem('address_store', '1');
 
       const pathName = localStorage.getItem('path_name');
-      
+
       const restaurantdata = JSON.parse(localStorage.getItem('main_shopdetails') || '{}');
-      
+
 
       // if (Object.keys(restaurantdata).length > 0) {
       //   this.distanceCalculation(restaurantdata, pathName, lat, long);
       // } else {
-        if (pathName) {
-          if (pathName == 'home') {
-            this.navctrl.navigateRoot(['/home'], {
-              queryParams: { refreshStatus: 1 }
-            });
-          } else {
-            this.router.navigate([pathName]);
-          }
-        } else {
+      if (pathName) {
+        if (pathName == 'home') {
           this.navctrl.navigateRoot(['/home'], {
             queryParams: { refreshStatus: 1 }
           });
+        } else {
+          this.router.navigate([pathName]);
         }
-        localStorage.setItem('address_store', '1');
+      } else {
+        this.navctrl.navigateRoot(['/home'], {
+          queryParams: { refreshStatus: 1 }
+        });
+      }
+      localStorage.setItem('address_store', '1');
       // }
 
     }
   }
 
-  gotoback2(){
+  gotoback2() {
     this.router.navigate(['/basket']);
   }
 
@@ -753,7 +753,7 @@ export class DefaultAddressPage implements OnInit {
   }
 
 
-  async presentToast(message: string, duration: number = 5000,color:any) {
+  async presentToast(message: string, duration: number = 5000, color: any) {
     const toast = await this.toastController.create({
       message: message,
       duration: duration,

@@ -30,11 +30,11 @@
 
 
   <div class="filter-container">
-    <div class="filter-chip" (click)="filterItems('All')">
+    <div class="filter-chip" [class.selected]="selectedFilter === 'All'" (click)="filterItems('All')">
       <span class="filters">All &nbsp;&nbsp;</span>
     </div>
 
-    <div class="filter-chip" *ngFor="let i of filters" (click)="filterItems(i)">
+    <div class="filter-chip" *ngFor="let i of filters" [class.selected]="selectedFilter === i.filter_name" (click)="filterItems(i)">
       <img *ngIf="i.filter_name=='Veg'" src="assets/icon/category/veg.svg">
       <img *ngIf="i.filter_name=='Non Veg'" src="assets/icon/category/non-veg.svg">
       <span class="filters">{{i.filter_name}} &nbsp;&nbsp;</span>
@@ -75,8 +75,10 @@
     </ion-row>
   </div>
 
-  <div style="text-align: center;margin-top:20%;font-family: 'sfregular';" *ngIf="avail">
-    No Shops Available
+  <div style="text-align: center; margin-top: 20%; font-family: 'sfregular'; padding: 20px; color: #666;" *ngIf="avail || shops.length === 0">
+    <ion-icon name="storefront-outline" style="font-size: 48px; color: #ccc; margin-bottom: 10px;"></ion-icon>
+    <p style="font-size: 16px; margin: 10px 0;">No shops are available</p>
+    <p style="font-size: 14px; color: #999;">Try selecting a different filter or search term</p>
   </div>
 
 </ion-content>

@@ -46,8 +46,7 @@ export class AllowLocationPage implements OnInit {
     }, 5000);
 
     try {
-      cordova.plugins.diagnostic.isLocationEnabled(
-        async (enabled: boolean) => {
+      cordova.plugins.diagnostic.isLocationEnabled(async (enabled: boolean) => {
           if (!enabled) {
             clearTimeout(this.timeoutRef);
             await loading.dismiss();
@@ -66,7 +65,7 @@ export class AllowLocationPage implements OnInit {
     } catch (err) {
       clearTimeout(this.timeoutRef);
       await loading.dismiss();
-      this.showToast('We couldn’t access your location. Try entering it manually.');
+      this.showToast('We couldn’t access your location. Try entering it manually..');
       this.enterManually();
     }
   }

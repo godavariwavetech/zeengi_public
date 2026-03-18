@@ -172,6 +172,7 @@ export class MainResturantPage implements OnInit {
   items: any = [];
   reorder_items: any = []
   filterskey: any
+  selectedFilter: string = 'All';
 
   async getshopdetail(shop_id: any) {
     var data = {
@@ -186,11 +187,14 @@ export class MainResturantPage implements OnInit {
     this.api.getitemslist(data).subscribe(async (res: any) => {
       this.inactiveItems = res.data.filter((item: any) => item.active_status == "1");
       res.data = res.data.filter((item: any) => item.active_status == "0");
+
       if (res.status == 200) {
         const shopitemstatus = this.cartData.some((obj: any) => obj.shop_id == shop_id);
+
         if (this.restaurantdata.banner_item_ids) {
           await this.banneritemsfunction(res.data, shopitemstatus, this.restaurantdata);
         } else {
+
           const bannerres: any = await firstValueFrom(this.api.getbanneritemslist(this.restaurantdata));
           if (bannerres.data[0]?.item_id) {
             this.exclusive_array = bannerres.data[0];
@@ -198,15 +202,39 @@ export class MainResturantPage implements OnInit {
             this.restaurantdata.banner_offer_title = bannerres.data[0].banner_offer_title;
             await this.banneritemsfunction(res.data, shopitemstatus, this.restaurantdata);
           }
+
         }
-        res.data = res.data.filter((item1: any) =>
-          !this.banneritmeslist.some((item2: any) => item2.id == item1.id)
-        );
+
+
+        // res.data = res.data.filter((item1: any) =>
+        //   !this.banneritmeslist.some((item2: any) => Number(item2.id) == Number(item1.id))
+        // );
+
+        const bannerArray = this.banneritmeslist;
+
+        if (!Array.isArray(res.data)) {
+        }
+        if (!Array.isArray(bannerArray)) {
+        }
+
+        const bannerIds = new Set(bannerArray.map((b: any) => String(b.id)));
+
+
+        res.data = (res.data || []).filter((item: any) => {
+          const idStr = String(item.id);
+          const inBanner = bannerIds.has(idStr);
+          if (inBanner) {
+          }
+          return !inBanner;
+        });
+
+
+
+
         res.data = res.data.map((item: any) => {
           const wishlistArray = Array.isArray(this.wishlistdata) ? this.wishlistdata : [];
           const matchedWishlist = wishlistArray.find(
-            (obj: any) =>
-              obj.wishlist_id == item.id &&
+            (obj: any) => obj.wishlist_id == item.id &&
               obj.wishlist_type == 1 &&
               obj.table_name == this.restaurantdata.shop_items_tb_nm
           );
@@ -239,7 +267,6 @@ export class MainResturantPage implements OnInit {
 
         loading.dismiss();
         this.notdatastatus = 0;
-
         this.originaldata = res.data;
         this.mainitems = res.data;
         this.items = this.groupItemsBySubCategory(res.data);
@@ -341,8 +368,10 @@ export class MainResturantPage implements OnInit {
     this.items = [];
     if (filterType == 'All') {
       this.filteredItems = [...this.mainitems];
+      this.selectedFilter = 'All';
     } else {
       this.filteredItems = this.mainitems.filter((item: any) => item.filter_one.toLowerCase() == filterType.toLowerCase());
+      this.selectedFilter = filterType;
     }
     this.items = this.groupItemsBySubCategory(this.filteredItems);;
     setTimeout(() => {
@@ -451,8 +480,6 @@ export class MainResturantPage implements OnInit {
       });
     }
     this.getCartSummary(); // Display cart summary
-
-
 
   }
 
@@ -577,7 +604,6 @@ export class MainResturantPage implements OnInit {
       let cartItemIndex = this.cartData.findIndex((cartItem: any) => cartItem.id == itemId);
       if (cartItemIndex !== -1) {
         if (item.itemscount == 0) {
-          console.log("remove delivery status 1");
 
           this.cartData.splice(cartItemIndex, 1);
           localStorage.removeItem('cartData');
@@ -593,7 +619,6 @@ export class MainResturantPage implements OnInit {
     } else {
       item.itemscount = 0;
     }
-    console.log(this.cartData);
     if (this.cartData.length == 0) {
       localStorage.setItem("set_delivery_distance_status", "0");
     }
@@ -734,9 +759,7 @@ export class MainResturantPage implements OnInit {
       return sum + parseFloat(item.price);
     }, 0);
     this.extra_finalAmount = this.total_extra_item_price * this.extra_cart_count;
-    console.log('ewrqerf', this.extra_finalAmount)
 
-    console.log(this.extra_items_array)
   }
 
 
@@ -815,7 +838,6 @@ export class MainResturantPage implements OnInit {
 
       localStorage.removeItem('cartData');
       localStorage.removeItem('cart_merchant');
-      console.log("remove delivery status 3");
       this.totalItems = this.cartData.reduce((sum: any, item: any) => sum + item.itemscount, 0);
       this.savingamount();
       this.data_er = localStorage.getItem('location_id');
@@ -827,7 +849,6 @@ export class MainResturantPage implements OnInit {
     } else {
       localStorage.removeItem('cartData');
       localStorage.removeItem('cart_merchant');
-      console.log("remove delivery status 4");
       localStorage.setItem("set_delivery_distance_status", "0");
     }
   }
@@ -843,14 +864,8 @@ export class MainResturantPage implements OnInit {
         to_latitude: this.userLatitude,
         to_longitude: this.userLongitude,
       };
-
-      console.log(distance_latlng)
       try {
-
-        // Uncomment when integrating real API call
         const distanceInfo = await this.api.getRouteDistanceORS(this.restaurantdata.shop_latitude, this.restaurantdata.shop_longitude, this.userLatitude, this.userLongitude);
-
-
         if (distanceInfo && (this.restaurantdata.maximum_del_km >= distanceInfo)) {
           this.restaurantdata.distance = distanceInfo;
           localStorage.setItem("order_distance", String(distanceInfo))
@@ -880,10 +895,8 @@ export class MainResturantPage implements OnInit {
           localStorage.setItem('address_store', '0');
           await dismissLoader();
           this.serviceNotAvailableFunction();
-          console.log("111")
         }
       } catch (error) {
-        console.error('Error fetching distance:', error);
         localStorage.removeItem('cartData');
         localStorage.removeItem('cart_merchant');
         localStorage.removeItem('main_shopdetails');
@@ -892,7 +905,6 @@ export class MainResturantPage implements OnInit {
         localStorage.setItem('address_store', '0');
         await dismissLoader();
         this.serviceNotAvailableFunction();
-        console.log("222")
       }
     } else {
       this.restaurantdata.distance = localStorage.getItem("order_distance");
@@ -1127,7 +1139,7 @@ Check out this amazing item on *Zeengi*!
 ✅ Delivered to your doorstep  
 
 📱 Download Zeengi now and explore more mouth-watering delights:  
-https://play.google.com/store/apps/details?id=Zeengi.app  
+https://play.google.com/store/apps/details?id=com.zeengi  
 
 Don't miss out — share with your friends and spread the foodie love! ❤️`;
 
@@ -1152,7 +1164,7 @@ Don't miss out — share with your friends and spread the foodie love! ❤️`;
 ✅ Amazing customer experience  
 
 📱 Download Zeengi now to explore this shop and many more:  
-https://play.google.com/store/apps/details?id=Zeengi.app  
+https://play.google.com/store/apps/details?id=com.zeengi 
 
 Share this with your friends and let them enjoy the goodness too! ❤️`;
 
@@ -1196,16 +1208,7 @@ Share this with your friends and let them enjoy the goodness too! ❤️`;
         allItems.sort((a: Item, b: Item) => (b.item_name || '').localeCompare(a.item_name || ''));
         break;
     }
-
-    // this.sortedItems = allItems;
-    // this.showfilteritemsstatus=false;
-    // this.filtertotalitems = allItems;
-
     this.items = this.groupItemsBySubCategory(allItems);
-
-
-
-
   }
 
   async getrelativeoutlets(restaurantdata: any) {
@@ -1342,20 +1345,16 @@ Share this with your friends and let them enjoy the goodness too! ❤️`;
 
 
   async gotoshopratingllist(restaurantdata: any) {
-
     if (restaurantdata.rating_count == 0) {
-
     } else {
       this.navctrl.navigateForward('shop-ratings', {
         queryParams: { pageback: 'main-resturant', pageind: '0', pagebackdata: restaurantdata }
       });
     }
-
   }
+
   async shop_offercelist(restaurantdata: any) {
-
     const valid_offer_amount = `Get Delivery Offer on orders above ₹${this.valid_offer_amount}`;
-
     this.api.getshop_offercelist(restaurantdata).subscribe(async (res: any) => {
       this.shop_offerslist = res.data;
       if (this.valid_offer_amount) {
@@ -1364,6 +1363,10 @@ Share this with your friends and let them enjoy the goodness too! ❤️`;
       if (restaurantdata.special_offer_name) {
         // this.shop_offerslist.push({ id: this.shop_offerslist.length + 1, location_id: this.restaurantdata.location_id, location_name: "", shop_id: this.restaurantdata.shop_id, coupon_name: restaurantdata.special_offer_name, coupon_description: restaurantdata.special_offer_name, coupon_percentage: 0, coupon_upto_price: 0, coupon_status: 0, coupon_user_permission: 0, coupon_type: 0, coupon_category_id: "0", coupon_max_price_limit: 0, i_ts: "2025-04-14 00:39:52", entry_by: "2", d_in: "0", "offer_type": 1 });
       }
+
+      // Hide coupons only when coupon_user_permission is 1
+      this.shop_offerslist = this.shop_offerslist.filter((offer: any) => (offer?.coupon_user_permission ?? 0) * 1 !== 1);
+      console.log(this.shop_offerslist); // kiran 
 
       this.offerscount = this.shop_offerslist.length;
       if (this.shop_offerslist?.length > 1) {
@@ -1377,7 +1380,6 @@ Share this with your friends and let them enjoy the goodness too! ❤️`;
 
 
   getcategorydetails(category_data: any) {
-
     const crtrydata = {
       id: category_data.category_id
     }
@@ -1400,7 +1402,6 @@ Share this with your friends and let them enjoy the goodness too! ❤️`;
 
 
   async setslot(i: any) {
-
     const modal = await this.modalCtrl.create({
       component: SchedulePage,
       componentProps: { restaurantdata: this.restaurantdata },
@@ -1410,9 +1411,6 @@ Share this with your friends and let them enjoy the goodness too! ❤️`;
       animated: true
     });
     await modal.present();
-
-    // await modal.present();
-
     modal.onDidDismiss().then((result) => {
 
       if (result.data?.dismissed) {
@@ -1425,8 +1423,6 @@ Share this with your friends and let them enjoy the goodness too! ❤️`;
         }
 
         this.api.checkshop_slot_timings(checktimeslot).subscribe(async (res: any) => {
-          console.log(res);
-
           this.restaurantdata.shop_active_status = res.data[0].shop_active_status;
           if (res.data[0].shop_active_status == 0) {
             const startTime24 = this.extractStartTimeTo24Hour(selectedTime);
@@ -1435,24 +1431,18 @@ Share this with your friends and let them enjoy the goodness too! ❤️`;
             this.restaurantdata.selectedTime = result.data.selectedTime;
             this.restaurantdata.deliveryType = this.deliveryType;
             this.restaurantdata.slot_order = 1;
-
             this.restaurantdata.order_date = result.data.selectedDate.slot_date;
             this.restaurantdata.slot_date = result.data.selectedDate.slot_date;
             this.restaurantdata.slot_time = startTime24
             this.restaurantdata.order_date_time = result.data.selectedDate.slot_date + " " + startTime24;
-
             localStorage.setItem('cart_merchant', JSON.stringify(this.restaurantdata));
-
           } else {
             this.deliveryType = 0;
             this.restaurantdata.slot_order = 0;
-
           }
-
         })
       }
     });
-
     await modal.present();
   }
   closseslottimingmodal() {
@@ -1469,7 +1459,6 @@ Share this with your friends and let them enjoy the goodness too! ❤️`;
     this.selectedItemId = 0;
     item = {}
     this.moreitemsdata = item;
-
   }
 
   closemoreitemsmodal1(item: any) {
@@ -1482,16 +1471,11 @@ Share this with your friends and let them enjoy the goodness too! ❤️`;
     this.selectedItemId = 0;
     item = {}
     this.moreitemsdata = item;
-
   }
 
   selectedmoreitems(moreselecteditemsdata: any) {
-
     moreselecteditemsdata.item_count = 1;
-
-
     this.moreitmscaliculation(moreselecteditemsdata)
-
   }
 
   increaseCount(event: Event, moreselecteditemsdata: any) {
@@ -1648,7 +1632,6 @@ Share this with your friends and let them enjoy the goodness too! ❤️`;
     localStorage.removeItem('cartData');
     localStorage.removeItem('cart_merchant');
     localStorage.removeItem('delivery_elements');
-    console.log("remove delivery status 5");
     localStorage.setItem("set_delivery_distance_status", "0");
     const alert = await this.alertController.create({
       mode: 'ios',

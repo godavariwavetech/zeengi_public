@@ -48,6 +48,7 @@ export class AppComponent {
     platform.ready().then(() => {
       if (platform.is('android')) {
         this.OneSignalInit();
+        this.registerBackButtonListener();
       }
     });
 
@@ -55,7 +56,7 @@ export class AppComponent {
       if (canRequest) {
         this.locationAccuracy.request(this.locationAccuracy.REQUEST_PRIORITY_HIGH_ACCURACY).then(
           () => {
-            this.getcurrentlocation();
+            // this.getcurrentlocation();
           },
           (error) => {
             console.error('Location accuracy request failed:', error);
@@ -72,9 +73,9 @@ export class AppComponent {
   }
 
   async initapp() {
-    await SplashScreen.hide();
     await SplashScreen.show({
-      showDuration: 2500,
+      // Show immediately; let Capacitor manage auto hide
+      showDuration: 0,
       autoHide: true,
     });
   }
@@ -90,6 +91,8 @@ export class AppComponent {
 
       });
       OneSignal.User.pushSubscription.addEventListener("change", (event: any) => {
+        console.log(event.current.id);
+        
         localStorage.setItem('player_id', event.current.id);
         this.addplayerid();
       });
@@ -148,49 +151,35 @@ export class AppComponent {
     });
   }
 
-  getcurrentlocation() {
-    this.geolocation.getCurrentPosition().then((resp) => {
-      localStorage.setItem('latitude', resp.coords.latitude.toString());
-      localStorage.setItem('longitude', resp.coords.longitude.toString());
-      localStorage.setItem('current_latitude', resp.coords.latitude.toString());
-      localStorage.setItem('current_longitude', resp.coords.longitude.toString());
+  // getcurrentlocation() {
+  //   this.geolocation.getCurrentPosition().then((resp) => {
+  //     localStorage.setItem('latitude', resp.coords.latitude.toString());
+  //     localStorage.setItem('longitude', resp.coords.longitude.toString());
+  //     localStorage.setItem('current_latitude', resp.coords.latitude.toString());
+  //     localStorage.setItem('current_longitude', resp.coords.longitude.toString());
 
-      localStorage.setItem('setlatlongs', resp.coords.latitude.toString() + ',' + resp.coords.longitude.toString())
+  //     localStorage.setItem('setlatlongs', resp.coords.latitude.toString() + ',' + resp.coords.longitude.toString())
 
-      this.getlocation(resp.coords.latitude, resp.coords.longitude);
-      const latlng = new google.maps.LatLng(resp.coords.latitude, resp.coords.longitude);
-      const geocoder = new google.maps.Geocoder();
-      // Use 'location' instead of 'latLng'
-      geocoder.geocode({ 'location': latlng }, (results, status) => {
-        if (status === google.maps.GeocoderStatus.OK && results && results[1]) {
-          localStorage.setItem("setlocation", results[1].formatted_address);
-          localStorage.setItem("current_address", results[1].formatted_address);
-        } else {
+  //     this.getlocation(resp.coords.latitude, resp.coords.longitude);
+  //     const latlng = new google.maps.LatLng(resp.coords.latitude, resp.coords.longitude);
+  //     const geocoder = new google.maps.Geocoder();
+  //     // Use 'location' instead of 'latLng'
+  //     // geocoder.geocode({ 'location': latlng }, (results, status) => {
+  //     //   if (status === google.maps.GeocoderStatus.OK && results && results[1]) {
+  //     //     localStorage.setItem("setlocation", results[1].formatted_address);
+  //     //     localStorage.setItem("current_address", results[1].formatted_address);
+  //     //   } else {
 
-        }
-      });
-    }).catch((error: any) => {
+  //     //   }
+  //     // });
+  //   }).catch((error: any) => {
 
-    });
-  }
+  //   });
+  // }
 
   appVersion: any = '';
   dbversion: any = '';
 
-  // async initializeApp() {
-  //   this.platform.ready().then(() => {
-  //     this.registerBackButtonListener();
-  //   });
-
-  //   await this.platform.ready();
-  //   try {
-  //     await StatusBar.setBackgroundColor({ color: '#F57B00' }); // Match your header
-  //     await StatusBar.setStyle({ style: Style.Light });          // Use Style.Dark if bg is light
-  //     await StatusBar.show();
-  //   } catch (err) {
-  //     console.warn('StatusBar plugin error:', err);
-  //   }
-  // }
 
   registerBackButtonListener() {
     CapacitorApp.addListener('backButton', async ({ canGoBack }) => {

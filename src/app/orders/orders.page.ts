@@ -12,7 +12,7 @@ import { ActivatedRoute } from '@angular/router';
 
 export class OrdersPage implements OnInit {
 
-  filterorder = "Past Orders";
+  filterorder = "InProcess";
   ongoindorderls: any = [];
   deliveredorders: any = [];
   subscripitioinorders: any = [];

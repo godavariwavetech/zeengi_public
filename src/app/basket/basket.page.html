@@ -260,6 +260,21 @@
         </ion-item>
       </span>
 
+      <!-- Minimum Order Section -->
+      <span *ngIf="shopdetails?.minimum_order">
+        <div style="border-bottom: 0.5px dashed rgb(206, 206, 206); padding: 8px;"></div>
+
+        <ion-item button detail lines="none" class="bill-summary" *ngIf="shopdetails?.minimum_order"
+          style="display: flex; align-items: center;">
+          <ion-icon slot="start" name="information-circle-outline"></ion-icon>
+          <ion-label style="font-family: 'sfregular';">
+            <div style="display: flex; flex-direction: column;">
+              <span style="font-size: 15px; color: #333;">Minimum Order: ₹{{ shopdetails?.minimum_order }}</span>
+            </div>
+          </ion-label>
+        </ion-item>
+      </span>
+
       <div style="border-bottom: 0.5px dashed rgb(206, 206, 206); padding: 8px;"></div>
 
       <!-- Total Bill Section -->
@@ -270,10 +285,10 @@
           <div style="display: flex; flex-direction: column; gap: 6px;">
             <!-- Total Bill Row -->
             <div
-              style="display: flex; align-items: center; flex-wrap: wrap; gap: 2px; font-size: 12px; letter-spacing: 0.5px;">
+              style="display: flex; align-items: center; flex-wrap: wrap; gap: 2px; font-size: 14px; letter-spacing: 0.5px;">
               <span>Total Bill</span>
-              <s style="font-size: 12px; color: #888;">₹{{ itemsstrikeamount | number:'1.2-2' }}</s><span>₹{{
-                grand_total | number:'1.2-2' }}</span>
+              <s style="font-size: 14px; color: #888;" *ngIf="(itemsstrikeamount * 1) > (grand_total * 1)">₹{{ itemsstrikeamount | number:'1.2-2' }}</s>
+              <span>₹{{ grand_total | number:'1.2-2' }}</span>
               <ion-badge class="save-badge" style="margin-left: auto;">Saved ₹{{ total_saving_amount | number:'1.2-2'
                 }}</ion-badge>
             </div>
@@ -409,7 +424,12 @@
       padding: 1% 4%;border-radius: 8px;">
         <div class="summary-item2">
           <p>Item total </p>
-          <strong><s style="color: #b8b8b8;">₹{{total_actual_amount}}</s> &nbsp; ₹{{ itemstotalamount }}</strong>
+          <strong>
+            <span *ngIf="total_actual_amount > itemstotalamount">
+              <s style="color: #b8b8b8;">₹{{total_actual_amount}}</s> &nbsp;
+            </span>
+            ₹{{ itemstotalamount }}
+          </strong>
         </div>
 
         <!-- <div class="summary-item2" *ngIf="selectedCoupon && coupon_discount_amount!=0">
@@ -683,7 +703,7 @@
         <!-- if ((results[0].distance.value / 1000) < this.shopdetails.minimum_km) {  -->
         <div style="display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 15px;">
           <div style="display: flex; justify-content: space-between; width: 100%; ">
-            <span style="font-weight: bold; font-size: 16px;">Small Order fee </span>
+            <span style="font-weight: bold; font-size: 16px;">Base Order fee </span>
             <span style="font-size: 16px; " *ngIf="saved_delivery"><s>₹{{commonapis.delivery_fixed_charges}}</s>
               ₹0</span>
             <span style="font-size: 16px; " *ngIf="!saved_delivery">₹{{ delivery_fixed_charges }}</span>

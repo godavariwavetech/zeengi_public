@@ -198,6 +198,52 @@ ion-searchbar {
   font-family: 'sfregular';
 }
 
+// ------------------------------------------------------------
+// Filters chips
+.filter-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.filter-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 14px;
+  height: 35px;
+  color: #333;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &.selected {
+    background-color: #F57B00;
+    border-color: #F57B00;
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(245, 123, 0, 0.3);
+  }
+
+  &:hover {
+    border-color: #F57B00;
+  }
+}
+
+.filters {
+  font-family: "sfregular";
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 16.71px;
+  letter-spacing: 0px;
+}
+
 .filter-container {
   display: flex;
   align-items: center;

@@ -9,9 +9,11 @@ const config: CapacitorConfig = {
   },
   plugins: {
     SplashScreen: {
-      launchShowDuration: 100,
+      // Show splash screen immediately when app launches
+      launchShowDuration: 0,
       launchAutoHide: true,
-      backgroundColor: "#ffffffff",
+      // Match your splash artwork background to avoid a white flash
+      backgroundColor: "#000000ff",
       androidSplashResourceName: "splash",
       showSpinner: false,
       androidSpinnerStyle: "large",
