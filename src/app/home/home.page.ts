@@ -392,10 +392,13 @@ export class HomePage implements OnInit {
 
   selectCategory(data: any) {
     this.selected_category_id = data.id;
+    console.log(data);
+    
     this.getbanner(data.id);
     this.getofferbanners(data.id);
     // localStorage.setItem("category_details",JSON.stringify(data))
     localStorage.setItem('category_id', data.id);
+    localStorage.setItem('slot_timing_status', data.slot_timing_status);
     // localStorage.setItem('category_name', data.category_name);
     // localStorage.setItem('order_offer_amount', data.order_offer_amount);
     this.selectedCategory = data.category_name;

@@ -101,6 +101,8 @@ export class MainResturantPage implements OnInit {
   showfilteritemsstatus: boolean = true;
   filtertotalitems: any = []; selectedItemId: number = 0; single_extra_item_price: any = 0; notdatastatus = 2;
 
+  slot_timing_status = localStorage.getItem('slot_timing_status')
+
   constructor(private route: ActivatedRoute, public api: ApiService, public navctrl: NavController, public loadingCtrl: LoadingController, private alertController: AlertController, private modalCtrl: ModalController, private toastController: ToastController,) {
     this.cartData = JSON.parse(localStorage.getItem("cartData") ?? '[]');
     if (this.cartData.length) {
@@ -116,6 +118,8 @@ export class MainResturantPage implements OnInit {
     this.route.queryParams.subscribe(params => {
       this.data = params['data'];
       this.restaurantdata = JSON.parse(this.data);
+      console.log(this.restaurantdata, "fhafjsa");
+      
       this.restaurantdata.slot_order = 0;
       this.getcategorydetails(this.restaurantdata);
       this.getcustomerwishlist();
@@ -1421,8 +1425,10 @@ Share this with your friends and let them enjoy the goodness too! ❤️`;
           location_id: result.data.selectedDate.location_id,
           shop_id: this.restaurantdata.shop_id
         }
+console.log(checktimeslot);
 
         this.api.checkshop_slot_timings(checktimeslot).subscribe(async (res: any) => {
+          console.log(res.data,"djfdjdj")
           this.restaurantdata.shop_active_status = res.data[0].shop_active_status;
           if (res.data[0].shop_active_status == 0) {
             const startTime24 = this.extractStartTimeTo24Hour(selectedTime);
@@ -1435,10 +1441,13 @@ Share this with your friends and let them enjoy the goodness too! ❤️`;
             this.restaurantdata.slot_date = result.data.selectedDate.slot_date;
             this.restaurantdata.slot_time = startTime24
             this.restaurantdata.order_date_time = result.data.selectedDate.slot_date + " " + startTime24;
+            this.restaurantdata.order_type = 1
             localStorage.setItem('cart_merchant', JSON.stringify(this.restaurantdata));
           } else {
             this.deliveryType = 0;
             this.restaurantdata.slot_order = 0;
+            this.restaurantdata.order_type = 0;
+            
           }
         })
       }

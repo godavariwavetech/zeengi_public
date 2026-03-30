@@ -212,7 +212,7 @@
                 class="platform-fee">Schedule it</span> </span> -->
           </div>
           <div style="display: flex; flex-direction: column;" *ngIf="deliveryType==1 ">
-            <span style="font-size: 15px; color: #333;">Delivery in {{selectedDate?.display}} - {{selectedTime}}</span>
+            <span style="font-size: 15px; color: #333;">Delivery in {{shopdetails?.order_date}} - {{selectedTime}}</span>
             <span style="font-size: 14px; color: #777;" (click)="setslot(0)" *ngIf="shopdetails.slot_order==0">Want this
               <span class="platform-fee"> Instant Order? </span></span>
           </div>
@@ -287,7 +287,8 @@
             <div
               style="display: flex; align-items: center; flex-wrap: wrap; gap: 2px; font-size: 14px; letter-spacing: 0.5px;">
               <span>Total Bill</span>
-              <s style="font-size: 14px; color: #888;" *ngIf="(itemsstrikeamount * 1) > (grand_total * 1)">₹{{ itemsstrikeamount | number:'1.2-2' }}</s>
+              <s style="font-size: 14px; color: #888;" *ngIf="(itemsstrikeamount * 1) > (grand_total * 1)">₹{{
+                itemsstrikeamount | number:'1.2-2' }}</s>
               <span>₹{{ grand_total | number:'1.2-2' }}</span>
               <ion-badge class="save-badge" style="margin-left: auto;">Saved ₹{{ total_saving_amount | number:'1.2-2'
                 }}</ion-badge>
@@ -531,7 +532,7 @@
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
-    
+
     <ion-content>
       <ion-searchbar style="font-family: 'sfregular';" (ionInput)="searchCoupons()" [(ngModel)]="searchQuery"
         placeholder="Search Coupons" show-clear-button="always">

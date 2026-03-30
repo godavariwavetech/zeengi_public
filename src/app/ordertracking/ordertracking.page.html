@@ -93,7 +93,7 @@
         <div class="separator-line"></div>
       </ion-col>
 
-      <ion-col size="2" class="icon-col">
+      <!-- <ion-col size="2" class="icon-col">
         <ion-icon *ngIf="mainorderdata.order_status <= 8" name="location-outline"
           [ngClass]="mainorderdata.order_status == 3 ? 'active-icon' : 'inactive-icon'">
         </ion-icon>
@@ -102,6 +102,23 @@
           *ngIf="mainorderdata.order_status == 4 || mainorderdata.order_status == 5 || mainorderdata.order_status == 6 "
           name="close" class="active-icon">
         </ion-icon>
+      </ion-col> -->
+      <ion-col size="2" class="icon-col">
+
+        <!-- Location Icon -->
+        <ion-icon *ngIf="mainorderdata.order_status <= 8 && 
+           mainorderdata.order_status != 4 && 
+           mainorderdata.order_status != 5 && 
+           mainorderdata.order_status != 6" name="location-outline"
+          [ngClass]="mainorderdata.order_status == 3 ? 'active-icon' : 'inactive-icon'">
+        </ion-icon>
+
+        <!-- Close Icon -->
+        <ion-icon *ngIf="mainorderdata.order_status == 4 || 
+           mainorderdata.order_status == 5 || 
+           mainorderdata.order_status == 6" name="close" class="active-icon">
+        </ion-icon>
+
       </ion-col>
     </ion-row>
 
@@ -243,9 +260,11 @@
 
 
   <!-- Delivery Boy Details Card for Status 2 -->
-  <ion-card class="delivery-boy-card" *ngIf="mainorderdata.order_status == 2 && deliveryboyarr && deliveryboyarr.length > 0">
+  <ion-card class="delivery-boy-card"
+    *ngIf="mainorderdata.order_status == 2 && deliveryboyarr && deliveryboyarr.length > 0">
     <ion-card-header>
-      <ion-card-title style="text-align: center;font-size: 1.1rem; font-family: 'sfregular';">Delivery Partner</ion-card-title>
+      <ion-card-title style="text-align: center;font-size: 1.1rem; font-family: 'sfregular';">Delivery
+        Partner</ion-card-title>
     </ion-card-header>
     <ion-card-content>
       <div *ngFor="let d of deliveryboyarr">

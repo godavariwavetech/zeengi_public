@@ -175,6 +175,8 @@ export class BasketPage implements OnInit {
     if (!this.dataw) return;
     try {
       this.shopdetails = JSON.parse(this.dataw);
+      console.log(this.shopdetails);
+
       if (localStorage.getItem("set_delivery_distance_status") == "0") {
         const distance_latlng = {
           from_latitude: this.shopdetails.shop_latitude,
@@ -196,6 +198,18 @@ export class BasketPage implements OnInit {
               var del_charges = Math.round((this.shopdetails.extradistance * this.shopdetails.per_km_chargers) + Number(this.shopdetails.minimum_del_charge));
               localStorage.setItem("delivery_charges", String(del_charges));
               this.shopdetails.delivery_charges = del_charges;
+            }
+            if (this.shopdetails.distance < this.locationdetails.del_minimum_km) {   // Below 3 kilometers
+              localStorage.setItem("deliveryboy_delivery_charges", String(this.locationdetails.del_minimum_del_charge));
+              this.shopdetails.deliveryboy_delivery_charges = this.locationdetails.del_minimum_del_charge;
+              this.shopdetails.extradistance = 0;
+            } else {
+              this.shopdetails.del_extradistance = this.shopdetails.distance - this.locationdetails.del_minimum_km;
+              var deliveryboy_delivery_charges = Math.round((this.shopdetails.del_extradistance * this.locationdetails.del_per_km_chargers) + Number(this.locationdetails.del_minimum_del_charge));
+              localStorage.setItem("deliveryboy_delivery_charges", String(deliveryboy_delivery_charges));
+              this.shopdetails.deliveryboy_delivery_charges = deliveryboy_delivery_charges;
+              console.log(this.shopdetails.distance, deliveryboy_delivery_charges);
+
             }
             localStorage.setItem("set_delivery_distance_status", "1");
             this.maindatafunction2();
@@ -354,6 +368,7 @@ export class BasketPage implements OnInit {
     this.api.getpaymentslist(localStorage.getItem('location_id')).subscribe((res: any) => {
       if (res.status == 200) {
         this.locationdetails = res.data[0];
+        console.log(this.locationdetails);
 
         const payment_type = Number(this.locationdetails.payment_type);
 
@@ -886,8 +901,13 @@ export class BasketPage implements OnInit {
       });
       await loading.present();
       var data = {
-        order_amount: this.grand_total * 100
+        order_amount: 1 * 100,
+        // order_amount: this.grand_total * 100,
+        razorpay_secret_key: this.locationdetails.razorpay_secret_key,
+        razorpay_key: this.locationdetails.razorpay_key
       }
+      console.log(data);
+
       this.api.generateorderid(data).subscribe(async (res: any) => {
         loading.dismiss();
         this.onlineorderplaced(response, res.orderId.id, res.payment_key_id);
@@ -930,7 +950,7 @@ export class BasketPage implements OnInit {
       item_gst_amount: item.item_gst_amount
     }));
 
-
+    const slotDate = this.shopdetails?.slot_date || this.getCurrentDate();
     var data = {
       actual_total_amount: (this.itemstotalamount * 1) + (this.savings * 1),
       customer_id: localStorage.getItem('usr_id'),
@@ -944,6 +964,7 @@ export class BasketPage implements OnInit {
       total_saving_amount: this.savings,
       coupon_amount: this.coupon_discount_amount !== undefined ? this.coupon_discount_amount : 0,
       delivery_charges: this.final_del_charges,
+      deliveryboy_delivery_charges: localStorage.getItem('deliveryboy_delivery_charges'),
       grand_total: this.grand_total,
       location_id: localStorage.getItem('location_id'),
       location_name: localStorage.getItem('location_name'),
@@ -956,12 +977,12 @@ export class BasketPage implements OnInit {
       delivery_address: this.locationaddress,
       order_latitude: this.order_latitude,
       order_longitude: this.order_longitude,
-      slot_timings: this.selectedDate?.slot_date + " " + this.selectedTime,
+      // slot_timings: this.shopdetails?.slot_date + " " + this.selectedTime,
       order_distance: this.shopdetails.distance,
       ext_del_charge: "0",
       shop_id: this.shopdetails.shop_id,
       user_player_id: localStorage.getItem('player_id'),
-      order_type: this.order_type,
+      order_type: this.shopdetails.order_type || 0,
       delivery_charges_gst: this.delivery_charges_gst,
       handling_charges: this.handling_charges,
       surcharges: this.surcharges,
@@ -980,13 +1001,19 @@ export class BasketPage implements OnInit {
       prescriptionRequired: this.prescriptionRequired,
       // slot_indication:this.shopdetails.slot_order,
       slot_indication: this.deliveryType,
-      order_date: this.shopdetails?.slot_date,
-      slot_date: this.shopdetails?.slot_date,
+      // order_date: this.shopdetails?.slot_date,
+      // slot_date: this.shopdetails?.slot_date,
       slot_time: this.shopdetails?.slot_time,
       order_date_time: this.shopdetails.order_date_time,
       deliveryType: this.deliveryType,
-      note: this.note
+      note: this.note,
+      delivery_fixed_charges: this.commonapis.delivery_fixed_charges,
+      slot_timings: slotDate + " " + this.selectedTime,
+      order_date: slotDate,
+      slot_date: slotDate,
     }
+    console.log(data);
+
     this.api.orderplaced(data).subscribe(async (res: any) => {
       loading.dismiss();
       if (res.status == 200) {
@@ -1022,7 +1049,14 @@ export class BasketPage implements OnInit {
       loading.dismiss();
     })
   }
+  getCurrentDate(): string {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = ('0' + (today.getMonth() + 1)).slice(-2);
+    const day = ('0' + today.getDate()).slice(-2);
 
+    return `${year}-${month}-${day}`;
+  }
 
   async presentMerchantClosedAlert() {
     const alert = await this.alertController.create({
@@ -1100,8 +1134,8 @@ export class BasketPage implements OnInit {
   updatepayment(data: any) {
     console.log(data);
     var datare = {
-      payment_id: "123456",
-      razorpay_order_id: "123456",
+      payment_id: data.razorpay_payment_id,
+      razorpay_order_id: data.razorpay_order_id,
       id: this.insert_id,
       user_player_id: localStorage.getItem('player_id'),
       shop_id: this.shopdetails.shop_id,
@@ -1356,7 +1390,7 @@ export class BasketPage implements OnInit {
         // kiran kk
         const startTime24 = this.extractStartTimeTo24Hour(this.selectedTime);
         this.deliveryType = 1;
-        this.order_type = 1;
+        this.order_type = this.shopdetails.order_type;
         // this.shopdetails.slot_order=1;
         this.shopdetails.order_date = this.selectedDate.slot_date;
         this.shopdetails.slot_date = this.selectedDate.slot_date;
@@ -1364,7 +1398,7 @@ export class BasketPage implements OnInit {
         this.shopdetails.order_date_time = this.selectedDate.slot_date + " " + startTime24;
       } else {
         this.deliveryType = 0;
-        this.order_type = 0;
+        this.order_type = this.shopdetails.order_type;
         const slot_time = this.selectedTime + ": Currently, we are not servicing this slot.";
         this.presentToast(slot_time);
       }
