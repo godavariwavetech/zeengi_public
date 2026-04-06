@@ -391,7 +391,7 @@ export class BasketPage implements OnInit {
             { label: 'Pay Online', selected: false }
           ];
         }
-
+        this.selectedPaymentType = this.orderTypeswe[0].label;
         console.log(this.orderTypeswe, "order types");
       }
     }, error => { });
@@ -556,7 +556,7 @@ export class BasketPage implements OnInit {
       }
       this.filteredOrderTypes();
       localStorage.removeItem('cartData');
-      setTimeout(() => {
+      setTimeout(() => {  
         localStorage.setItem('cartData', JSON.stringify(this.cartdata));
       }, 100);
       this.checkprescriptionstatus();
@@ -576,6 +576,8 @@ export class BasketPage implements OnInit {
       this.orderTypes = this.orderTypeswe;
     } else {
       this.orderTypes = this.orderTypeswe.filter((type: any) => type.label === 'Pay Online');
+      console.log(this.orderTypes);
+
       this.selectedPaymentType = this.orderTypes[0].label;
       this.payment_type = 'Pay Online';
     }
