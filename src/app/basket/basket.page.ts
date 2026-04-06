@@ -171,8 +171,11 @@ export class BasketPage implements OnInit {
         this.userLongitude = Number(stayLatLong[1]);
       }
     }
-
-    if (!this.dataw) return;
+    if (!this.dataw) {
+      this.nodata = true;
+      (await loadings).dismiss()
+      return;
+    }
     try {
       this.shopdetails = JSON.parse(this.dataw);
       console.log(this.shopdetails);
@@ -276,6 +279,8 @@ export class BasketPage implements OnInit {
           obj.single_extra_item_price = single_extra_item_price;
         });
       } catch (error) {
+      } finally {
+        (await loadings).dismiss()
       }
       // Fetch category details and offer
       const category_data = { id: this.shopdetails.category_id };
@@ -556,7 +561,7 @@ export class BasketPage implements OnInit {
       }
       this.filteredOrderTypes();
       localStorage.removeItem('cartData');
-      setTimeout(() => {  
+      setTimeout(() => {
         localStorage.setItem('cartData', JSON.stringify(this.cartdata));
       }, 100);
       this.checkprescriptionstatus();
