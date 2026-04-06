@@ -351,7 +351,14 @@ export class HomePage implements OnInit {
     this.api.getlocationctgrylist(data).subscribe(async (res: any) => {
       if (res.status == 200) {
         this.categories = res.data;
-        this.displayCategories = [...this.categories, ...this.categories];
+
+        if (this.categories.length > 4) {
+          // duplicate only when scrolling needed
+          this.displayCategories = [...this.categories, ...this.categories];
+        } else {
+          // no duplication
+          this.displayCategories = [...this.categories];
+        }
         const categorylist = res.data.map((item: any) => `Search ${item.category_name}`)
         clearInterval(this.placeholderInterval);
         this.changePlaceholder(categorylist);
@@ -393,7 +400,7 @@ export class HomePage implements OnInit {
   selectCategory(data: any) {
     this.selected_category_id = data.id;
     console.log(data);
-    
+
     this.getbanner(data.id);
     this.getofferbanners(data.id);
     // localStorage.setItem("category_details",JSON.stringify(data))
