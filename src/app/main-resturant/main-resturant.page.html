@@ -402,6 +402,27 @@
       style="color: #FFC107; font-size: 18px; vertical-align: middle; margin-right: 6px;"></ion-icon>
     <strong>Note:</strong> Item images are for reference; actual product may vary.
   </div>
+
+  <!-- Service Unavailable Overlay -->
+  <div class="service-unavailable-overlay" *ngIf="serviceUnavailableReason">
+    <div class="service-unavailable-card">
+      <div class="su-icon-wrap">
+        <img [src]="getServiceUnavailableIcon()" class="su-icon" />
+      </div>
+      <h2 class="su-title">{{ getServiceUnavailableTitle() }}</h2>
+      <p class="su-message">{{ getServiceUnavailableMessage() }}</p>
+      <div class="su-actions">
+        <button class="su-btn su-btn-primary" (click)="onChangeAddress()">
+          <ion-icon name="location-outline"></ion-icon>
+          Change Address
+        </button>
+        <button class="su-btn su-btn-secondary" (click)="onBrowseShops()">
+          <ion-icon name="storefront-outline"></ion-icon>
+          Browse Shops
+        </button>
+      </div>
+    </div>
+  </div>
 </ion-content>
 
 

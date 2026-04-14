@@ -28,20 +28,20 @@ task clean(type: Delete) {
 // ✅ ADD THIS BLOCK (VERY IMPORTANT)
 //////////////////////////////////////////////////////////////
 
-subprojects {
-    afterEvaluate { project ->
-        if (project.hasProperty("android")) {
-            project.android {
-                compileOptions {
-                    sourceCompatibility JavaVersion.VERSION_17
-                    targetCompatibility JavaVersion.VERSION_17
-                }
-            }
-        }
+// subprojects {
+//     afterEvaluate { project ->
+//         if (project.hasProperty("android")) {
+//             project.android {
+//                 compileOptions {
+//                     sourceCompatibility JavaVersion.VERSION_17
+//                     targetCompatibility JavaVersion.VERSION_17
+//                 }
+//             }
+//         }
 
-        tasks.withType(JavaCompile).configureEach {
-            sourceCompatibility = "17"
-            targetCompatibility = "17"
-        }
-    }
-}
+//         tasks.withType(JavaCompile).configureEach {
+//             sourceCompatibility = "17"
+//             targetCompatibility = "17"
+//         }
+//     }
+// }

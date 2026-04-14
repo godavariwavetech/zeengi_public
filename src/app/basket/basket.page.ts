@@ -138,22 +138,8 @@ export class BasketPage implements OnInit {
     }
   }
 
-  async gotoservicelist() {
-    const alert = await this.alertController.create({
-      mode: 'ios',
-      header: 'Service Unavailable',
-      message: 'We are currently not servicing this location. Please choose another serviceable area.',
-      backdropDismiss: false,
-      buttons: [
-        {
-          text: 'Change you delivery address',
-          handler: () => {
-            this.navCtrl.navigateRoot('default-address');
-          }
-        }
-      ]
-    });
-    await alert.present();
+  gotoservicelist() {
+    this.serviceNotAvailableFunction('no_location');
   }
 
   lat: any;
@@ -170,6 +156,12 @@ export class BasketPage implements OnInit {
         this.userLatitude = Number(stayLatLong[0]);
         this.userLongitude = Number(stayLatLong[1]);
       }
+    }
+    if (!this.userLatitude || !this.userLongitude || isNaN(this.userLatitude) || isNaN(this.userLongitude)) {
+      this.loadCartItems();
+      (await loadings).dismiss();
+      this.serviceNotAvailableFunction('location_error');
+      return;
     }
     if (!this.dataw) {
       this.nodata = true;
@@ -202,49 +194,21 @@ export class BasketPage implements OnInit {
               localStorage.setItem("delivery_charges", String(del_charges));
               this.shopdetails.delivery_charges = del_charges;
             }
-            if (this.shopdetails.distance < this.locationdetails.del_minimum_km) {   // Below 3 kilometers
-              localStorage.setItem("deliveryboy_delivery_charges", String(this.locationdetails.del_minimum_del_charge));
-              this.shopdetails.deliveryboy_delivery_charges = this.locationdetails.del_minimum_del_charge;
-              this.shopdetails.extradistance = 0;
-            } else {
-              this.shopdetails.del_extradistance = this.shopdetails.distance - this.locationdetails.del_minimum_km;
-              var deliveryboy_delivery_charges = Math.round((this.shopdetails.del_extradistance * this.locationdetails.del_per_km_chargers) + Number(this.locationdetails.del_minimum_del_charge));
-              localStorage.setItem("deliveryboy_delivery_charges", String(deliveryboy_delivery_charges));
-              this.shopdetails.deliveryboy_delivery_charges = deliveryboy_delivery_charges;
-              console.log(this.shopdetails.distance, deliveryboy_delivery_charges);
-
-            }
             localStorage.setItem("set_delivery_distance_status", "1");
             this.maindatafunction2();
             (await loadings).dismiss()
           } else {
-            localStorage.removeItem('cartData');
-            localStorage.removeItem('cart_merchant');
-            localStorage.removeItem('main_shopdetails');
-            localStorage.removeItem('shopdetails');
             localStorage.setItem("set_delivery_distance_status", "0");
-            localStorage.removeItem('order_distance');
-            localStorage.removeItem('order_delivery_charges');
-            localStorage.removeItem('order_extradistance');
-            localStorage.setItem('address_store', '0');
-            localStorage.removeItem('cart_created_at');
-            this.nodata = true;
-            this.serviceNotAvailableFunction('.');
+            this.loadCartItems();
+            (await loadings).dismiss();
+            this.serviceNotAvailableFunction('distance');
           }
         } catch (error) {
           console.error('Error fetching distance:', error);
-          localStorage.removeItem('cartData');
-          localStorage.removeItem('cart_merchant');
-          localStorage.removeItem('main_shopdetails');
-          localStorage.removeItem('shopdetails');
           localStorage.setItem("set_delivery_distance_status", "0");
-          localStorage.removeItem('order_distance');
-          localStorage.removeItem('order_delivery_charges');
-          localStorage.removeItem('order_extradistance');
-          localStorage.setItem('address_store', '0');
-          localStorage.removeItem('cart_created_at');
-          this.nodata = true;
-          this.serviceNotAvailableFunction('..');
+          this.loadCartItems();
+          (await loadings).dismiss();
+          this.serviceNotAvailableFunction('location_error');
         }
         this.distanceLoading = false;
       } else {
@@ -375,6 +339,20 @@ export class BasketPage implements OnInit {
         this.locationdetails = res.data[0];
         console.log(this.locationdetails);
 
+        // Calculate delivery boy charges now that locationdetails is available
+        if (this.shopdetails.distance && this.locationdetails) {
+          if (this.shopdetails.distance < this.locationdetails.del_minimum_km) {
+            localStorage.setItem("deliveryboy_delivery_charges", String(this.locationdetails.del_minimum_del_charge));
+            this.shopdetails.deliveryboy_delivery_charges = this.locationdetails.del_minimum_del_charge;
+          } else {
+            this.shopdetails.del_extradistance = this.shopdetails.distance - this.locationdetails.del_minimum_km;
+            var deliveryboy_delivery_charges = Math.round((this.shopdetails.del_extradistance * this.locationdetails.del_per_km_chargers) + Number(this.locationdetails.del_minimum_del_charge));
+            localStorage.setItem("deliveryboy_delivery_charges", String(deliveryboy_delivery_charges));
+            this.shopdetails.deliveryboy_delivery_charges = deliveryboy_delivery_charges;
+            console.log(this.shopdetails.distance, deliveryboy_delivery_charges);
+          }
+        }
+
         const payment_type = Number(this.locationdetails.payment_type);
 
         // Reset array
@@ -392,8 +370,8 @@ export class BasketPage implements OnInit {
         }
         else if (payment_type === 2) {
           this.orderTypeswe = [
-            { label: 'Cash on Delivery', selected: false },
-            { label: 'Pay Online', selected: false }
+            { label: 'Pay Online', selected: false },
+            { label: 'Cash on Delivery', selected: false }
           ];
         }
         this.selectedPaymentType = this.orderTypeswe[0].label;
@@ -633,11 +611,11 @@ export class BasketPage implements OnInit {
   }
 
   isCouponValid(coupon: any): boolean {
-    return this.itemstotalamount < coupon.coupon_max_price_limit;
+    return this.itemstotalamount < coupon.coupon_upto_price;
   }
 
   getErrorMessage(coupon: any): string {
-    if (this.itemstotalamount < coupon.coupon_max_price_limit) return `Minimum order value must be ₹${coupon.coupon_max_price_limit}.`;
+    if (this.itemstotalamount < coupon.coupon_upto_price) return `Minimum order value must be ₹${coupon.coupon_upto_price}.`;
     return '';
   }
 
@@ -676,7 +654,7 @@ export class BasketPage implements OnInit {
       this.selectedCoupon = coupon;
       this.closeModal();
       console.log(this.selectedCoupon);
-      if (this.itemstotalamount >= this.selectedCoupon.coupon_max_price_limit) {
+      if (this.itemstotalamount >= this.selectedCoupon.coupon_upto_price) {
         var discount = Math.round((this.itemstotalamount * this.selectedCoupon.coupon_percentage) / 100);
 
         if (discount <= this.selectedCoupon.coupon_max_price_limit) {
@@ -1014,7 +992,7 @@ export class BasketPage implements OnInit {
       order_date_time: this.shopdetails.order_date_time,
       deliveryType: this.deliveryType,
       note: this.note,
-      delivery_fixed_charges: this.commonapis.delivery_fixed_charges,
+      delivery_fixed_charges: this.delivery_fixed_charges,
       slot_timings: slotDate + " " + this.selectedTime,
       order_date: slotDate,
       slot_date: slotDate,
@@ -1082,22 +1060,64 @@ export class BasketPage implements OnInit {
     await alert.present();
   }
 
-  async serviceNotAvailableFunction(yt: any) {
-    const alert = await this.alertController.create({
-      header: 'Notice',
-      message: 'Unable to service this location' + yt + 'Would you like to continue with another shop ? ',
-      buttons: [
-        {
-          text: 'Okay',
-          handler: () => {
-            // Redirect to home page or shop list
-            this.navCtrl.navigateRoot('/home');
-          }
-        }
-      ]
-    });
+  serviceUnavailableReason: 'distance' | 'location_error' | 'no_location' | null = null;
 
-    await alert.present();
+  serviceNotAvailableFunction(reason: 'distance' | 'location_error' | 'no_location') {
+    this.serviceUnavailableReason = reason;
+  }
+
+  getServiceUnavailableTitle(): string {
+    switch (this.serviceUnavailableReason) {
+      case 'distance': return 'Shop Too Far Away';
+      case 'location_error': return 'Location Not Found';
+      case 'no_location': return 'No Delivery Address';
+      default: return 'Service Unavailable';
+    }
+  }
+
+  getServiceUnavailableMessage(): string {
+    switch (this.serviceUnavailableReason) {
+      case 'distance': return 'This shop is too far from your current delivery address. Please change your address or try a nearby shop.';
+      case 'location_error': return 'We couldn\'t determine your delivery location. Please update your address so we can calculate delivery.';
+      case 'no_location': return 'Please set a delivery address to continue with your order.';
+      default: return 'Something went wrong. Please try again.';
+    }
+  }
+
+  getServiceUnavailableIcon(): string {
+    switch (this.serviceUnavailableReason) {
+      case 'distance': return 'assets/icon/store.png';
+      default: return 'assets/icon/home/location-pin.svg';
+    }
+  }
+
+  loadCartItems() {
+    const data = localStorage.getItem('cartData');
+    if (data) {
+      try {
+        this.cartdata = JSON.parse(data);
+        this.totalItems = this.cartdata.reduce((sum: number, item: any) => sum + (item.quantity || 1), 0);
+        this.cartdata.forEach((obj: any) => {
+          const single_extra_item_price = parseFloat(obj.single_extra_item_price) || 0;
+          const selling = parseFloat(obj.org_selling_price) || 0;
+          const actual = parseFloat(obj.org_actual_price) || 0;
+          obj.selling_price = selling + single_extra_item_price;
+          obj.actual_price = actual + single_extra_item_price;
+        });
+      } catch (e) {
+        this.cartdata = [];
+      }
+    }
+  }
+
+  onChangeAddress() {
+    this.serviceUnavailableReason = null;
+    this.navCtrl.navigateForward('default-address');
+  }
+
+  onBrowseShops() {
+    this.serviceUnavailableReason = null;
+    this.navCtrl.navigateRoot('/home');
   }
 
   async openrazorpay(order_id: any, payment_key_id: any) {

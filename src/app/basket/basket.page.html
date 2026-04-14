@@ -72,12 +72,33 @@
   </ng-container>
 
 
-  <div *ngIf="nodata" style="font-family: 'sfregular';font-size: 20px;text-align: center;margin-top: 50%;">
+  <!-- Service Unavailable Overlay -->
+  <div class="service-unavailable-overlay" *ngIf="serviceUnavailableReason">
+    <div class="service-unavailable-card">
+      <div class="su-icon-wrap">
+        <img [src]="getServiceUnavailableIcon()" class="su-icon" />
+      </div>
+      <h2 class="su-title">{{ getServiceUnavailableTitle() }}</h2>
+      <p class="su-message">{{ getServiceUnavailableMessage() }}</p>
+      <div class="su-actions">
+        <button class="su-btn su-btn-primary" (click)="onChangeAddress()">
+          <ion-icon name="location-outline"></ion-icon>
+          Change Address
+        </button>
+        <button class="su-btn su-btn-secondary" (click)="onBrowseShops()">
+          <ion-icon name="storefront-outline"></ion-icon>
+          Browse Shops
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="nodata && !serviceUnavailableReason" style="font-family: 'sfregular';font-size: 20px;text-align: center;margin-top: 50%;">
     <img style="width: 35%;" src="assets/icon/emptycart.png"><br>
     Your Cart is Empty!
   </div>
 
-  <div class="cart-summary" *ngIf="cartdata.length && !distanceLoading">
+  <div class="cart-summary" *ngIf="cartdata.length && !distanceLoading && !nodata">
     <p>Total Items ({{ totalItems }})</p>
   </div>
 

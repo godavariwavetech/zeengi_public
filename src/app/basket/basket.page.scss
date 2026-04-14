@@ -1,3 +1,115 @@
+// ── Service Unavailable Overlay ──
+.service-unavailable-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: suFadeIn 0.25s ease;
+}
+
+@keyframes suFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes suSlideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.service-unavailable-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 32px 24px 24px;
+  width: 100%;
+  max-width: 340px;
+  text-align: center;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+  animation: suSlideUp 0.3s ease;
+}
+
+.su-icon-wrap {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 16px;
+  background: #FFF3E6;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.su-icon {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+
+.su-title {
+  font-family: 'sfmedium', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 8px;
+}
+
+.su-message {
+  font-family: 'sfregular', sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  color: #666;
+  margin: 0 0 24px;
+}
+
+.su-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.su-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 13px 16px;
+  border-radius: 12px;
+  font-family: 'sfmedium', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  ion-icon {
+    font-size: 18px;
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+.su-btn-primary {
+  background: linear-gradient(135deg, #F57B00 0%, #E06800 100%);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(245, 123, 0, 0.3);
+}
+
+.su-btn-secondary {
+  background: #F5F5F5;
+  color: #333;
+  border: 1px solid #E0E0E0;
+}
+
 .category-header {
   display: flex;
   align-items: center;

@@ -898,7 +898,7 @@ export class MainResturantPage implements OnInit {
           localStorage.setItem("set_delivery_distance_status", "0");
           localStorage.setItem('address_store', '0');
           await dismissLoader();
-          this.serviceNotAvailableFunction();
+          this.serviceNotAvailableFunction('distance');
         }
       } catch (error) {
         localStorage.removeItem('cartData');
@@ -908,7 +908,7 @@ export class MainResturantPage implements OnInit {
         localStorage.setItem("set_delivery_distance_status", "0");
         localStorage.setItem('address_store', '0');
         await dismissLoader();
-        this.serviceNotAvailableFunction();
+        this.serviceNotAvailableFunction('location_error');
       }
     } else {
       this.restaurantdata.distance = localStorage.getItem("order_distance");
@@ -1681,21 +1681,45 @@ console.log(checktimeslot);
     return { loading, dismiss };
   }
 
-  async serviceNotAvailableFunction() {
-    const alert = await this.alertController.create({
-      header: 'Notice',
-      message: 'Unable to service this location. Would you like to continue with another shop?',
-      buttons: [
-        {
-          text: 'Okay',
-          handler: () => {
-            // Redirect to home page or shop list
-            this.navctrl.navigateRoot('/home');
-          }
-        }
-      ]
-    });
-    await alert.present();
+  serviceUnavailableReason: 'distance' | 'location_error' | 'no_location' | null = null;
+
+  serviceNotAvailableFunction(reason: 'distance' | 'location_error' | 'no_location' = 'distance') {
+    this.serviceUnavailableReason = reason;
+  }
+
+  getServiceUnavailableTitle(): string {
+    switch (this.serviceUnavailableReason) {
+      case 'distance': return 'Shop Too Far Away';
+      case 'location_error': return 'Location Not Found';
+      case 'no_location': return 'No Delivery Address';
+      default: return 'Service Unavailable';
+    }
+  }
+
+  getServiceUnavailableMessage(): string {
+    switch (this.serviceUnavailableReason) {
+      case 'distance': return 'This shop is too far from your current delivery address. Please change your address or try a nearby shop.';
+      case 'location_error': return 'We couldn\'t determine your delivery location. Please update your address so we can calculate delivery.';
+      case 'no_location': return 'Please set a delivery address to continue with your order.';
+      default: return 'Something went wrong. Please try again.';
+    }
+  }
+
+  getServiceUnavailableIcon(): string {
+    switch (this.serviceUnavailableReason) {
+      case 'distance': return 'assets/icon/store.png';
+      default: return 'assets/icon/home/location-pin.svg';
+    }
+  }
+
+  onChangeAddress() {
+    this.serviceUnavailableReason = null;
+    this.navctrl.navigateForward('default-address');
+  }
+
+  onBrowseShops() {
+    this.serviceUnavailableReason = null;
+    this.navctrl.navigateRoot('/home');
   }
 
   unavailableitems: boolean = true
