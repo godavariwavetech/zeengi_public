@@ -430,7 +430,7 @@
   <ion-toolbar>
     <div style="display: flex;">
       <span slot="start">
-        <ion-searchbar style="font-family: 'sfregular';" [(ngModel)]="searchQuery" (ionInput)="searchdata()"
+        <ion-searchbar style="font-family: 'sfregular';" [(ngModel)]="searchQuery" (ionInput)="searchdata($event)"
           placeholder="Search" showClearButton="always">
         </ion-searchbar>
       </span>

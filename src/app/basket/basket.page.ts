@@ -148,7 +148,8 @@ export class BasketPage implements OnInit {
 
   async maindata() {
 
-    const loadings = this.presentLoadings()
+    // const loadings = this.presentLoadings()
+    const loading = await this.presentLoadings();
     const setLatLongs = localStorage.getItem('setlatlongs');
     if (setLatLongs) {
       const stayLatLong = setLatLongs.split(',');
@@ -159,13 +160,13 @@ export class BasketPage implements OnInit {
     }
     if (!this.userLatitude || !this.userLongitude || isNaN(this.userLatitude) || isNaN(this.userLongitude)) {
       this.loadCartItems();
-      (await loadings).dismiss();
+      (await loading).dismiss();
       this.serviceNotAvailableFunction('location_error');
       return;
     }
     if (!this.dataw) {
       this.nodata = true;
-      (await loadings).dismiss()
+      (await loading).dismiss()
       return;
     }
     try {
@@ -196,31 +197,32 @@ export class BasketPage implements OnInit {
             }
             localStorage.setItem("set_delivery_distance_status", "1");
             this.maindatafunction2();
-            (await loadings).dismiss()
+            (await loading).dismiss()
           } else {
             localStorage.setItem("set_delivery_distance_status", "0");
             this.loadCartItems();
-            (await loadings).dismiss();
+            (await loading).dismiss();
             this.serviceNotAvailableFunction('distance');
           }
         } catch (error) {
           console.error('Error fetching distance:', error);
           localStorage.setItem("set_delivery_distance_status", "0");
           this.loadCartItems();
-          (await loadings).dismiss();
+          (await loading).dismiss();
           this.serviceNotAvailableFunction('location_error');
         }
         this.distanceLoading = false;
       } else {
         this.maindatafunction2();
-        (await loadings).dismiss()
+        (await loading).dismiss()
       }
     } catch (error) {
     }
   }
 
   async maindatafunction2() {
-    const loadings = this.presentLoadings()
+    // const loadings = this.presentLoadings()
+    const loading = await this.presentLoadings();
     this.shopdetails.slot_order = this.shopdetails?.slot_order || 0;
     this.getcoupons(this.shopdetails);
     if (this.shopdetails.deliveryType == 1) {
@@ -244,7 +246,7 @@ export class BasketPage implements OnInit {
         });
       } catch (error) {
       } finally {
-        (await loadings).dismiss()
+        (await loading).dismiss()
       }
       // Fetch category details and offer
       const category_data = { id: this.shopdetails.category_id };
@@ -254,10 +256,10 @@ export class BasketPage implements OnInit {
         this.order_offer_amount = offerAmount;
         this.valid_offer_amount = offerAmount ? Number(offerAmount) : 0;
         this.updateGrandTotal();
-        (await loadings).dismiss()
+        (await loading).dismiss()
       }, async error => {
         this.updateGrandTotal();
-        (await loadings).dismiss()
+        (await loading).dismiss()
       });
     }
     // Check if cart is empty

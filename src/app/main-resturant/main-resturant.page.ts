@@ -119,7 +119,7 @@ export class MainResturantPage implements OnInit {
       this.data = params['data'];
       this.restaurantdata = JSON.parse(this.data);
       console.log(this.restaurantdata, "fhafjsa");
-      
+
       this.restaurantdata.slot_order = 0;
       this.getcategorydetails(this.restaurantdata);
       this.getcustomerwishlist();
@@ -271,7 +271,8 @@ export class MainResturantPage implements OnInit {
 
         loading.dismiss();
         this.notdatastatus = 0;
-        this.originaldata = res.data;
+        // this.originaldata = res.data;
+        this.originaldata = [...res.data]; // clone
         this.mainitems = res.data;
         this.items = this.groupItemsBySubCategory(res.data);
         this.othermainitems = this.items;
@@ -929,25 +930,55 @@ export class MainResturantPage implements OnInit {
     });
     localStorage.setItem("callbackdata", JSON.stringify({ pageback: 'main-resturant', pageind: '0', pagebackdata: this.restaurantdata }))
   }
-  searchdata() {
-    const query = this.searchQuery.toLowerCase();
-    if (query == ' ') {
-      this.mainitems = [...this.originaldata];
-      return;
-    }
-    this.mainitems = this.originaldata.filter((item: any) =>
-      item.item_name.toLowerCase().includes(query) ||
-      item.category_name.toLowerCase().includes(query) ||
-      item.sub_category_name.toLowerCase().includes(query)
-    );
-    this.items = this.groupItemsBySubCategory(this.mainitems);
-    const uniqueFilters = Array.from(
-      new Set(this.mainitems.map((item: any) => item.filter_one.toLowerCase().replace(/\b\w/g, (c: any) => c.toUpperCase())))
-    );
-    // this.filterskey = uniqueFilters;
-    this.filteredItems = [...this.mainitems];
+  // searchdata() {
+  //   const query = this.searchQuery.toLowerCase();
+  //   if (query == ' ') {
+  //     this.mainitems = [...this.originaldata];
+  //     return;
+  //   }
+  //   this.mainitems = this.originaldata.filter((item: any) =>
+  //     item.item_name.toLowerCase().includes(query) ||
+  //     item.category_name.toLowerCase().includes(query) ||
+  //     item.sub_category_name.toLowerCase().includes(query)
+  //   );
+  //   this.items = this.groupItemsBySubCategory(this.mainitems);
+  //   const uniqueFilters = Array.from(
+  //     new Set(this.mainitems.map((item: any) => item.filter_one.toLowerCase().replace(/\b\w/g, (c: any) => c.toUpperCase())))
+  //   );
+  //   // this.filterskey = uniqueFilters;
+  //   this.filteredItems = [...this.mainitems];
+  // }
+
+searchdata(event: any) {
+  const value = (event?.target?.value || '').trim().toLowerCase();
+
+  console.log("Search:", value);
+
+  if (!value) {
+    this.mainitems = [...this.originaldata];
+  } else {
+    this.mainitems = this.originaldata.filter((item: any) => {
+
+      const name = (item.item_name || '').toLowerCase().trim();
+      const subCat = (item.sub_category_name || '').toLowerCase().trim();
+      const filter = (item.filter_one || '').toLowerCase().trim();
+
+      console.log("Checking:", name); // 👈 DEBUG
+
+      return (
+        name.includes(value) ||
+        subCat.includes(value) ||
+        filter.includes(value)
+      );
+    });
   }
 
+  console.log("Filtered:", this.mainitems);
+
+  this.items = this.groupItemsBySubCategory(this.mainitems);
+  this.items.forEach((cat: any) => cat.open = true);
+  this.filteredItems = [...this.mainitems];
+}
   filtersubcategory(data: any) {
     if (data == 'All') {
       this.mainitems = this.originaldata;
@@ -1425,10 +1456,10 @@ Share this with your friends and let them enjoy the goodness too! ❤️`;
           location_id: result.data.selectedDate.location_id,
           shop_id: this.restaurantdata.shop_id
         }
-console.log(checktimeslot);
+        console.log(checktimeslot);
 
         this.api.checkshop_slot_timings(checktimeslot).subscribe(async (res: any) => {
-          console.log(res.data,"djfdjdj")
+          console.log(res.data, "djfdjdj")
           this.restaurantdata.shop_active_status = res.data[0].shop_active_status;
           if (res.data[0].shop_active_status == 0) {
             const startTime24 = this.extractStartTimeTo24Hour(selectedTime);
@@ -1447,7 +1478,7 @@ console.log(checktimeslot);
             this.deliveryType = 0;
             this.restaurantdata.slot_order = 0;
             this.restaurantdata.order_type = 0;
-            
+
           }
         })
       }
