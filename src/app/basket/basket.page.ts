@@ -377,6 +377,7 @@ export class BasketPage implements OnInit {
           ];
         }
         this.selectedPaymentType = this.orderTypeswe[0].label;
+        this.payment_type = this.orderTypeswe[0].label;
         console.log(this.orderTypeswe, "order types");
       }
     }, error => { });
@@ -888,8 +889,8 @@ export class BasketPage implements OnInit {
       });
       await loading.present();
       var data = {
-        order_amount: 1 * 100,
-        // order_amount: this.grand_total * 100,
+        // order_amount: 1 * 100,
+        order_amount: this.grand_total * 100,
         razorpay_secret_key: this.locationdetails.razorpay_secret_key,
         razorpay_key: this.locationdetails.razorpay_key
       }

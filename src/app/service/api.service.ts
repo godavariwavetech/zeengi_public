@@ -10,9 +10,9 @@ declare const google: any;
 
 export class ApiService {
 
-  private baseUrl = 'https://api.zeengi.com/public_app/';
+  // private baseUrl = 'https://api.zeengi.com/public_app/';
 
-  // private baseUrl = 'https://stagingapi.zeengi.com/public_app/';
+  private baseUrl = 'https://stagingapi.zeengi.com/public_app/';
   // private baseUrl = 'http://localhost:2406/public_app/';
 
   private cartCount = new BehaviorSubject<number>(0);
