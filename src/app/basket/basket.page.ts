@@ -362,7 +362,7 @@ export class BasketPage implements OnInit {
 
         if (payment_type === 0) {
           this.orderTypeswe = [
-            { label: 'Cash on Delivery', selected: false }
+            { label: 'Cash On Delivery', selected: false }
           ];
         }
         else if (payment_type === 1) {
@@ -373,7 +373,7 @@ export class BasketPage implements OnInit {
         else if (payment_type === 2) {
           this.orderTypeswe = [
             { label: 'Pay Online', selected: false },
-            { label: 'Cash on Delivery', selected: false }
+            { label: 'Cash On Delivery', selected: false }
           ];
         }
         this.selectedPaymentType = this.orderTypeswe[0].label;
